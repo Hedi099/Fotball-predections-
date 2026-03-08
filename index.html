@@ -3,92 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان 2026</title>
+    <title>گروپی برایان - وەشانی کۆتایی</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --p: #2563eb; --s: #f59e0b; --bg: #f8fafc; --card: #ffffff; }
+        :root { --p: #2563eb; --s: #f59e0b; --bg: #f8fafc; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: var(--bg); color: #1e293b; margin: 0; padding: 0; display: flex; justify-content: center; }
+        body { background: var(--bg); color: #1e293b; margin: 0; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 450px; padding: 15px; }
 
-        /* بەشی فەرموودە */
+        /* فەرموودە */
         .hadith-box {
-            background: white; border-right: 4px solid var(--s); padding: 15px;
-            border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: white; border-right: 5px solid var(--s); padding: 15px;
+            border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .hadith-h { color: var(--s); font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }
-        .hadith-t { font-size: 14px; line-height: 1.6; color: #475569; }
 
-        /* پڕۆفایلی خاڵەکان */
+        /* خاڵەکان */
         .stats-card {
-            background: var(--p); color: white; padding: 20px; border-radius: 20px;
+            background: #1e293b; color: white; padding: 20px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
         }
         .stat-v { font-size: 22px; font-weight: bold; color: var(--s); }
 
-        /* کارتەکانی یاری */
+        /* یارییەکان */
         .m-card {
-            background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
+            background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;
+            border: 1px solid #e2e8f0; text-align: center;
         }
-        .m-header { display: flex; justify-content: space-between; align-items: center; }
-        .team { flex: 1; text-align: center; }
-        .t-logo { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
-        .t-name { font-size: 12px; font-weight: bold; display: block; }
+        .m-header { display: flex; justify-content: space-around; align-items: center; }
+        .t-logo { width: 65px; height: 65px; object-fit: contain; background: #fff; padding: 5px; border-radius: 10px; }
+        .t-name { font-size: 13px; font-weight: bold; margin-top: 8px; display: block; }
 
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
         .o-btn {
-            background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px;
-            padding: 10px 2px; cursor: pointer; font-size: 12px; font-weight: bold;
+            background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 12px 5px; cursor: pointer; font-weight: bold; transition: 0.2s;
         }
-        .o-btn.selected { background: var(--p); color: white; }
-        .pts { font-size: 9px; color: var(--s); display: block; }
+        .o-btn.selected { background: var(--p) !important; color: white !important; }
+        .pts { font-size: 10px; color: var(--s); display: block; }
 
+        #overlay { 
+            display: none; position: fixed; inset: 0; background: white; z-index: 1000; 
+            padding: 20px; overflow-y: auto; 
+        }
+        .rank-item { 
+            display: flex; justify-content: space-between; padding: 15px; 
+            border-bottom: 1px solid #eee; align-items: center;
+        }
+        
         #login-page { text-align: center; padding-top: 100px; }
-        .inp { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 10px; text-align: center; }
-        .btn-lg { width: 100%; background: var(--p); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-
-        #overlay { display: none; position: fixed; inset: 0; background: white; z-index: 100; padding: 20px; overflow-y: auto; }
+        .inp { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 10px; }
+        .btn-lg { width: 100%; background: var(--p); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-page">
-        <h2 style="color: var(--p)">گروپی برایان 🏆</h2>
-        <input type="text" id="userInput" class="inp" placeholder="ناوەکەت لێرە بنووسە...">
+        <h2>گروپی برایان 🏆</h2>
+        <input type="text" id="userInput" class="inp" placeholder="ناوەکەت بنووسە">
         <button class="btn-lg" onclick="login()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display:none;">
         <div class="hadith-box">
             <span class="hadith-h">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
-            <div class="hadith-t">«الدَّالُّ عَلَى الخَيْرِ كَفَاعِلِهِ» (ئەوەی ڕێنمایی کەسێک بکات بۆ کارێکی چاک، وەک ئەوە وایە خۆی کردبێتی)</div>
+            <div style="font-size: 14px;">«الدَّالُّ عَلَى الخَيْرِ كَفَاعِلِهِ» (ئەوەی ڕێنمایی کەسێک بکات بۆ کارێکی چاک، وەک ئەوە وایە خۆی کردبێتی)</div>
         </div>
 
         <div class="stats-card">
-            <div><span id="uName" style="font-weight:bold;"></span><br><small onclick="logout()" style="cursor:pointer; opacity:0.8;">دەرچوون ↩</small></div>
+            <div><span id="uName" style="font-size:18px;"></span><br><small onclick="logout()" style="cursor:pointer; opacity:0.7;">Logout ↩</small></div>
             <div style="display:flex; gap:15px;">
-                <div style="text-align:center;"><span id="uW" class="stat-v">0</span><br><small style="font-size:9px;">هەفتانە</small></div>
-                <div style="text-align:center;"><span id="uT" class="stat-v">0</span><br><small style="font-size:9px;">گشتی</small></div>
+                <div style="text-align:center;"><span id="uW" class="stat-v">0</span><br><small>هەفتانە</small></div>
+                <div style="text-align:center;"><span id="uT" class="stat-v">0</span><br><small>گشتی</small></div>
             </div>
         </div>
 
-        <button onclick="openRank()" style="width:100%; padding:12px; border:1px solid var(--p); background:none; color:var(--p); border-radius:12px; font-weight:bold; margin-bottom:20px; cursor:pointer;">📊 ڕیزبەندی خاڵەکان</button>
-        
+        <button onclick="openRank()" style="width:100%; padding:12px; border:1px solid var(--p); background:none; color:var(--p); border-radius:12px; font-weight:bold; margin-bottom:20px;">📊 خشتەی ڕیزبەندی</button>
         <div id="m-list"></div>
     </div>
 </div>
 
 <div id="overlay">
-    <button onclick="document.getElementById('overlay').style.display='none'" style="margin-bottom:20px;">داخستن ✖</button>
+    <button onclick="document.getElementById('overlay').style.display='none'" style="padding:10px 20px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">گەڕانەوە</button>
+    <h3 style="text-align:center;">ڕیزبەندی هەمووان</h3>
     <div id="rank-list"></div>
 </div>
 
 <script>
-    // کۆنفیگی فایەربەیس
     const firebaseConfig = {
         apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ",
         authDomain: "brayan-2a1ef.firebaseapp.com",
@@ -99,17 +102,14 @@
         appId: "1:655783456427:web:1535d3dfd9b53515c391ee"
     };
 
-    // جێگیرکردنی فایەربەیس بە شێوەی سەلامەت
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let user = localStorage.getItem('brayanUser');
 
-    // لیستی یارییەکان
     const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-09T23:00:00", img1: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d6/RCD_Espanyol_logo.svg/100px-RCD_Espanyol_logo.svg.png", img2: "https://upload.wikimedia.org/wikipedia/en/thumb/4/45/Real_Oviedo_logo.svg/100px-Real_Oviedo_logo.svg.png" },
-        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, time: "2026-03-10T20:45:00", img1: "https://upload.wikimedia.org/wikipedia/en/thumb/3/31/Galatasaray_Star_Logo.svg/100px-Galatasaray_Star_Logo.svg.png", img2: "https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Liverpool_FC.svg/100px-Liverpool_FC.svg.png" }
+        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-09T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
+        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, time: "2026-03-10T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/141.png", img2: "https://tmssl.akamaized.net/images/crest/big/31.png" },
+        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, time: "2026-03-10T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/800.png", img2: "https://tmssl.akamaized.net/images/crest/big/27.png" }
     ];
 
     function login() {
@@ -117,8 +117,7 @@
         if(n.length < 2) return alert("ناو بنووسە");
         db.ref('users/' + n).once('value', s => {
             if(!s.exists()) db.ref('users/' + n).set({total:0, weekly:0});
-            localStorage.setItem('brayanUser', n);
-            location.reload();
+            localStorage.setItem('brayanUser', n); location.reload();
         });
     }
 
@@ -126,8 +125,7 @@
         document.getElementById('login-page').style.display='none';
         document.getElementById('main-app').style.display='block';
         document.getElementById('uName').innerText = user;
-        renderMatches();
-        
+        render();
         db.ref('users/' + user).on('value', s => {
             const d = s.val();
             if(d) {
@@ -138,15 +136,14 @@
         });
     }
 
-    function renderMatches() {
-        let html = '';
+    function render() {
+        let h = '';
         matches.forEach(m => {
-            html += `
-            <div class="m-card" id="${m.id}">
+            h += `<div class="m-card" id="${m.id}">
                 <div class="m-header">
-                    <div class="team"><img src="${m.img1}" class="t-logo"><span class="t-name">${m.t1}</span></div>
-                    <div style="color:#94a3b8; font-weight:bold;">VS</div>
-                    <div class="team"><img src="${m.img2}" class="t-logo"><span class="t-name">${m.t2}</span></div>
+                    <div class="team"><img src="${m.img1}" class="t-logo" onerror="this.src='https://via.placeholder.com/60?text=Team'"><span class="t-name">${m.t1}</span></div>
+                    <div style="font-weight:bold; color:#cbd5e1;">VS</div>
+                    <div class="team"><img src="${m.img2}" class="t-logo" onerror="this.src='https://via.placeholder.com/60?text=Team'"><span class="t-name">${m.t2}</span></div>
                 </div>
                 <div class="btn-grid">
                     <button class="o-btn" id="${m.id}-1" onclick="vote('${m.id}',1,${m.p1})">1 <span class="pts">${m.p1}خاڵ</span></button>
@@ -155,41 +152,36 @@
                 </div>
             </div>`;
         });
-        document.getElementById('m-list').innerHTML = html;
+        document.getElementById('m-list').innerHTML = h;
     }
 
     function vote(mId, c, p) {
-        if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) {
-            db.ref('users/'+user+'/predictions/'+mId).set({choice:c, pts:p});
-        }
+        if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+user+'/predictions/'+mId).set({choice:c, pts:p});
     }
 
     function highlight(preds) {
         Object.keys(preds).forEach(mId => {
-            const choice = preds[mId].choice;
-            const btn = document.getElementById(mId + '-' + choice);
+            const btn = document.getElementById(mId + '-' + preds[mId].choice);
             if(btn) {
-                const card = document.getElementById(mId);
-                card.querySelectorAll('.o-btn').forEach(b => {
-                    b.disabled = true;
-                    b.style.opacity = "0.3";
+                document.getElementById(mId).querySelectorAll('.o-btn').forEach(b => {
+                    b.disabled = true; b.style.opacity = "0.3";
                 });
-                btn.classList.add('selected');
-                btn.style.opacity = "1";
+                btn.classList.add('selected'); btn.style.opacity = "1";
             }
         });
     }
 
     function openRank() {
         db.ref('users').once('value', s => {
-            let a = [];
-            s.forEach(u => a.push({name: u.key, points: u.val().total || 0}));
-            a.sort((x, y) => y.points - x.points);
-            document.getElementById('rank-list').innerHTML = a.map((u, i) => 
-                `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee;">
-                    <span>${i+1}. ${u.name}</span><b>${u.points} خاڵ</b>
-                </div>`
-            ).join('');
+            let arr = [];
+            s.forEach(u => arr.push({ name: u.key, total: u.val().total || 0 }));
+            arr.sort((a, b) => b.total - a.total);
+            document.getElementById('rank-list').innerHTML = arr.map((u, i) => `
+                <div class="rank-item">
+                    <span><b>${i+1}.</b> ${u.name}</span>
+                    <span style="color:var(--p); font-weight:bold;">${u.total} خاڵ</span>
+                </div>
+            `).join('');
             document.getElementById('overlay').style.display='block';
         });
     }
@@ -197,4 +189,4 @@
     function logout() { localStorage.removeItem('brayanUser'); location.reload(); }
 </script>
 </body>
-</html>
+</html> 
