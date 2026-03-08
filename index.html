@@ -3,91 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی کۆتایی</title>
+    <title>گروپی برایان</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --p: #2563eb; --s: #f59e0b; --bg: #f8fafc; }
+        :root { --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: var(--bg); color: #1e293b; margin: 0; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 450px; padding: 15px; }
-
-        /* فەرموودە */
-        .hadith-box {
-            background: white; border-right: 5px solid var(--s); padding: 15px;
-            border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .hadith-h { color: var(--s); font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }
-
-        /* خاڵەکان */
-        .stats-card {
-            background: #1e293b; color: white; padding: 20px; border-radius: 20px;
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-        }
-        .stat-v { font-size: 22px; font-weight: bold; color: var(--s); }
-
-        /* یارییەکان */
-        .m-card {
-            background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;
-            border: 1px solid #e2e8f0; text-align: center;
-        }
-        .m-header { display: flex; justify-content: space-around; align-items: center; }
-        .t-logo { width: 65px; height: 65px; object-fit: contain; background: #fff; padding: 5px; border-radius: 10px; }
-        .t-name { font-size: 13px; font-weight: bold; margin-top: 8px; display: block; }
-
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .o-btn {
-            background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px;
-            padding: 12px 5px; cursor: pointer; font-weight: bold; transition: 0.2s;
-        }
-        .o-btn.selected { background: var(--p) !important; color: white !important; }
-        .pts { font-size: 10px; color: var(--s); display: block; }
-
-        #overlay { 
-            display: none; position: fixed; inset: 0; background: white; z-index: 1000; 
-            padding: 20px; overflow-y: auto; 
-        }
-        .rank-item { 
-            display: flex; justify-content: space-between; padding: 15px; 
-            border-bottom: 1px solid #eee; align-items: center;
-        }
+        body { background-color: var(--bg); color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 480px; padding: 15px; }
         
-        #login-page { text-align: center; padding-top: 100px; }
-        .inp { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 10px; }
-        .btn-lg { width: 100%; background: var(--p); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; }
+        #login-page, #main-app { background: rgba(30, 41, 59, 0.7); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-top: 20px; text-align: center; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 15px; text-align: center; }
+        button { cursor: pointer; border: none; font-weight: bold; }
+        .btn-main { width: 100%; background: var(--primary); color: white; padding: 15px; border-radius: 10px; }
+        
+        .match-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .match-info { display: flex; justify-content: space-around; align-items: center; margin-bottom: 15px; }
+        .team-box { flex: 1; text-align: center; }
+        .team-logo { width: 60px; height: 60px; object-fit: contain; background: white; border-radius: 10px; padding: 5px; }
+        .team-name { font-size: 14px; display: block; margin-top: 8px; font-weight: bold; }
+        
+        .options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .opt-btn { background: rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; font-size: 12px; }
+        .opt-btn.selected { background: var(--secondary); color: black; }
+        
+        .rank-btn { background: white; color: black; width: 100%; padding: 12px; border-radius: 10px; margin-top: 15px; }
+        #leaderboard { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; padding: 20px; overflow-y: auto; z-index: 100; }
+        .rank-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-page">
-        <h2>گروپی برایان 🏆</h2>
-        <input type="text" id="userInput" class="inp" placeholder="ناوەکەت بنووسە">
-        <button class="btn-lg" onclick="login()">چوونە ژوورەوە</button>
+        <h2>🏆 گروپی برایان</h2>
+        <input type="text" id="userName" placeholder="ناوەکەت بنووسە">
+        <button class="btn-main" onclick="login()">چوونە ژوورەوە</button>
     </div>
 
-    <div id="main-app" style="display:none;">
-        <div class="hadith-box">
-            <span class="hadith-h">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
-            <div style="font-size: 14px;">«الدَّالُّ عَلَى الخَيْرِ كَفَاعِلِهِ» (ئەوەی ڕێنمایی کەسێک بکات بۆ کارێکی چاک، وەک ئەوە وایە خۆی کردبێتی)</div>
-        </div>
-
-        <div class="stats-card">
-            <div><span id="uName" style="font-size:18px;"></span><br><small onclick="logout()" style="cursor:pointer; opacity:0.7;">Logout ↩</small></div>
-            <div style="display:flex; gap:15px;">
-                <div style="text-align:center;"><span id="uW" class="stat-v">0</span><br><small>هەفتانە</small></div>
-                <div style="text-align:center;"><span id="uT" class="stat-v">0</span><br><small>گشتی</small></div>
+    <div id="main-app" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="displayUser"></span>
+            <div>
+                <span id="scoreTotal" style="color: var(--secondary); font-weight: bold; font-size: 20px;">0</span> خاڵ
             </div>
         </div>
-
-        <button onclick="openRank()" style="width:100%; padding:12px; border:1px solid var(--p); background:none; color:var(--p); border-radius:12px; font-weight:bold; margin-bottom:20px;">📊 خشتەی ڕیزبەندی</button>
-        <div id="m-list"></div>
+        
+        <button class="rank-btn" onclick="showRank()">📊 خشتەی ڕیزبەندی</button>
+        <div id="matches"></div>
     </div>
 </div>
 
-<div id="overlay">
-    <button onclick="document.getElementById('overlay').style.display='none'" style="padding:10px 20px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">گەڕانەوە</button>
-    <h3 style="text-align:center;">ڕیزبەندی هەمووان</h3>
+<div id="leaderboard">
+    <button onclick="document.getElementById('leaderboard').style.display='none'" style="padding: 10px; margin-bottom: 20px;">داخستن ✖</button>
     <div id="rank-list"></div>
 </div>
 
@@ -101,92 +69,85 @@
         messagingSenderId: "655783456427",
         appId: "1:655783456427:web:1535d3dfd9b53515c391ee"
     };
-
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let user = localStorage.getItem('brayanUser');
+    let currentUser = localStorage.getItem('bUser');
 
-    const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-09T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
-        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, time: "2026-03-10T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/141.png", img2: "https://tmssl.akamaized.net/images/crest/big/31.png" },
-        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, time: "2026-03-10T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/800.png", img2: "https://tmssl.akamaized.net/images/crest/big/27.png" }
+    // وێنەکانم گۆڕی بۆ ئەم لینکە جێگیرانە بۆ ئەوەی بلۆک نەکرێن
+    const matchList = [
+        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
+        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/141.png", img2: "https://tmssl.akamaized.net/images/crest/big/31.png" },
+        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/800.png", img2: "https://tmssl.akamaized.net/images/crest/big/27.png" }
     ];
 
     function login() {
-        const n = document.getElementById('userInput').value.trim();
-        if(n.length < 2) return alert("ناو بنووسە");
-        db.ref('users/' + n).once('value', s => {
-            if(!s.exists()) db.ref('users/' + n).set({total:0, weekly:0});
-            localStorage.setItem('brayanUser', n); location.reload();
-        });
+        const n = document.getElementById('userName').value.trim();
+        if(n.length < 2) return;
+        localStorage.setItem('bUser', n);
+        currentUser = n;
+        location.reload();
     }
 
-    if(user) {
-        document.getElementById('login-page').style.display='none';
-        document.getElementById('main-app').style.display='block';
-        document.getElementById('uName').innerText = user;
-        render();
-        db.ref('users/' + user).on('value', s => {
-            const d = s.val();
-            if(d) {
-                document.getElementById('uT').innerText = d.total || 0;
-                document.getElementById('uW').innerText = d.weekly || 0;
-                if(d.predictions) highlight(d.predictions);
-            }
-        });
-    }
-
-    function render() {
+    if(currentUser) {
+        document.getElementById('login-page').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        document.getElementById('displayUser').innerText = "سڵاو " + currentUser;
+        
         let h = '';
-        matches.forEach(m => {
-            h += `<div class="m-card" id="${m.id}">
-                <div class="m-header">
-                    <div class="team"><img src="${m.img1}" class="t-logo" onerror="this.src='https://via.placeholder.com/60?text=Team'"><span class="t-name">${m.t1}</span></div>
-                    <div style="font-weight:bold; color:#cbd5e1;">VS</div>
-                    <div class="team"><img src="${m.img2}" class="t-logo" onerror="this.src='https://via.placeholder.com/60?text=Team'"><span class="t-name">${m.t2}</span></div>
+        matchList.forEach(m => {
+            h += `<div class="match-card" id="${m.id}">
+                <div class="match-info">
+                    <div class="team-box"><img src="${m.img1}" class="team-logo"><span class="team-name">${m.t1}</span></div>
+                    <div style="font-weight:bold;">VS</div>
+                    <div class="team-box"><img src="${m.img2}" class="team-logo"><span class="team-name">${m.t2}</span></div>
                 </div>
-                <div class="btn-grid">
-                    <button class="o-btn" id="${m.id}-1" onclick="vote('${m.id}',1,${m.p1})">1 <span class="pts">${m.p1}خاڵ</span></button>
-                    <button class="o-btn" id="${m.id}-2" onclick="vote('${m.id}',2,${m.pX})">X <span class="pts">${m.pX}خاڵ</span></button>
-                    <button class="o-btn" id="${m.id}-3" onclick="vote('${m.id}',3,${m.p2})">2 <span class="pts">${m.p2}خاڵ</span></button>
+                <div class="options">
+                    <button class="opt-btn" id="${m.id}-1" onclick="vote('${m.id}', 1)">1 (${m.p1}خاڵ)</button>
+                    <button class="opt-btn" id="${m.id}-2" onclick="vote('${m.id}', 2)">X (${m.pX}خاڵ)</button>
+                    <button class="opt-btn" id="${m.id}-3" onclick="vote('${m.id}', 3)">2 (${m.p2}خاڵ)</button>
                 </div>
             </div>`;
         });
-        document.getElementById('m-list').innerHTML = h;
-    }
+        document.getElementById('matches').innerHTML = h;
 
-    function vote(mId, c, p) {
-        if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+user+'/predictions/'+mId).set({choice:c, pts:p});
-    }
-
-    function highlight(preds) {
-        Object.keys(preds).forEach(mId => {
-            const btn = document.getElementById(mId + '-' + preds[mId].choice);
-            if(btn) {
-                document.getElementById(mId).querySelectorAll('.o-btn').forEach(b => {
-                    b.disabled = true; b.style.opacity = "0.3";
-                });
-                btn.classList.add('selected'); btn.style.opacity = "1";
+        db.ref('users/' + currentUser).on('value', s => {
+            const data = s.val();
+            if(!data) db.ref('users/' + currentUser).set({total:0});
+            else {
+                document.getElementById('scoreTotal').innerText = data.total || 0;
+                if(data.predictions) {
+                    Object.keys(data.predictions).forEach(mid => {
+                        const btn = document.getElementById(mid + '-' + data.predictions[mid]);
+                        if(btn) {
+                            document.getElementById(mid).querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+                            btn.classList.add('selected');
+                        }
+                    });
+                }
             }
         });
     }
 
-    function openRank() {
-        db.ref('users').once('value', s => {
-            let arr = [];
-            s.forEach(u => arr.push({ name: u.key, total: u.val().total || 0 }));
-            arr.sort((a, b) => b.total - a.total);
-            document.getElementById('rank-list').innerHTML = arr.map((u, i) => `
-                <div class="rank-item">
-                    <span><b>${i+1}.</b> ${u.name}</span>
-                    <span style="color:var(--p); font-weight:bold;">${u.total} خاڵ</span>
-                </div>
-            `).join('');
-            document.getElementById('overlay').style.display='block';
-        });
+    function vote(mId, choice) {
+        if(confirm("دڵنیای؟")) {
+            db.ref('users/' + currentUser + '/predictions/' + mId).set(choice);
+        }
     }
 
-    function logout() { localStorage.removeItem('brayanUser'); location.reload(); }
+    function showRank() {
+        db.ref('users').once('value', s => {
+            let arr = [];
+            s.forEach(u => { arr.push({ name: u.key, total: u.val().total || 0 }); });
+            arr.sort((a,b) => b.total - a.total);
+            document.getElementById('rank-list').innerHTML = arr.map((u, i) => `
+                <div class="rank-row">
+                    <span>${i+1}. ${u.name}</span>
+                    <b>${u.total} خاڵ</b>
+                </div>
+            `).join('');
+            document.getElementById('leaderboard').style.display = 'block';
+        });
+    }
 </script>
 </body>
 </html> 
