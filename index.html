@@ -3,80 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی وێنەی جێگیر</title>
+    <title>گروپی برایان - وەشانی شاهانە</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.95); --border: rgba(255, 255, 255, 0.1); --danger: #ef4444; --success: #22c55e; }
+        :root { 
+            --primary: #3b82f6; 
+            --secondary: #f59e0b; 
+            --bg: #0f172a; 
+            --card-bg: rgba(30, 41, 59, 0.7); 
+            --border: rgba(255, 255, 255, 0.1); 
+            --danger: #ef4444; 
+            --success: #22c55e;
+        }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: #0f172a; color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+        body { 
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; 
+        }
         .container { width: 100%; max-width: 480px; padding: 15px; }
-        #login-page, #main-app, .admin-box { background: var(--card-bg); padding: 25px; border-radius: 25px; border: 1px solid var(--border); margin-top: 15px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .rank-toggle-btn { background: var(--secondary); color: #000; font-weight: bold; padding: 14px; border-radius: 12px; border: none; width: 100%; margin: 15px 0; cursor: pointer; }
-        .match-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 22px; padding: 20px; margin-top: 20px; }
-        .prediction-container { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-        .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .team-logo { width: 75px; height: 75px; object-fit: contain; background: white; border-radius: 15px; padding: 5px; border: 2px solid var(--secondary); }
-        .team-name { font-size: 13px; font-weight: bold; color: #cbd5e1; height: 35px; text-align: center; display: flex; align-items: center; }
-        .opt-btn { width: 90%; background: rgba(255,255,255,0.07); border: 1px solid var(--border); color: white; padding: 12px 5px; border-radius: 10px; cursor: pointer; font-size: 12px; }
-        .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 15px var(--primary); transform: scale(1.05); }
+
+        /* بەشی فەرموودە */
+        .hadith-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(15, 23, 42, 0.8));
+            border: 1px solid var(--secondary);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .hadith-title { color: var(--secondary); font-size: 14px; font-weight: bold; margin-bottom: 8px; display: block; }
+        .hadith-text { font-size: 16px; line-height: 1.7; color: #f8fafc; font-weight: 500; }
+
+        #login-page, #main-app, .admin-box { 
+            background: var(--card-bg); backdrop-filter: blur(12px);
+            padding: 25px; border-radius: 30px; border: 1px solid var(--border); 
+            margin-top: 15px; text-align: center; 
+        }
+
+        input { 
+            width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); 
+            background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; font-size: 16px; 
+        }
+
+        .btn-main { 
+            width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); 
+            color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer;
+        }
+
+        .rank-toggle-btn { 
+            background: white; color: #0f172a; font-weight: bold; padding: 14px; border-radius: 15px; 
+            border: none; width: 100%; margin: 15px 0; cursor: pointer;
+        }
+
+        /* دیزاینی نوێی یارییەکان */
+        .match-card { 
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); 
+            border-radius: 25px; padding: 25px 15px; margin-top: 25px; 
+        }
+
+        .prediction-container { display: flex; justify-content: space-around; align-items: center; }
+        .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        
+        .team-logo { 
+            width: 85px; height: 85px; object-fit: contain; background: white; 
+            border-radius: 20px; padding: 8px; border: 2px solid var(--secondary);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .team-name { font-size: 14px; font-weight: bold; color: #f1f5f9; text-align: center; min-height: 40px; display: flex; align-items: center; }
+
+        .opt-btn { 
+            width: 95%; background: rgba(255,255,255,0.08); border: 1px solid var(--border); 
+            color: white; padding: 12px 5px; border-radius: 12px; cursor: pointer; font-size: 12px;
+        }
+        .opt-btn.selected { 
+            background: var(--secondary); color: black; font-weight: bold; border-color: white; 
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5); 
+        }
+
         .pts-text { font-size: 12px; color: var(--secondary); font-weight: bold; }
-        .deadline-text { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; }
-        .admin-section { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #334155; }
+        .deadline-text { font-size: 11px; color: #94a3b8; margin-top: 15px; display: block; }
+        
+        .rank-row { 
+            display: flex; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); 
+            background: rgba(255,255,255,0.02); margin-bottom: 8px; border-radius: 15px; align-items: center;
+        }
+        
         #leaderboard-overlay, #preds-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         .close-btn { background: var(--danger); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
-        .rank-row { display: flex; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.03); margin-bottom: 6px; border-radius: 12px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: #1e293b; color: white; cursor: pointer; font-weight: bold; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: #1e293b; color: white; cursor: pointer; font-weight: bold; }
         .tab-btn.active { background: var(--secondary); color: black; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="hadith-box">
+        <span class="hadith-title">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
+        <div class="hadith-text">
+            «الدَّالُّ عَلَى الخَيْرِ كَفَاعِلِهِ»<br>
+            <span style="font-size: 13px; opacity: 0.9;">(ئەوەی ڕێنمایی کەسێک بکات بۆ کارێکی چاک، وەک ئەوە وایە خۆی کردبێتی)</span>
+        </div>
+    </div>
+
     <div id="login-page">
-        <h1 style="color: var(--secondary)">🏆 گروپی برایان</h1>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە...">
+        <h1>🏆 گروپی برایان</h1>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە...">
         <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 20px;">
             <div style="text-align: right;">
                 <span id="welcomeText" style="font-weight: bold; color: var(--secondary);"></span><br>
-                <button onclick="logoutUser()" style="color: var(--danger); background:none; border:none; cursor:pointer; font-size: 12px;">دەرچوون</button>
+                <button onclick="logoutUser()" style="color: var(--danger); background:none; border:none; cursor:pointer; font-size: 12px;">Logout ↩</button>
             </div>
-            <div style="display: flex; gap: 8px;">
-                <div style="background: rgba(59, 130, 246, 0.1); padding: 5px 10px; border-radius: 10px; border: 1px solid var(--primary); text-align: center;">
-                    <div id="userWeeklyPoints" style="color: var(--primary); font-size: 16px; font-weight: bold;">0</div>
-                    <div style="font-size: 8px;">هەفتانە</div>
+            <div style="display: flex; gap: 15px;">
+                <div style="text-align: center;">
+                    <div id="userWeeklyPoints" style="color: var(--primary); font-size: 20px; font-weight: bold;">0</div>
+                    <div style="font-size: 9px; color: #94a3b8;">هەفتانە</div>
                 </div>
-                <div style="background: rgba(245, 158, 11, 0.1); padding: 5px 10px; border-radius: 10px; border: 1px solid var(--secondary); text-align: center;">
-                    <div id="userPoints" style="color: var(--secondary); font-size: 16px; font-weight: bold;">0</div>
-                    <div style="font-size: 8px;">گشتی</div>
+                <div style="text-align: center;">
+                    <div id="userPoints" style="color: var(--secondary); font-size: 20px; font-weight: bold;">0</div>
+                    <div style="font-size: 9px; color: #94a3b8;">گشتی</div>
                 </div>
             </div>
         </div>
 
-        <button class="rank-toggle-btn" onclick="openLeaderboard()">📊 ڕیزبەندی خاڵەکان</button>
+        <button class="rank-toggle-btn" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
         <div id="matches-list"></div>
 
-        <div id="admin-panel" class="admin-box" style="display:none; border: 2px solid var(--danger);">
-            <h3 style="color:var(--danger)">کۆنترۆڵی Hedi</h3>
+        <div id="admin-panel" class="admin-box" style="display:none; border: 1px solid var(--danger);">
+            <h3 style="color:var(--danger)">بەشی Hedi</h3>
             <div id="admin-controls"></div>
-            <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">⚠️ سفرکردنەوەی هەفتانە</button>
+            <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 پاککردنەوەی هەفتە</button>
         </div>
     </div>
 
     <div id="leaderboard-overlay">
         <button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
-        <div style="display: flex; margin-bottom: 20px; border-radius: 10px; overflow: hidden;">
-            <button id="tab-total" class="tab-btn active" onclick="switchTab('total')">ڕیزبەندی گشتی</button>
-            <button id="tab-weekly" class="tab-btn" onclick="switchTab('weekly')">ڕیزبەندی هەفتانە</button>
+        <div style="display: flex; margin-bottom: 20px; border-radius: 15px; overflow: hidden;">
+            <button id="tab-total" class="tab-btn active" onclick="switchTab('total')">گشتی</button>
+            <button id="tab-weekly" class="tab-btn" onclick="switchTab('weekly')">هەفتانە</button>
         </div>
         <div id="leaderboard-list"></div>
     </div>
+
     <div id="preds-overlay"><button class="close-btn" onclick="document.getElementById('preds-overlay').style.display='none'">گەڕانەوە ↩</button><div id="preds-content"></div></div>
 </div>
 
@@ -95,7 +169,6 @@
     let currentUser = localStorage.getItem('groupBryanUser');
     let currentTab = 'total';
 
-    // بەکارهێنانی لینکە هەمیشەییەکانی وێنەکان (PNG)
     const matches = [
         { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-09T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
         { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, time: "2026-03-10T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/141.png", img2: "https://tmssl.akamaized.net/images/crest/big/31.png" },
@@ -125,7 +198,7 @@
                     </div>
                     <div class="predict-box">
                         <span class="team-name">X</span>
-                        <div style="height:75px; display:flex; align-items:center; font-weight:bold; color:#475569; font-size:24px;">VS</div>
+                        <div style="height:85px; display:flex; align-items:center; font-weight:bold; color:rgba(255,255,255,0.05); font-size:45px;">VS</div>
                         <button class="opt-btn" id="${m.id}-btn2" onclick="makeChoice('${m.id}', 2, ${m.pX})">یەکسان</button>
                         <span class="pts-text">${m.pX} خاڵ</span>
                     </div>
@@ -136,16 +209,18 @@
                         <span class="pts-text">${m.p2} خاڵ</span>
                     </div>
                 </div>
-                <span class="deadline-text" id="timer-${m.id}" style="text-align:center; display:block; margin-top:10px;"></span>
-                <button class="view-preds-btn" id="view-${m.id}" style="width:100%; padding:8px; border-radius:10px; margin-top:10px; cursor:pointer; display:none;" onclick="showAllPredictions('${m.id}')">👁 پێشبینییەکان</button>
+                <div style="text-align:center;">
+                    <span class="deadline-text" id="timer-${m.id}"></span>
+                    <button id="view-${m.id}" style="background:none; border:none; color:var(--primary); font-size:11px; margin-top:12px; cursor:pointer; display:none; text-decoration:underline;" onclick="showAllPredictions('${m.id}')">بینینی پێشبینی برادەران</button>
+                </div>
             </div>`;
             
-            a += `<div class="admin-section">
-                <div style="font-weight:bold; margin-bottom:10px;">${m.t1} - ${m.t2}</div>
+            a += `<div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; margin-bottom:10px; border-right:4px solid var(--secondary);">
+                <div style="font-weight:bold; margin-bottom:10px; font-size:13px;">${m.t1} - ${m.t2}</div>
                 <div style="display:flex; gap:5px;">
-                    <button class="opt-btn" style="background:var(--success); flex:1;" onclick="finishMatch('${m.id}', 1, ${m.p1})">${m.t1}</button>
+                    <button class="opt-btn" style="background:var(--success); flex:1;" onclick="finishMatch('${m.id}', 1, ${m.p1})">1</button>
                     <button class="opt-btn" style="background:#444; flex:1;" onclick="finishMatch('${m.id}', 2, ${m.pX})">X</button>
-                    <button class="opt-btn" style="background:var(--danger); flex:1;" onclick="finishMatch('${m.id}', 3, ${m.p2})">${m.t2}</button>
+                    <button class="opt-btn" style="background:var(--danger); flex:1;" onclick="finishMatch('${m.id}', 3, ${m.p2})">2</button>
                 </div>
             </div>`;
         });
@@ -183,7 +258,7 @@
                 const diff = new Date(m.time).getTime() - new Date().getTime();
                 const timer = document.getElementById('timer-' + m.id);
                 if (diff <= 0) {
-                    timer.innerText = "🔒 داخراوە";
+                    timer.innerText = "🔒 داخرا";
                     document.getElementById(m.id).querySelectorAll('.opt-btn').forEach(b => { if(!b.classList.contains('selected')) b.disabled = true; });
                     document.getElementById('view-' + m.id).style.display = 'block';
                 } else {
@@ -195,7 +270,7 @@
     }
 
     function makeChoice(mId, cId, pts) {
-        if(confirm("دڵنیای؟ دواتر ناگۆڕدرێت")) db.ref('users/' + currentUser + '/predictions/' + mId).set({ choice: cId, pts: pts });
+        if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/' + currentUser + '/predictions/' + mId).set({ choice: cId, pts: pts });
     }
 
     function highlight(preds) {
@@ -211,6 +286,7 @@
     }
 
     function finishMatch(mId, res, pts) {
+        if(!confirm("خاڵەکان هەژمار بکرێن؟")) return;
         db.ref('users').once('value').then(snap => {
             snap.forEach(u => {
                 const data = u.val();
@@ -218,7 +294,7 @@
                     db.ref('users/'+u.key).update({ total: (data.total||0)+pts, weekly: (data.weekly||0)+pts });
                 }
             });
-            alert("تەواو!");
+            alert("ئەنجام تۆمارکرا!");
         });
     }
 
@@ -230,7 +306,7 @@
     }
 
     function updateLeaderboardDisplay() {
-        db.ref('users').once('value', snap => {
+        db.ref('users').once('value').then(snap => {
             let arr = []; snap.forEach(u => arr.push({ name: u.key, total: u.val().total || 0, weekly: u.val().weekly || 0 }));
             arr.sort((a,b) => currentTab === 'total' ? b.total - a.total : b.weekly - a.weekly);
             document.getElementById('leaderboard-list').innerHTML = arr.map((u,i) => `<div class="rank-row"><span>${i+1}. ${u.name}</span><b>${currentTab==='total' ? u.total : u.weekly} خاڵ</b></div>`).join('');
@@ -242,7 +318,7 @@
     function showAllPredictions(mId) {
         const teamNames = document.getElementById(mId).dataset.teams.split(',');
         db.ref('users').once('value').then(snap => {
-            let html = `<h3 style="text-align:center">پێشبینییەکان</h3>`;
+            let html = `<h3 style="text-align:center; color:var(--secondary);">پێشبینی برادەران</h3>`;
             snap.forEach(u => {
                 const p = u.val().predictions?.[mId];
                 html += `<div class="rank-row"><span>${u.key}</span><b>${p ? teamNames[p.choice-1] : '---'}</b></div>`;
@@ -253,8 +329,9 @@
     }
 
     function resetWeeklyOnly() {
-        if(confirm("پێشبینییەکان و خاڵی هەفتانە سفر بکرێتەوە؟")) {
+        if(confirm("تەنها خاڵی هەفتانە و پێشبینییەکان سفر دەکرێنەوە. خاڵی گشتی وەک خۆی دەمێنێت. ڕازیت؟")) {
             db.ref('users').once('value').then(snap => snap.forEach(u => db.ref('users/' + u.key).update({ weekly: 0, predictions: {} })));
+            alert("هەفتەی نوێ پاککرایەوە!");
         }
     }
 
@@ -262,4 +339,4 @@
     if (currentUser) startApp();
 </script>
 </body>
-</html> 
+    </html> 
