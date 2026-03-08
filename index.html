@@ -3,131 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئەپی پێشبینی - هاوار</title>
+    <title>ئەپی پێشبینی هاوار</title>
     <style>
         :root {
             --primary: #3b82f6;
             --secondary: #f59e0b;
-            --danger: #ef4444;
             --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.85);
+            --card-bg: rgba(30, 41, 59, 0.9);
             --border: rgba(255, 255, 255, 0.1);
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: radial-gradient(circle at top right, #1e293b, #0f172a); color: white; margin: 0; min-height: 100vh; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 450px; padding: 20px; }
+        .container { width: 100%; max-width: 450px; padding: 20px; padding-bottom: 80px; }
 
         /* لۆگین */
         #login-page { margin-top: 80px; text-align: center; background: var(--card-bg); padding: 40px 20px; border-radius: 30px; border: 1px solid var(--border); }
-        input { width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: white; margin-bottom: 15px; outline: none; text-align: center; }
+        input { width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: white; margin-bottom: 15px; text-align: center; }
         .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
         /* ئەپ */
         #main-app { display: none; width: 100%; }
-        .match-card { background: var(--card-bg); padding: 25px; border-radius: 25px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        
+        /* دیزاینی یارییەکە */
+        .match-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
 
-        /* کاتژمێر */
-        .timer-box { background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 14px; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .teams-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+        }
 
-        .odds-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .odd-box { background: rgba(255, 255, 255, 0.05); padding: 15px 5px; border-radius: 15px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: 0.3s; }
-        .odd-box span { display: block; font-size: 11px; color: #94a3b8; }
-        .odd-box strong { color: var(--secondary); }
+        .team { flex: 1; text-align: center; }
+        .team img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; }
+        .vs { font-size: 24px; font-weight: 900; color: var(--secondary); opacity: 0.7; }
 
-        /* ستایڵی هەڵبژاردن و قوفڵ کردن */
-        .odd-box.selected { background: var(--primary); border-color: white; transform: scale(1.03); }
-        .odd-box.disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        /* دوگمەکانی پێشبینی لە خوارەوە */
+        .prediction-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-        .status-msg { text-align: center; margin-top: 15px; font-size: 13px; font-weight: bold; }
+        .opt-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 10px 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: white;
+        }
+
+        .opt-btn span { display: block; font-size: 11px; color: #94a3b8; }
+        .opt-btn strong { display: block; font-size: 13px; margin-top: 4px; }
+        
+        .opt-btn.selected { background: var(--primary); border-color: white; transform: scale(1.05); }
+        .opt-btn.disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* دوگمەی ڕیزبەندی لە خوارەوە */
+        .nav-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn {
+            background: none; border: none; color: white; font-weight: bold;
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+        }
+
+        /* مۆداڵی ڕیزبەندی */
+        #leaderboard-modal {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 100; justify-content: center; align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg); width: 90%; max-width: 350px;
+            padding: 25px; border-radius: 25px; border: 1px solid var(--border);
+        }
+
+        .rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-page">
-        <h2>بەخێرهاتی ⚽</h2>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
+        <h2>سیستەمی پێشبینی ⚽</h2>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە">
         <button class="btn-main" onclick="saveUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app">
-        <header style="display: flex; justify-content: space-between; margin-bottom: 25px;">
-            <span id="welcomeText"></span>
-            <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer;">دەرچوون</button>
+        <header style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <span id="welcomeText" style="font-weight: bold; color: var(--primary);"></span>
+            <span id="timer" style="color: #ef4444; font-size: 13px;"></span>
         </header>
 
         <div class="match-card">
-            <div id="timer" class="timer-box">ماوە بۆ داخستن: --:--:--</div>
-
-            <div style="text-align:center; margin-bottom:20px;">
-                <small style="color:#94a3b8;">دێربی میلانۆ 🇮🇹</small><br>
-                <strong style="font-size:20px;">ئینتەر 🆚 میلان</strong>
+            <small style="color: #94a3b8;">🇮🇹 دێربی میلانۆ - سان سیرۆ</small>
+            
+            <div class="teams-area">
+                <div class="team">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/d/d2/Inter_Milan_2021_logo.svg/1200px-Inter_Milan_2021_logo.svg.png" alt="Inter">
+                    <div>ئینتەر</div>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1200px-Logo_of_AC_Milan.svg.png" alt="Milan">
+                    <div>میلان</div>
+                </div>
             </div>
 
-            <div class="odds-container" id="odds-wrapper">
-                <div class="odd-box" id="opt-1" onclick="makeChoice(1, 'بردنەوەی ئینتەر')"><span>ئینتەر</span><strong>2خ</strong></div>
-                <div class="odd-box" id="opt-2" onclick="makeChoice(2, 'یەکسانبوون')"><span>یەکسان</span><strong>3خ</strong></div>
-                <div class="odd-box" id="opt-3" onclick="makeChoice(3, 'میلان')"><span>میلان</span><strong>4خ</strong></div>
+            <div class="prediction-options">
+                <button class="opt-btn" id="opt-1" onclick="makeChoice(1, 'بردنەوەی ئینتەر')">
+                    <strong>بردنەوە</strong><span>2 خاڵ</span>
+                </button>
+                <button class="opt-btn" id="opt-2" onclick="makeChoice(2, 'یەکسانبوون')">
+                    <strong>یەکسان</strong><span>3 خاڵ</span>
+                </button>
+                <button class="opt-btn" id="opt-3" onclick="makeChoice(3, 'بردنەوەی میلان')">
+                    <strong>بردنەوە</strong><span>4 خاڵ</span>
+                </button>
             </div>
+            <p id="lockStatus" style="margin-top: 15px; font-size: 12px; color: #10b981; display: none;">🔒 پێشبینییەکەت قوفڵ کرا و ناگۆڕدرێت</p>
+        </div>
 
-            <div id="statusMsg" class="status-msg"></div>
+        <div class="nav-bar">
+            <button class="nav-btn" onclick="toggleLeaderboard(true)">
+                🏆 بینینی ڕیزبەندی گشتی
+            </button>
         </div>
     </div>
 </div>
 
+<div id="leaderboard-modal">
+    <div class="modal-content">
+        <h3 style="text-align: center; color: var(--secondary);">🏆 ڕیزبەندی پێشبینیکەران</h3>
+        <div class="rank-row"><span>١. هاوار زاریفی</span><strong>٢٤٥٠ خ</strong></div>
+        <div class="rank-row"><span>٢. ئاراس عەلی</span><strong>٢١٠٠ خ</strong></div>
+        <div id="myRank" class="rank-row" style="color: var(--primary);"></div>
+        <button class="btn-main" style="margin-top: 20px; background: #334155;" onclick="toggleLeaderboard(false)">داخستن</button>
+    </div>
+</div>
+
 <script>
-    // کاتی دەستپێکی یاری (ساڵ، مانگ-١، ڕۆژ، کاتژمێر، خولەک)
-    // تێبینی: مانگ لە سفرەوە دەست پێ دەکات، واتە ئازار (٣) دەبێتە ٢.
-    const matchTime = new Date(2026, 2, 8, 21, 0, 0).getTime(); 
-    let isLocked = false;
+    const matchDeadline = new Date(2026, 2, 8, 21, 0, 0).getTime();
 
     window.onload = function() {
         const name = localStorage.getItem('app_user_name');
         if (name) {
             showApp(name);
-            updateTimer(); 
-            setInterval(updateTimer, 1000);
+            checkLock();
+            startTimer();
         }
     };
-
-    function updateTimer() {
-        const now = new Date().getTime();
-        const distance = matchTime - now;
-
-        if (distance < 0) {
-            isLocked = true;
-            document.getElementById('timer').innerText = "⚠️ پێشبینی داخرا - یاری دەستی پێکرد";
-            document.getElementById('timer').style.color = "#94a3b8";
-            document.getElementById('timer').style.background = "rgba(255,255,255,0.05)";
-            lockOdds();
-            return;
-        }
-
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        document.getElementById('timer').innerText = `کات ماوە: ${hours}:${minutes}:${seconds}`;
-    }
-
-    function lockOdds() {
-        document.querySelectorAll('.odd-box').forEach(el => el.classList.add('disabled'));
-    }
-
-    function makeChoice(id, text) {
-        if (isLocked) {
-            alert("ببورە، کاتی پێشبینی کۆتایی هاتووە!");
-            return;
-        }
-
-        document.querySelectorAll('.odd-box').forEach(el => el.classList.remove('selected'));
-        document.getElementById('opt-' + id).classList.add('selected');
-        
-        localStorage.setItem('milan_choice', id);
-        document.getElementById('statusMsg').innerText = "✓ پێشبینییەکەت تۆمارکرا: " + text;
-        document.getElementById('statusMsg').style.color = "#10b981";
-    }
 
     function saveUser() {
         const name = document.getElementById('userNameInput').value;
@@ -139,16 +193,46 @@
     function showApp(name) {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('welcomeText').innerText = "سڵاو، " + name;
-        
-        const saved = localStorage.getItem('milan_choice');
-        if (saved) {
-            document.getElementById('opt-' + saved).classList.add('selected');
-            document.getElementById('statusMsg').innerText = "تۆ پێشتر پێشبینیت کردووە";
+        document.getElementById('welcomeText').innerText = "سڵاو " + name;
+        document.getElementById('myRank').innerHTML = "<span>ناوت لە لیستدایە:</span> <strong>0 خ</strong>";
+    }
+
+    function makeChoice(id, text) {
+        if (localStorage.getItem('milan_choice')) return; // ئەگەر پێشتر هەڵبژاردبێت ڕێگەی مەدە
+
+        if (confirm("ئایا دڵنیایت؟ پێشبینییەکەت قوفڵ دەکرێت و ناگۆڕدرێت!")) {
+            localStorage.setItem('milan_choice', id);
+            checkLock();
         }
     }
 
-    function logout() { localStorage.clear(); location.reload(); }
+    function checkLock() {
+        const saved = localStorage.getItem('milan_choice');
+        if (saved) {
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.add('disabled'));
+            document.getElementById('opt-' + saved).classList.add('selected');
+            document.getElementById('lockStatus').style.display = 'block';
+        }
+    }
+
+    function startTimer() {
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = matchDeadline - now;
+            if (diff <= 0) {
+                document.getElementById('timer').innerText = "داخراوە";
+                document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.add('disabled'));
+            } else {
+                const h = Math.floor(diff / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById('timer').innerText = "ماوە: " + h + ":" + m;
+            }
+        }, 1000);
+    }
+
+    function toggleLeaderboard(show) {
+        document.getElementById('leaderboard-modal').style.display = show ? 'flex' : 'none';
+    }
 </script>
 
 </body>
