@@ -6,6 +6,7 @@
     <title>گروپی برایان - وەشانی نوێ</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    
     <style>
         :root { --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.95); --border: rgba(255, 255, 255, 0.1); --danger: #ef4444; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -28,17 +29,16 @@
         .opt-btn strong { display: block; font-size: 13px; margin-bottom: 5px; }
         .pts-badge { background: rgba(245, 158, 11, 0.2); color: var(--secondary); font-size: 11px; padding: 2px 6px; border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3); }
         
-        .opt-btn.selected { background: var(--primary); border-color: white; transform: translateY(-3px); }
+        .opt-btn.selected { background: var(--primary); border-color: white; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
         .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
         
-        /* Logout Button Style */
-        .logout-link { color: var(--danger); font-size: 13px; text-decoration: none; cursor: pointer; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 5px 12px; border-radius: 8px; margin-top: 8px; display: inline-block; transition: 0.3s; }
-        .logout-link:hover { background: var(--danger); color: white; }
+        .logout-link { color: var(--danger); font-size: 12px; text-decoration: none; cursor: pointer; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 4px 10px; border-radius: 8px; margin-top: 5px; display: inline-block; }
 
         .nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 400px; background: #1e293b; padding: 15px; border-radius: 20px; text-align: center; border: 1px solid var(--border); z-index: 50; }
         
         #leaderboard-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; }
         .modal-content { background: #1e293b; width: 90%; max-width: 350px; padding: 25px; border-radius: 25px; border: 1px solid var(--border); }
+        .rank-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body>
@@ -46,91 +46,147 @@
 <div class="container">
     <div id="login-page">
         <h1 style="color: var(--secondary); margin-bottom: 10px;">گروپی برایان</h1>
-        <p style="color: #94a3b8; margin-bottom: 30px;">سیستەمی پێشبینی یارییەکان</p>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
+        <p style="color: #94a3b8; margin-bottom: 30px;">ناوەکەت بنووسە بۆ بەشداریکردن</p>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە...">
         <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app">
-        <header style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <div>
-                <span id="welcomeText" style="font-weight: bold; font-size: 18px;"></span><br>
-                <button class="logout-link" onclick="logoutUser()">دەرچوون لە ئەکاونت</button>
+                <span id="welcomeText" style="font-weight: bold; font-size: 16px;"></span><br>
+                <button class="logout-link" onclick="logoutUser()">دەرچوون</button>
             </div>
             <div style="text-align: center;">
-                <span style="font-size: 12px; color: #94a3b8;">کۆی خاڵەکان</span><br>
-                <span id="userPoints" style="color: var(--secondary); font-size: 22px; font-weight: bold;">0</span>
+                <span style="font-size: 11px; color: #94a3b8;">خاڵەکانت</span><br>
+                <span id="userPoints" style="color: var(--secondary); font-size: 20px; font-weight: bold;">0</span>
             </div>
         </header>
 
-        <div class="match-card">
-            <div class="teams-header">
-                <div class="team-box">
-                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png">
-                    <span class="team-name">ئینتەر</span>
+        <div id="match-list">
+            <div class="match-card" id="m1">
+                <div class="teams-header">
+                    <div class="team-box"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png"><span class="team-name">ئینتەر</span></div>
+                    <div class="vs-badge">VS</div>
+                    <div class="team-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png"><span class="team-name">میلان</span></div>
                 </div>
-                <div class="vs-badge">VS</div>
-                <div class="team-box">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png">
-                    <span class="team-name">میلان</span>
+                <div class="prediction-grid">
+                    <button class="opt-btn" onclick="makeChoice('m1', 1, 2)"><strong>بردنەوەی ئینتەر</strong><span class="pts-badge">2 خاڵ</span></button>
+                    <button class="opt-btn" onclick="makeChoice('m1', 2, 3)"><strong>یەکسانبوون</strong><span class="pts-badge">3 خاڵ</span></button>
+                    <button class="opt-btn" onclick="makeChoice('m1', 3, 4)"><strong>بردنەوەی میلان</strong><span class="pts-badge">4 خاڵ</span></button>
                 </div>
-            </div>
-            <div class="prediction-grid">
-                <button class="opt-btn" onclick="makeChoice(1, 1)"><strong>بردنەوەی ئینتەر</strong><span class="pts-badge">2 خاڵ</span></button>
-                <button class="opt-btn" onclick="makeChoice(1, 2)"><strong>یەکسانبوون</strong><span class="pts-badge">3 خاڵ</span></button>
-                <button class="opt-btn" onclick="makeChoice(1, 3)"><strong>بردنەوەی میلان</strong><span class="pts-badge">4 خاڵ</span></button>
             </div>
         </div>
 
         <div class="nav-bar">
-            <button onclick="toggleLeaderboard(true)" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer; font-size:16px;">🏆 بینینی ڕیزبەندی گشتی</button>
+            <button onclick="loadLeaderboard()" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer;">🏆 بینینی ڕیزبەندی</button>
         </div>
     </div>
 </div>
 
 <div id="leaderboard-modal">
     <div class="modal-content">
-        <h3 style="text-align: center; color: var(--secondary); margin-bottom: 20px;">🏆 ڕیزبەندی برادەران</h3>
-        <div id="leaderboardList"></div>
-        <button class="btn-main" style="margin-top: 20px; background: #334155;" onclick="toggleLeaderboard(false)">داخستن</button>
+        <h3 style="text-align: center; color: var(--secondary);">🏆 ڕیزبەندی برادەران</h3>
+        <div id="leaderboardList" style="max-height: 300px; overflow-y: auto; margin: 15px 0;"></div>
+        <button class="btn-main" onclick="document.getElementById('leaderboard-modal').style.display='none'">داخستن</button>
     </div>
 </div>
 
 <script>
-    // لۆجیکی سادە بۆ تاقیکردنەوە
+    // --- گرنگ: لێرە زانیارییەکانی Firebase خۆت دابنێ ---
+    const firebaseConfig = {
+        apiKey: "AIzaSy...",
+        authDomain: "your-app.firebaseapp.com",
+        databaseURL: "https://your-app-default-rtdb.firebaseio.com",
+        projectId: "your-app",
+        storageBucket: "your-app.appspot.com",
+        messagingSenderId: "...",
+        appId: "..."
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let currentUser = localStorage.getItem('groupBryanUser');
+
+    // لۆگین
     function loginUser() {
-        const name = document.getElementById('userNameInput').value;
-        if(name.trim() !== "") {
-            localStorage.setItem('username', name);
-            showApp(name);
-        } else {
-            alert("تکایە ناوەکەت بنووسە");
-        }
+        const name = document.getElementById('userNameInput').value.trim();
+        if (name.length < 2) return alert("ناوێکی ڕاست بنووسە");
+        
+        currentUser = name;
+        localStorage.setItem('groupBryanUser', name);
+        
+        // دروستکردنی بەکارهێنەر لە داتابەیس ئەگەر نەبێت
+        db.ref('users/' + name).once('value', snapshot => {
+            if (!snapshot.exists()) {
+                db.ref('users/' + name).set({ points: 0, predictions: {} });
+            }
+            startApp();
+        });
     }
 
-    function showApp(name) {
+    function startApp() {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('welcomeText').innerText = "سڵاو، " + name;
+        document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
+        
+        // بارکردنی خاڵەکان و پێشبینییە کۆنەکان
+        db.ref('users/' + currentUser).on('value', snapshot => {
+            const data = snapshot.val();
+            document.getElementById('userPoints').innerText = data.points || 0;
+            if (data.predictions) {
+                // ڕەنگکردنی ئەو دوگمەیەی پێشتر هەڵبژێردراوە
+                Object.keys(data.predictions).forEach(mId => {
+                    const choice = data.predictions[mId];
+                    // لێرە دەتوانیت لۆجیکێک دابنێیت بۆ نیشاندانی هەڵبژاردەکان
+                });
+            }
+        });
+    }
+
+    // ئەنجامدانی پێشبینی
+    function makeChoice(matchId, choiceId, points) {
+        if (!currentUser) return;
+        
+        db.ref('users/' + currentUser + '/predictions/' + matchId).set(choiceId)
+        .then(() => {
+            alert("پێشبینییەکەت تۆمارکرا!");
+        });
+    }
+
+    // بارکردنی ڕیزبەندی
+    function loadLeaderboard() {
+        document.getElementById('leaderboard-modal').style.display = 'flex';
+        const listDiv = document.getElementById('leaderboardList');
+        listDiv.innerHTML = "چاوەڕێ بکە...";
+
+        db.ref('users').orderByChild('points').once('value', snapshot => {
+            let users = [];
+            snapshot.forEach(child => {
+                users.push({ name: child.key, points: child.val().points });
+            });
+            users.reverse(); // بۆ ئەوەی زۆرترین خاڵ لە سەرەوە بێت
+
+            listDiv.innerHTML = "";
+            users.forEach((u, index) => {
+                listDiv.innerHTML += `
+                    <div class="rank-row">
+                        <span>${index + 1}. ${u.name}</span>
+                        <span style="color: var(--secondary)">${u.points} خاڵ</span>
+                    </div>`;
+            });
+        });
     }
 
     function logoutUser() {
-        if(confirm("ئایا دڵنیایت لە دەرچوون؟")) {
-            localStorage.removeItem('username');
-            location.reload(); // لاپەڕەکە نوێ دەکاتەوە و دەچێتەوە سەر لۆگین
-        }
+        localStorage.removeItem('groupBryanUser');
+        location.reload();
     }
 
-    function toggleLeaderboard(show) {
-        document.getElementById('leaderboard-modal').style.display = show ? 'flex' : 'none';
-    }
-
-    // پشکنینی ئەوەی پێشتر لۆگین کراوە یاخود نا
-    window.onload = function() {
-        const savedName = localStorage.getItem('username');
-        if(savedName) {
-            showApp(savedName);
-        }
+    // پشکنین لە کاتی کردنەوەی لاپەڕە
+    if (currentUser) {
+        startApp();
     }
 </script>
 
