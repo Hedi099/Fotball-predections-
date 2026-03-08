@@ -57,6 +57,27 @@
         </div>
         
         <div class="match-card" id="m1">
+            <div class="match-card" id="m_sev_ray">
+    <p style="font-size: 13px; color: #94a3b8;">خولی ئیسپانی - یاریگای ڕامۆن سانچێز</p>
+    <div class="prediction-container">
+        <div class="predict-box">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Sevilla_FC_logo.svg/800px-Sevilla_FC_logo.svg.png" class="team-logo">
+            <button class="opt-btn" id="m_sev_ray-btn1" onclick="makeChoice('m_sev_ray', 1, 2)">سێڤیلیا</button>
+            <span class="pts-text">2 خاڵ</span>
+        </div>
+        <div class="predict-box">
+            <div style="font-weight: 900; color: var(--border); font-size: 20px; margin-bottom: 15px;">VS</div>
+            <button class="opt-btn" id="m_sev_ray-btn2" onclick="makeChoice('m_sev_ray', 2, 3)">یەکسان</button>
+            <span class="pts-text">3 خاڵ</span>
+        </div>
+        <div class="predict-box">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1b/Rayo_Vallecano_logo.svg/800px-Rayo_Vallecano_logo.svg.png" class="team-logo">
+            <button class="opt-btn" id="m_sev_ray-btn3" onclick="makeChoice('m_sev_ray', 3, 4)">ڤاییکانۆ</button>
+            <span class="pts-text">4 خاڵ</span>
+        </div>
+    </div>
+    <p id="lock-msg-m_sev_ray" style="display:none; font-size: 11px; color: var(--secondary); margin-top: 15px;">🔒 پێشبینییەکەت قفڵ کرا</p>
+            </div>
             <p style="font-size: 13px; color: #94a3b8;">خولی ئیتاڵیا - سان سیرۆ</p>
             <div class="prediction-container">
                 <div class="predict-box">
@@ -79,6 +100,13 @@
         </div>
 
         <div id="admin-panel" class="admin-box">
+            <hr style="border: 0.1px solid var(--border); margin: 15px 0;">
+<p style="font-size: 12px;">ئەنجامی سێڤیلیا - ڤاییکانۆ:</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+    <button class="btn-main" style="background: var(--success); font-size: 10px;" onclick="finishMatch('m_sev_ray', 1, 2)">سێڤیلیا بردی</button>
+    <button class="btn-main" style="background: #64748b; font-size: 10px;" onclick="finishMatch('m_sev_ray', 2, 3)">یەکسان</button>
+    <button class="btn-main" style="background: var(--danger); font-size: 10px;" onclick="finishMatch('m_sev_ray', 3, 4)">ڤاییکانۆ بردی</button>
+</div>
             <h3 style="color: var(--secondary); margin-top: 0;">کۆنترۆڵی Hedi</h3>
             <p style="font-size: 12px;">ئەنجامی ڕاستەقینە هەڵبژێرە بۆ دابەشکردنی خاڵ:</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
