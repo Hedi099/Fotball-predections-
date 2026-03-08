@@ -3,31 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی نوێ</title>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    
+    <title>گروپی برایان - وەشانی تاقیکاری</title>
     <style>
         :root { --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.95); --border: rgba(255, 255, 255, 0.1); --danger: #ef4444; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: #0f172a; color: white; margin: 0; min-height: 100vh; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 480px; padding: 20px; padding-bottom: 120px; }
         
-        /* Login Page */
         #login-page { margin-top: 80px; text-align: center; background: var(--card-bg); padding: 40px 20px; border-radius: 30px; border: 1px solid var(--border); }
         input { width: 100%; background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); padding: 15px; border-radius: 15px; color: white; margin-bottom: 15px; text-align: center; outline: none; font-size: 16px; }
         
-        /* Main App */
         #main-app { display: none; width: 100%; }
         .match-card { background: var(--card-bg); padding: 20px; border-radius: 25px; border: 1px solid var(--border); text-align: center; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .teams-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .team-box { flex: 1; }
         .team-box img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 8px; }
         .team-name { font-weight: bold; font-size: 14px; display: block; }
         .vs-badge { background: var(--secondary); color: black; font-weight: 900; padding: 4px 10px; border-radius: 8px; font-size: 12px; }
 
         .prediction-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .opt-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 15px; padding: 12px 5px; cursor: pointer; color: white; transition: 0.3s; position: relative; }
+        .opt-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 15px; padding: 12px 5px; cursor: pointer; color: white; transition: 0.3s; }
         .opt-btn.selected { background: var(--primary); border-color: white; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
         .pts-badge { background: rgba(245, 158, 11, 0.2); color: var(--secondary); font-size: 11px; padding: 2px 6px; border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3); }
         
@@ -35,10 +29,6 @@
         .logout-link { color: var(--danger); font-size: 12px; text-decoration: none; cursor: pointer; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 4px 10px; border-radius: 8px; margin-top: 5px; display: inline-block; }
 
         .nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 400px; background: #1e293b; padding: 15px; border-radius: 20px; text-align: center; border: 1px solid var(--border); z-index: 50; }
-        
-        #leaderboard-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: #1e293b; width: 90%; max-width: 350px; padding: 25px; border-radius: 25px; border: 1px solid var(--border); }
-        .rank-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body>
@@ -46,7 +36,7 @@
 <div class="container">
     <div id="login-page">
         <h1 style="color: var(--secondary); margin-bottom: 10px;">گروپی برایان</h1>
-        <p style="color: #94a3b8; margin-bottom: 30px;">ناوەکەت بنووسە بۆ چوونە ژوورەوە</p>
+        <p style="color: #94a3b8; margin-bottom: 30px;">وەشانی ئۆفلاین (بێ کێشە)</p>
         <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە...">
         <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
@@ -63,109 +53,61 @@
             </div>
         </header>
 
-        <div id="match-list">
-            <div class="match-card" id="m1">
-                <div class="teams-header">
-                    <div class="team-box">
-                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png">
-                        <span class="team-name">ئینتەر</span>
-                    </div>
-                    <div class="vs-badge">VS</div>
-                    <div class="team-box">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png">
-                        <span class="team-name">میلان</span>
-                    </div>
+        <div class="match-card" id="m1">
+            <div class="teams-header">
+                <div class="team-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png">
+                    <span class="team-name">ئینتەر</span>
                 </div>
-                <div class="prediction-grid">
-                    <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1)"><strong>ئینتەر</strong><span class="pts-badge">2 خاڵ</span></button>
-                    <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2)"><strong>یەکسان</strong><span class="pts-badge">3 خاڵ</span></button>
-                    <button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3)"><strong>میلان</strong><span class="pts-badge">4 خاڵ</span></button>
+                <div class="vs-badge">VS</div>
+                <div class="team-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png">
+                    <span class="team-name">میلان</span>
                 </div>
+            </div>
+            <div class="prediction-grid">
+                <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1)"><strong>ئینتەر</strong><span class="pts-badge">2 خاڵ</span></button>
+                <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2)"><strong>یەکسان</strong><span class="pts-badge">3 خاڵ</span></button>
+                <button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3)"><strong>میلان</strong><span class="pts-badge">4 خاڵ</span></button>
             </div>
         </div>
 
         <div class="nav-bar">
-            <button onclick="loadLeaderboard()" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer; font-size:16px;">🏆 ڕیزبەندی گشتی</button>
+            <span style="color: #94a3b8; font-size: 14px;">🏆 ئەمە تەنها وێرژنی تاقیکارییە</span>
         </div>
     </div>
 </div>
 
-<div id="leaderboard-modal">
-    <div class="modal-content">
-        <h3 style="text-align: center; color: var(--secondary);">🏆 ڕیزبەندی برادەران</h3>
-        <div id="leaderboardList" style="max-height: 300px; overflow-y: auto; margin: 15px 0;"></div>
-        <button class="btn-main" onclick="document.getElementById('leaderboard-modal').style.display='none'">داخستن</button>
-    </div>
-</div>
-
 <script>
-    // لێرە زانیارییەکانی Firebase خۆت دابنێ
-    const firebaseConfig = {
-        apiKey: "AIzaSy...",
-        authDomain: "your-app.firebaseapp.com",
-        databaseURL: "https://your-app-default-rtdb.firebaseio.com",
-        projectId: "your-app",
-        storageBucket: "your-app.appspot.com",
-        messagingSenderId: "...",
-        appId: "..."
-    };
-    
-    // دەستپێکردنی Firebase
-    try {
-        firebase.initializeApp(firebaseConfig);
-        var db = firebase.database();
-    } catch (e) {
-        console.error("Firebase connection error", e);
-    }
-
+    // ئەم وێرژنە LocalStorage بەکاردێنێت لەجیاتی Firebase
     let currentUser = localStorage.getItem('groupBryanUser');
+    let predictions = JSON.parse(localStorage.getItem('myPredictions')) || {};
 
     function loginUser() {
-        const nameInput = document.getElementById('userNameInput');
-        const name = nameInput.value.trim();
+        const name = document.getElementById('userNameInput').value.trim();
         if (name.length < 2) return alert("ناوێکی ڕاست بنووسە");
         
-        // هەوڵدان بۆ پەیوەندی بە داتابەیس بۆ لۆگین
-        db.ref('users/' + name).once('value')
-        .then(snapshot => {
-            if (!snapshot.exists()) {
-                db.ref('users/' + name).set({ points: 0, predictions: {} });
-            }
-            localStorage.setItem('groupBryanUser', name);
-            currentUser = name;
-            startApp();
-        })
-        .catch(err => {
-            alert("کێشەی لۆگین: " + err.message + "\nدڵنیابە Rules لە Firebase چالاک کراوە.");
-        });
+        localStorage.setItem('groupBryanUser', name);
+        currentUser = name;
+        startApp();
     }
 
     function startApp() {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
-        
-        // هێنانی خاڵەکان و پێشبینییەکان بە زیندوویی
-        db.ref('users/' + currentUser).on('value', snapshot => {
-            const data = snapshot.val();
-            if (data) {
-                document.getElementById('userPoints').innerText = data.points || 0;
-                if (data.predictions) highlightChoices(data.predictions);
-            }
-        });
+        highlightChoices();
     }
 
     function makeChoice(matchId, choiceId) {
-        if (!currentUser) return;
-        db.ref('users/' + currentUser + '/predictions/' + matchId).set(choiceId)
-        .then(() => alert("پێشبینییەکەت تۆمارکرا!"))
-        .catch(err => alert("هەڵە: " + err.message));
+        predictions[matchId] = choiceId;
+        localStorage.setItem('myPredictions', JSON.stringify(predictions));
+        highlightChoices();
+        alert("پێشبینییەکەت پاشەکەوت کرا!");
     }
 
-    function highlightChoices(predictions) {
-        // سڕینەوەی ڕەنگی کۆن
+    function highlightChoices() {
         document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('selected'));
-        // دانانی ڕەنگی نوێ بۆ هەڵبژێردراوەکان
         Object.keys(predictions).forEach(mId => {
             const choiceId = predictions[mId];
             const targetBtn = document.getElementById(`${mId}-btn${choiceId}`);
@@ -173,37 +115,11 @@
         });
     }
 
-    function loadLeaderboard() {
-        document.getElementById('leaderboard-modal').style.display = 'flex';
-        const listDiv = document.getElementById('leaderboardList');
-        listDiv.innerHTML = "چاوەڕێ بکە...";
-
-        db.ref('users').orderByChild('points').once('value', snapshot => {
-            let users = [];
-            snapshot.forEach(child => {
-                users.push({ name: child.key, points: child.val().points || 0 });
-            });
-            users.reverse();
-
-            listDiv.innerHTML = "";
-            users.forEach((u, index) => {
-                listDiv.innerHTML += `
-                    <div class="rank-row">
-                        <span>${index + 1}. ${u.name}</span>
-                        <span style="color: var(--secondary)">${u.points} خاڵ</span>
-                    </div>`;
-            });
-        });
-    }
-
     function logoutUser() {
-        if (confirm("دڵنیایت لە دەرچوون؟")) {
-            localStorage.removeItem('groupBryanUser');
-            location.reload();
-        }
+        localStorage.removeItem('groupBryanUser');
+        location.reload();
     }
 
-    // ئەگەر پێشتر لۆگینی کردبوو
     if (currentUser) {
         startApp();
     }
