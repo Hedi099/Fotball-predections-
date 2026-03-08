@@ -3,132 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئەپی پێشبینی وەرزشی</title>
-    <link rel="stylesheet" href="style.css">
+    <title>ئەپی پێشبینی وەرزشی - هاوار</title>
+    <style>
+        /* --- بەشی دیزاین (CSS) --- */
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a; /* ڕەنگی ڕەشی مۆدێرن */
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+
+        /* سێ کارتە سەرەکییەکە */
+        .top-cards {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            flex: 1;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            background: #1e293b;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            border: 1px solid #334155;
+        }
+
+        .card h3 {
+            font-size: 13px;
+            margin: 0 0 10px 0;
+            color: #94a3b8;
+        }
+
+        .card .count {
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+        }
+
+        /* ڕەنگی جیاواز بۆ لای کارتەکان */
+        .card-blue { border-right: 4px solid #3b82f6; }
+        .card-green { border-right: 4px solid #10b981; }
+        .card-gold { border-right: 4px solid #f59e0b; }
+
+        /* لیستی یارییەکان */
+        .match-list h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-right: 5px;
+            border-right: 3px solid #3b82f6;
+        }
+
+        .match-item {
+            background: #1e293b;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, background 0.2s;
+            cursor: pointer;
+        }
+
+        .match-item:hover {
+            background: #334155;
+            transform: scale(1.02);
+        }
+
+        .teams {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .match-time {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .prediction-badge {
+            background: #3b82f6;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+        }
+    </style>
 </head>
 <body>
 
     <div class="app-container">
         <header class="header">
-            <h1>پێشبینی یارییەکان</h1>
-            <div class="status-bar">ئەمڕۆ: ٢٠٢٦/٠٣/٠٨</div>
+            <h1>یارییەکانی ئەمڕۆ</h1>
+            <small style="color: #64748b;">بەخێرهاتی هاوار، پێشبینییەکانت بکە</small>
         </header>
 
         <div class="top-cards">
             <div class="card card-blue">
-                <h3>یارییەکانی ئێستا</h3>
-                <p class="count">١٢</p>
+                <h3>بەردەست</h3>
+                <span class="count">١٢</span>
             </div>
             <div class="card card-green">
-                <h3>پێشبینی سەرکەوتوو</h3>
-                <p class="count">٨٥٪</p>
+                <h3>سەرکەوتوو</h3>
+                <span class="count">٨٥٪</span>
             </div>
             <div class="card card-gold">
-                <h3>خاڵەکانت</h3>
-                <p class="count">١٢٥٠</p>
+                <h3>خاڵەکان</h3>
+                <span class="count">١٢٥٠</span>
             </div>
         </div>
 
         <main class="match-list">
-            <h2>لیستی یارییەکان و پێشبینی</h2>
+            <h2>نوێترین پێشبینییەکان</h2>
             <div id="matches-container">
                 </div>
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        /* --- بەشی کارکردن (JavaScript) --- */
+        const matchesData = [
+            { teams: "مانچستەر سیتی 🆚 لیڤەرپوول", time: "٢١:٠٠", prediction: "بردنەوەی سیتی" },
+            { teams: "بارسێلۆنا 🆚 ڕیال مەدرید", time: "٢٣:٠٠", prediction: "هەردوولا گۆڵ دەکەن" },
+            { teams: "ئارسناڵ 🆚 چێڵسی", time: "١٨:٣٠", prediction: "سەروو ٢.٥ گۆڵ" },
+            { teams: "بایەرن میونشن 🆚 دۆرتمۆند", time: "٢٠:٤٥", prediction: "بردنەوەی بایەرن" },
+            { teams: "میلان 🆚 ئینتەر میلان", time: "٢٢:٤٥", prediction: "یەکسانبوون" }
+        ];
+
+        function loadMatches() {
+            const container = document.getElementById('matches-container');
+            container.innerHTML = '';
+
+            matchesData.forEach(match => {
+                const item = document.createElement('div');
+                item.className = 'match-item';
+                item.innerHTML = `
+                    <div class="info">
+                        <div class="teams">${match.teams}</div>
+                        <div class="match-time">🕒 کات: ${match.time}</div>
+                    </div>
+                    <div class="prediction-badge">
+                        ${match.prediction}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // کارپێکردن لە کاتی کردنەوە
+        window.onload = loadMatches;
+    </script>
 </body>
-</html>
-body {
-    background-color: #0f172a; /* ڕەنگی پشتێنەی زۆر تۆخ */
-    color: #f8fafc;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
-
-.app-container {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-/* ستایڵی سێ کارتەکە */
-.top-cards {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
-}
-
-.card {
-    flex: 1;
-    padding: 15px;
-    border-radius: 15px;
-    text-align: center;
-    background: #1e293b;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-
-.card h3 { font-size: 14px; margin-bottom: 10px; color: #cbd5e1; }
-.card .count { font-size: 22px; font-weight: bold; }
-
-/* ڕەنگی جیاواز بۆ کارتەکان */
-.card-blue { border-bottom: 4px solid #3b82f6; }
-.card-green { border-bottom: 4px solid #10b981; }
-.card-gold { border-bottom: 4px solid #f59e0b; }
-
-/* ستایڵی لیستی خوارەوە */
-.match-list h2 { font-size: 18px; margin-bottom: 15px; }
-
-.match-item {
-    background: #1e293b;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.3s;
-}
-
-.match-item:hover { background: #334155; }
-
-.teams { font-weight: 500; }
-.odds {
-    background: #3b82f6;
-    padding: 5px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-}
-// داتای نموونەیی بۆ یارییەکان
-const matches = [
-    { teams: "مانچستەر سیتی - لیڤەرپوول", time: "٢١:٠٠", prediction: "بردنەوەی سیتی" },
-    { teams: "بارسێلۆنا - ڕیال مەدرید", time: "٢٣:٠٠", prediction: "هەردوولا گۆڵ دەکەن" },
-    { teams: "ئارسناڵ - چێڵسی", time: "١٨:٣٠", prediction: "سەروو ٢.٥ گۆڵ" },
-    { teams: "بایەرن میونشن - دۆرتمۆند", time: "٢٠:٤٥", prediction: "بردنەوەی بایەرن" }
-];
-
-function displayMatches() {
-    const container = document.getElementById('matches-container');
-    container.innerHTML = ''; // پاککردنەوەی پێشوەختە
-
-    matches.forEach(match => {
-        const div = document.createElement('div');
-        div.className = 'match-item';
-        div.innerHTML = `
-            <div class="match-info">
-                <div class="teams">${match.teams}</div>
-                <small style="color: #94a3b8;">کات: ${match.time}</small>
-            </div>
-            <div class="odds">${match.prediction}</div>
-        `;
-        container.appendChild(div);
-    });
-}
-
-// کارپێکردنی فەرمانەکە لەکاتی کردنەوەی لاپەڕەکە
-window.onload = displayMatches;
+</html> 
