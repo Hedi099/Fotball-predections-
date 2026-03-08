@@ -3,31 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی پێشکەوتوو</title>
+    <title>گروپی برایان - وەشانی نوێ</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root { --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.95); --border: rgba(255, 255, 255, 0.1); --danger: #ef4444; --success: #22c55e; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #0f172a; color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+        body { background: #0f172a; color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
         .container { width: 100%; max-width: 450px; padding: 20px; }
+        
         #login-page, #main-app, .admin-box { background: var(--card-bg); padding: 30px; border-radius: 25px; border: 1px solid var(--border); margin-top: 20px; text-align: center; }
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; margin-bottom: 20px; text-align: center; }
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .match-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-top: 20px; position: relative; }
+        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        
+        /* Floating Rank Button */
+        .rank-toggle-btn { background: var(--secondary); color: #000; font-weight: bold; padding: 12px; border-radius: 12px; border: none; width: 100%; margin-top: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* Matches Styling */
+        .match-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-top: 20px; }
         .prediction-container { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px; gap: 5px; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .team-logo { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
         .opt-btn { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 10px var(--primary); }
         .pts-text { font-size: 11px; color: var(--secondary); margin-top: 5px; font-weight: bold; }
-        .deadline-text { font-size: 10px; color: #94a3b8; display: block; margin-top: 5px; }
-        
-        /* Leaderboard Tabs */
-        .tabs { display: flex; gap: 5px; margin-top: 20px; background: #1e293b; padding: 5px; border-radius: 12px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: none; color: #94a3b8; cursor: pointer; font-size: 12px; }
-        .tab-btn.active { background: var(--primary); color: white; }
-        .rank-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        .deadline-text { font-size: 10px; color: #94a3b8; display: block; margin-top: 10px; }
+
+        /* Leaderboard Modal (OverLay) */
+        #leaderboard-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1000; padding: 20px; overflow-y: auto; }
+        .close-btn { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 20px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: #1e293b; color: white; cursor: pointer; }
+        .tab-btn.active { background: var(--primary); border-color: white; }
+        .rank-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body>
@@ -51,22 +59,26 @@
             </div>
         </div>
 
+        <button class="rank-toggle-btn" onclick="openLeaderboard()">
+            🏆 بینینی ڕیزبەندی
+        </button>
+
         <div class="match-card" id="m1" data-deadline="2026-03-08T22:45:00">
-            <p style="font-size: 12px; margin:0;">ئیتاڵیا - 22:45</p>
+            <p style="font-size: 12px; margin:0; color: var(--secondary);">ئیتاڵیا - دەستپێکردن 22:45</p>
             <div class="prediction-container">
                 <div class="predict-box">
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png" class="team-logo">
-                    <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1, 2)">ئینتەر</button>
+                    <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1, 2)">بردنەوەی ئینتەر</button>
                     <span class="pts-text">2 خاڵ</span>
                 </div>
                 <div class="predict-box">
-                    <span style="margin-bottom: 15px; font-weight: bold; color: #475569;">VS</span>
-                    <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2, 3)">یەکسان</button>
+                    <span style="margin-top: 15px; font-weight: bold; color: #475569;">VS</span>
+                    <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2, 3)">یەکسانبوون</button>
                     <span class="pts-text">3 خاڵ</span>
                 </div>
                 <div class="predict-box">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png" class="team-logo">
-                    <button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3, 4)">میلان</button>
+                    <button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3, 4)">بردنەوەی میلان</button>
                     <span class="pts-text">4 خاڵ</span>
                 </div>
             </div>
@@ -74,37 +86,30 @@
         </div>
 
         <div class="match-card" id="m_sev_ray" data-deadline="2026-03-08T21:00:00">
-            <p style="font-size: 12px; margin:0;">ئیسپانیا - 21:00</p>
+            <p style="font-size: 12px; margin:0; color: var(--secondary);">ئیسپانیا - دەستپێکردن 21:00</p>
             <div class="prediction-container">
                 <div class="predict-box">
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Sevilla_FC_logo.svg/800px-Sevilla_FC_logo.svg.png" class="team-logo">
-                    <button class="opt-btn" id="m_sev_ray-btn1" onclick="makeChoice('m_sev_ray', 1, 2)">سێڤیلیا</button>
+                    <button class="opt-btn" id="m_sev_ray-btn1" onclick="makeChoice('m_sev_ray', 1, 2)">بردنەوەی سێڤیلیا</button>
                     <span class="pts-text">2 خاڵ</span>
                 </div>
                 <div class="predict-box">
-                    <span style="margin-bottom: 15px; font-weight: bold; color: #475569;">VS</span>
-                    <button class="opt-btn" id="m_sev_ray-btn2" onclick="makeChoice('m_sev_ray', 2, 3)">یەکسان</button>
+                    <span style="margin-top: 15px; font-weight: bold; color: #475569;">VS</span>
+                    <button class="opt-btn" id="m_sev_ray-btn2" onclick="makeChoice('m_sev_ray', 2, 3)">یەکسانبوون</button>
                     <span class="pts-text">3 خاڵ</span>
                 </div>
                 <div class="predict-box">
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1b/Rayo_Vallecano_logo.svg/800px-Rayo_Vallecano_logo.svg.png" class="team-logo">
-                    <button class="opt-btn" id="m_sev_ray-btn3" onclick="makeChoice('m_sev_ray', 3, 4)">ڤاییکانۆ</button>
+                    <button class="opt-btn" id="m_sev_ray-btn3" onclick="makeChoice('m_sev_ray', 3, 4)">بردنەوەی ڤاییکانۆ</button>
                     <span class="pts-text">4 خاڵ</span>
                 </div>
             </div>
             <span class="deadline-text" id="timer-m_sev_ray"></span>
         </div>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('total', this)">گشتی</button>
-            <button class="tab-btn" onclick="switchTab('monthly', this)">مانگانە</button>
-            <button class="tab-btn" onclick="switchTab('weekly', this)">هەفتانە</button>
-        </div>
-        <div id="leaderboardList" style="margin-top: 10px; background: rgba(255,255,255,0.02); border-radius: 12px;"></div>
-
         <div id="admin-panel" class="admin-box" style="display:none; border: 1px dashed var(--secondary);">
             <h4 style="color:var(--secondary); margin-top:0;">کۆنترۆڵی Hedi</h4>
-            <div style="font-size: 11px; margin-bottom: 10px;">ئەنجامی میلان-ئینتەر:</div>
+            <div style="font-size: 11px; margin-bottom: 5px;">ئەنجامی میلان-ئینتەر:</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
                 <button class="opt-btn" onclick="finishMatch('m1', 1, 2)">ئینتەر</button>
                 <button class="opt-btn" onclick="finishMatch('m1', 2, 3)">یەکسان</button>
@@ -117,6 +122,16 @@
                 <button class="opt-btn" onclick="finishMatch('m_sev_ray', 3, 4)">ڤاییکانۆ</button>
             </div>
         </div>
+    </div>
+
+    <div id="leaderboard-overlay">
+        <button class="close-btn" onclick="closeLeaderboard()">گەڕانەوە ↩</button>
+        <h2 style="text-align: center; color: var(--secondary);">ڕیزبەندی گروپ</h2>
+        <div class="tabs">
+            <button id="tab-weekly" class="tab-btn active" onclick="switchTab('weekly')">هەفتە</button>
+            <button id="tab-total" class="tab-btn" onclick="switchTab('total')">کۆی گشتی</button>
+        </div>
+        <div id="leaderboard-content"></div>
     </div>
 </div>
 
@@ -133,13 +148,13 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
-    let currentTab = 'total';
+    let currentTab = 'weekly';
 
     function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
         if (name.length < 2) return alert("ناو بنووسە");
         db.ref('users/' + name).once('value').then((snap) => {
-            if (!snap.exists()) db.ref('users/' + name).set({ total: 0, monthly: 0, weekly: 0, predictions: {} });
+            if (!snap.exists()) db.ref('users/' + name).set({ total: 0, weekly: 0, predictions: {} });
             localStorage.setItem('groupBryanUser', name);
             currentUser = name;
             startApp();
@@ -159,7 +174,6 @@
                 if (data.predictions) highlight(data.predictions);
             }
         });
-        loadLeaderboard();
         checkDeadlines();
     }
 
@@ -168,8 +182,8 @@
             document.querySelectorAll('.match-card').forEach(card => {
                 const deadline = new Date(card.dataset.deadline).getTime();
                 const now = new Date().getTime();
-                const timerId = 'timer-' + card.id;
                 const diff = deadline - now;
+                const timerId = 'timer-' + card.id;
 
                 if (diff <= 0) {
                     document.getElementById(timerId).innerText = "🔒 کات بەسەرچوو";
@@ -177,7 +191,7 @@
                 } else {
                     const hours = Math.floor(diff / (1000 * 60 * 60));
                     const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    document.getElementById(timerId).innerText = `⏰ ماوە: ${hours}ک و ${mins}خ`;
+                    document.getElementById(timerId).innerText = `⏰ کاتی ماوە: ${hours} کاتژمێر و ${mins} خولەک`;
                 }
             });
         }, 1000);
@@ -185,11 +199,11 @@
 
     function makeChoice(matchId, choiceId, pts) {
         const deadline = new Date(document.getElementById(matchId).dataset.deadline).getTime();
-        if (new Date().getTime() > deadline) return alert("کات بەسەرچوو!");
+        if (new Date().getTime() > deadline) return alert("ببورە کات بەسەرچووە!");
         
         db.ref('users/' + currentUser + '/predictions/' + matchId).once('value').then((snap) => {
-            if (snap.exists()) return alert("قفڵ کراوە!");
-            if (confirm("دڵنیایت؟ ناگۆڕدرێت.")) {
+            if (snap.exists()) return alert("پێشبینیت کردووە!");
+            if (confirm("ئایا دڵنیایت؟ پێشبینییەکەت قفڵ دەکرێت.")) {
                 db.ref('users/' + currentUser + '/predictions/' + matchId).set({ choice: choiceId, pts: pts });
             }
         });
@@ -206,10 +220,19 @@
         });
     }
 
-    function switchTab(type, btn) {
+    function openLeaderboard() {
+        document.getElementById('leaderboard-overlay').style.display = 'block';
+        loadLeaderboard();
+    }
+
+    function closeLeaderboard() {
+        document.getElementById('leaderboard-overlay').style.display = 'none';
+    }
+
+    function switchTab(type) {
         currentTab = type;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        document.getElementById('tab-' + type).classList.add('active');
         loadLeaderboard();
     }
 
@@ -218,14 +241,17 @@
             let users = [];
             snap.forEach(u => users.push({ name: u.key, pts: u.val()[currentTab] || 0 }));
             users.sort((a, b) => b.pts - a.pts);
-            document.getElementById('leaderboardList').innerHTML = users.map((u, i) => `
-                <div class="rank-row"><span>${i+1}. ${u.name}</span><span style="color:var(--secondary)">${u.pts} خاڵ</span></div>
+            document.getElementById('leaderboard-content').innerHTML = users.map((u, i) => `
+                <div class="rank-row">
+                    <span>${i+1}. ${u.name}</span>
+                    <span style="color:var(--secondary); font-weight:bold;">${u.pts} خاڵ</span>
+                </div>
             `).join('');
         });
     }
 
     function finishMatch(matchId, result, pts) {
-        if (!confirm("خاڵ دابەش بکرێت؟")) return;
+        if (!confirm("دڵنیایت لە دابەشکردنی خاڵ؟")) return;
         db.ref('users').once('value').then(snap => {
             snap.forEach(child => {
                 const data = child.val();
@@ -233,12 +259,11 @@
                     const uRef = db.ref('users/' + child.key);
                     uRef.update({
                         total: (data.total || 0) + pts,
-                        monthly: (data.monthly || 0) + pts,
                         weekly: (data.weekly || 0) + pts
                     });
                 }
             });
-            alert("خاڵەکان هەژمار کران!");
+            alert("خاڵەکان بە سەرکەوتوویی دابەشکران.");
         });
     }
 
@@ -246,4 +271,4 @@
     if (currentUser) startApp();
 </script>
 </body>
-</html>
+</html> 
