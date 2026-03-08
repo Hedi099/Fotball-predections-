@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی شەفاف</title>
+    <title>گروپی برایان - وەشانی کۆتایی</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
@@ -19,12 +19,11 @@
         .prediction-container { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px; gap: 5px; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .team-logo { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
-        .opt-btn { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
+        .opt-btn { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; margin-bottom: 5px; }
         .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 10px var(--primary); }
         .pts-text { font-size: 11px; color: var(--secondary); margin-top: 5px; font-weight: bold; }
         .deadline-text { font-size: 10px; color: #94a3b8; display: block; margin-top: 10px; }
         .view-preds-btn { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--border); padding: 8px; border-radius: 10px; font-size: 11px; margin-top: 15px; cursor: pointer; width: 100%; display: none; }
-        
         #leaderboard-overlay, #preds-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1000; padding: 20px; overflow-y: auto; }
         .close-btn { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 20px; }
         .rank-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); }
@@ -59,9 +58,21 @@
         <div class="match-card" id="m1" data-deadline="2026-03-08T22:45:00" data-teams="ئینتەر,یەکسان,میلان">
             <p style="font-size: 12px; margin:0; color: var(--secondary);">ئیتاڵیا - 22:45</p>
             <div class="prediction-container">
-                <div class="predict-box"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png" class="team-logo"><button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1, 2)">ئینتەر</button></div>
-                <div class="predict-box"><span style="margin-top: 15px; font-weight: bold; color: #475569;">VS</span><button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2, 3)">یەکسان</button></div>
-                <div class="predict-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png" class="team-logo"><button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3, 4)">میلان</button></div>
+                <div class="predict-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png" class="team-logo">
+                    <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1, 2)">ئینتەر</button>
+                    <span class="pts-text">2 خاڵ</span>
+                </div>
+                <div class="predict-box">
+                    <span style="margin-top: 15px; font-weight: bold; color: #475569;">VS</span>
+                    <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2, 3)">یەکسان</button>
+                    <span class="pts-text">3 خاڵ</span>
+                </div>
+                <div class="predict-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png" class="team-logo">
+                    <button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3, 4)">میلان</button>
+                    <span class="pts-text">4 خاڵ</span>
+                </div>
             </div>
             <span class="deadline-text" id="timer-m1"></span>
             <button class="view-preds-btn" id="view-m1" onclick="showAllPredictions('m1')">👁 بینینی پێشبینی هەمووان</button>
@@ -70,29 +81,55 @@
         <div class="match-card" id="m_sev_ray" data-deadline="2026-03-08T21:00:00" data-teams="سێڤیلیا,یەکسان,ڤاییکانۆ">
             <p style="font-size: 12px; margin:0; color: var(--secondary);">ئیسپانیا - 21:00</p>
             <div class="prediction-container">
-                <div class="predict-box"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Sevilla_FC_logo.svg/800px-Sevilla_FC_logo.svg.png" class="team-logo"><button class="opt-btn" id="m_sev_ray-btn1" onclick="makeChoice('m_sev_ray', 1, 2)">سێڤیلیا</button></div>
-                <div class="predict-box"><span style="margin-top: 15px; font-weight: bold; color: #475569;">VS</span><button class="opt-btn" id="m_sev_ray-btn2" onclick="makeChoice('m_sev_ray', 2, 3)">یەکسان</button></div>
-                <div class="predict-box"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1b/Rayo_Vallecano_logo.svg/800px-Rayo_Vallecano_logo.svg.png" class="team-logo"><button class="opt-btn" id="m_sev_ray-btn3" onclick="makeChoice('m_sev_ray', 3, 4)">ڤاییکانۆ</button></div>
+                <div class="predict-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Sevilla_FC_logo.svg/800px-Sevilla_FC_logo.svg.png" class="team-logo">
+                    <button class="opt-btn" id="m_sev_ray-btn1" onclick="makeChoice('m_sev_ray', 1, 2)">سێڤیلیا</button>
+                    <span class="pts-text">2 خاڵ</span>
+                </div>
+                <div class="predict-box">
+                    <span style="margin-top: 15px; font-weight: bold; color: #475569;">VS</span>
+                    <button class="opt-btn" id="m_sev_ray-btn2" onclick="makeChoice('m_sev_ray', 2, 3)">یەکسان</button>
+                    <span class="pts-text">3 خاڵ</span>
+                </div>
+                <div class="predict-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1b/Rayo_Vallecano_logo.svg/800px-Rayo_Vallecano_logo.svg.png" class="team-logo">
+                    <button class="opt-btn" id="m_sev_ray-btn3" onclick="makeChoice('m_sev_ray', 3, 4)">ڤاییکانۆ</button>
+                    <span class="pts-text">4 خاڵ</span>
+                </div>
             </div>
             <span class="deadline-text" id="timer-m_sev_ray"></span>
             <button class="view-preds-btn" id="view-m_sev_ray" onclick="showAllPredictions('m_sev_ray')">👁 بینینی پێشبینی هەمووان</button>
         </div>
 
         <div id="admin-panel" class="admin-box" style="display:none; border: 1px dashed var(--secondary);">
-            <h4 style="color:var(--secondary); margin-top:0;">ئەدمین</h4>
-            <button class="btn-main" style="background:var(--danger); font-size:12px;" onclick="resetWeekly()">🔄 سفرکردنەوەی هەفتانە</button>
+            <h4 style="color:var(--secondary); margin-top:0;">کۆنترۆڵی Hedi</h4>
+            <div style="font-size: 11px; margin-bottom: 5px;">ئەنجامی میلان-ئینتەر:</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+                <button class="opt-btn" style="background:var(--success)" onclick="finishMatch('m1', 1, 2)">ئینتەر</button>
+                <button class="opt-btn" style="background:#64748b" onclick="finishMatch('m1', 2, 3)">یەکسان</button>
+                <button class="opt-btn" style="background:var(--danger)" onclick="finishMatch('m1', 3, 4)">میلان</button>
+            </div>
+            <div style="font-size: 11px; margin-top: 15px; margin-bottom: 5px;">ئەنجامی سێڤیلیا-ڤاییکانۆ:</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+                <button class="opt-btn" style="background:var(--success)" onclick="finishMatch('m_sev_ray', 1, 2)">سێڤیلیا</button>
+                <button class="opt-btn" style="background:#64748b" onclick="finishMatch('m_sev_ray', 2, 3)">یەکسان</button>
+                <button class="opt-btn" style="background:var(--danger)" onclick="finishMatch('m_sev_ray', 3, 4)">ڤاییکانۆ</button>
+            </div>
+            <button class="btn-main" style="background:var(--danger); margin-top:20px; font-size:12px;" onclick="resetWeekly()">🔄 سفرکردنەوەی هەفتانە</button>
         </div>
     </div>
 
     <div id="leaderboard-overlay">
         <button class="close-btn" onclick="closeLeaderboard()">داخستن ✖</button>
-        <div class="tabs"><button id="tab-weekly" class="tab-btn active" onclick="switchTab('weekly')">هەفتانە</button><button id="tab-total" class="tab-btn" onclick="switchTab('total')">گشتی</button></div>
+        <div class="tabs">
+            <button id="tab-weekly" class="tab-btn active" onclick="switchTab('weekly')">هەفتانە</button>
+            <button id="tab-total" class="tab-btn" onclick="switchTab('total')">کۆی گشتی</button>
+        </div>
         <div id="leaderboard-content"></div>
     </div>
 
     <div id="preds-overlay">
-        <button class="close-btn" onclick="document.getElementById('preds-overlay').style.display='none'">داخستن ✖</button>
-        <h3 id="preds-title" style="text-align: center; color: var(--secondary);">پێشبینییەکان</h3>
+        <button class="close-btn" onclick="document.getElementById('preds-overlay').style.display='none'">گەڕانەوە ↩</button>
         <div id="preds-content"></div>
     </div>
 </div>
@@ -128,6 +165,7 @@
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
         if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
+        
         db.ref('users/' + currentUser).on('value', snap => {
             const data = snap.val();
             if (data) {
@@ -149,8 +187,8 @@
 
                 if (diff <= 0) {
                     document.getElementById(timerId).innerText = "🔒 قفڵ کرا";
-                    card.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
-                    viewBtn.style.display = 'block'; // دوای کاتەکە دوگمەی بینین دەرکەوێت
+                    card.querySelectorAll('.opt-btn').forEach(b => { if(!b.classList.contains('selected')) b.disabled = true; });
+                    if(viewBtn) viewBtn.style.display = 'block';
                 } else {
                     const hours = Math.floor(diff / (1000 * 60 * 60));
                     const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -162,7 +200,7 @@
 
     function makeChoice(matchId, choiceId, pts) {
         const deadline = new Date(document.getElementById(matchId).dataset.deadline).getTime();
-        if (new Date().getTime() > deadline) return alert("کات نەماوە!");
+        if (new Date().getTime() > deadline) return alert("کات تەواو بووە!");
         if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) {
             db.ref('users/' + currentUser + '/predictions/' + matchId).set({ choice: choiceId, pts: pts });
         }
@@ -171,29 +209,14 @@
     function highlight(preds) {
         Object.keys(preds).forEach(mId => {
             const choice = preds[mId].choice;
-            document.querySelectorAll(`#${mId} .opt-btn`).forEach(btn => {
-                btn.disabled = true;
-                if (btn.id === `${mId}-btn${choice}`) btn.classList.add('selected');
-                else btn.style.opacity = "0.3";
-            });
-        });
-    }
-
-    function showAllPredictions(matchId) {
-        const teamNames = document.getElementById(matchId).dataset.teams.split(',');
-        db.ref('users').once('value').then(snap => {
-            let html = '';
-            snap.forEach(child => {
-                const data = child.val();
-                let choiceText = "<span style='color:#64748b'>دیاری نەکردووە</span>";
-                if (data.predictions && data.predictions[matchId]) {
-                    const cId = data.predictions[matchId].choice;
-                    choiceText = `<span style="color:var(--secondary)">${teamNames[cId-1]}</span>`;
-                }
-                html += `<div class="rank-row"><span>${child.key}</span><span>${choiceText}</span></div>`;
-            });
-            document.getElementById('preds-content').innerHTML = html;
-            document.getElementById('preds-overlay').style.display = 'block';
+            const container = document.getElementById(mId);
+            if(container) {
+                container.querySelectorAll('.opt-btn').forEach(btn => {
+                    btn.disabled = true;
+                    if (btn.id === `${mId}-btn${choice}`) btn.classList.add('selected');
+                    else btn.style.opacity = "0.3";
+                });
+            }
         });
     }
 
@@ -204,9 +227,48 @@
     function loadLeaderboard() {
         db.ref('users').on('value', snap => {
             let users = [];
-            snap.forEach(u => users.push({ name: u.key, pts: u.val()[currentTab] || 0 }));
+            snap.forEach(u => {
+                const data = u.val();
+                users.push({ name: u.key, pts: data[currentTab] || 0 });
+            });
             users.sort((a, b) => b.pts - a.pts);
-            document.getElementById('leaderboard-content').innerHTML = users.map((u, i) => `<div class="rank-row"><span>${i+1}. ${u.name}</span><span style="color:var(--secondary);font-weight:bold;">${u.pts} خاڵ</span></div>`).join('');
+            document.getElementById('leaderboard-content').innerHTML = users.map((u, i) => `
+                <div class="rank-row"><span>${i+1}. ${u.name}</span><span style="color:var(--secondary);font-weight:bold;">${u.pts} خاڵ</span></div>
+            `).join('');
+        });
+    }
+
+    function showAllPredictions(matchId) {
+        const teamNames = document.getElementById(matchId).dataset.teams.split(',');
+        db.ref('users').once('value').then(snap => {
+            let html = `<h3 style="text-align:center;color:var(--secondary)">پێشبینی برادەران</h3>`;
+            snap.forEach(child => {
+                const data = child.val();
+                let choiceText = "<span style='color:#64748b'>-</span>";
+                if (data.predictions && data.predictions[matchId]) {
+                    const cId = data.predictions[matchId].choice;
+                    choiceText = `<span style="color:var(--primary)">${teamNames[cId-1]}</span>`;
+                }
+                html += `<div class="rank-row"><span>${child.key}</span><span>${choiceText}</span></div>`;
+            });
+            document.getElementById('preds-content').innerHTML = html;
+            document.getElementById('preds-overlay').style.display = 'block';
+        });
+    }
+
+    function finishMatch(matchId, result, pts) {
+        if (!confirm("خاڵەکان دابەش بکرێن؟")) return;
+        db.ref('users').once('value').then(snap => {
+            snap.forEach(child => {
+                const data = child.val();
+                if (data.predictions && data.predictions[matchId] && data.predictions[matchId].choice == result) {
+                    db.ref('users/' + child.key).update({
+                        total: (data.total || 0) + pts,
+                        weekly: (data.weekly || 0) + pts
+                    });
+                }
+            });
+            alert("خاڵەکان هەژمار کران!");
         });
     }
 
