@@ -3,60 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان</title>
+    <title>گروپی برایان - وەشانی فۆڵ</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; }
+        :root { --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; --card: rgba(30, 41, 59, 0.8); }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background-color: var(--bg); color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 480px; padding: 15px; }
+        .container { width: 100%; max-width: 500px; padding: 15px; }
         
-        #login-page, #main-app { background: rgba(30, 41, 59, 0.7); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-top: 20px; text-align: center; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 15px; text-align: center; color: black; }
-        button { cursor: pointer; border: none; font-weight: bold; }
-        .btn-main { width: 100%; background: var(--primary); color: white; padding: 15px; border-radius: 10px; }
+        #login-page, #main-app { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-top: 10px; text-align: center; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 15px; text-align: center; font-size: 16px; }
+        button { cursor: pointer; border: none; font-weight: bold; transition: 0.3s; }
+        .btn-main { width: 100%; background: var(--primary); color: white; padding: 15px; border-radius: 10px; font-size: 16px; }
         
-        .match-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .match-info { display: flex; justify-content: space-around; align-items: center; margin-bottom: 15px; }
+        .user-header { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+        .score-box { text-align: center; }
+        .score-num { font-size: 20px; color: var(--secondary); display: block; }
+
+        .match-card { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 15px; margin-top: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .match-info { display: flex; justify-content: space-around; align-items: center; margin-bottom: 12px; }
         .team-box { flex: 1; text-align: center; }
-        .team-logo { width: 60px; height: 60px; object-fit: contain; background: white; border-radius: 10px; padding: 5px; }
-        .team-name { font-size: 14px; display: block; margin-top: 8px; font-weight: bold; }
+        .team-logo { width: 55px; height: 55px; object-fit: contain; background: white; border-radius: 10px; padding: 4px; }
+        .team-name { font-size: 12px; display: block; margin-top: 5px; font-weight: bold; }
         
-        .options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .opt-btn { background: rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; font-size: 12px; }
+        .options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .opt-btn { background: rgba(255,255,255,0.1); color: white; padding: 10px 5px; border-radius: 8px; font-size: 11px; }
         .opt-btn.selected { background: var(--secondary) !important; color: black !important; }
         
-        .rank-btn { background: white; color: black; width: 100%; padding: 12px; border-radius: 10px; margin-top: 15px; }
-        #leaderboard { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; padding: 20px; overflow-y: auto; z-index: 100; }
-        .rank-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .admin-section { margin-top: 20px; padding: 15px; border: 1px dashed red; border-radius: 15px; background: rgba(255,0,0,0.05); }
+        .admin-btn { background: #ef4444; color: white; padding: 5px 10px; border-radius: 5px; font-size: 10px; margin: 2px; }
+
+        #leaderboard { display: none; position: fixed; inset: 0; background: #0f172a; padding: 20px; overflow-y: auto; z-index: 1000; }
+        .rank-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-page">
-        <h2>🏆 گروپی برایان</h2>
+        <h2>🏆 پڕۆژەی برایان</h2>
         <input type="text" id="userName" placeholder="ناوەکەت بنووسە">
         <button class="btn-main" onclick="login()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span id="displayUser"></span>
-            <div>
-                <span id="scoreTotal" style="color: var(--secondary); font-weight: bold; font-size: 20px;">0</span> خاڵ
-            </div>
+        <div class="user-header">
+            <div><b id="displayUser"></b><br><small onclick="logout()" style="cursor:pointer; opacity:0.6;">دەرچوون ↩</small></div>
+            <div class="score-box"><span class="score-num" id="scoreW">0</span><small>هەفتە</small></div>
+            <div class="score-box"><span class="score-num" id="scoreT">0</span><small>گشتی</small></div>
         </div>
         
-        <button class="rank-btn" onclick="showRank()">📊 خشتەی ڕیزبەندی</button>
-        <div id="matches"></div>
+        <button class="btn-main" style="background: white; color: black;" onclick="showRank()">📊 خشتەی ڕیزبەندی</button>
+
+        <div id="admin-panel" class="admin-section" style="display:none;">
+            <h4 style="margin:0 0 10px 0;">کۆنتڕۆڵی ئەدمین</h4>
+            <button onclick="resetWeekly()" style="background:orange; padding:10px; border-radius:8px; margin-bottom:10px; width:100%;">سڕینەوەی خاڵی هەفتە 🗑️</button>
+            <div id="admin-matches"></div>
+        </div>
+
+        <div id="matches-container"></div>
     </div>
 </div>
 
 <div id="leaderboard">
-    <button onclick="document.getElementById('leaderboard').style.display='none'" style="padding: 10px 20px; margin-bottom: 20px; background: red; color: white; border-radius: 10px;">داخستن ✖</button>
+    <button onclick="document.getElementById('leaderboard').style.display='none'" style="background: #334155; color: white; padding: 10px 20px; border-radius: 8px;">گەڕانەوە</button>
     <h3 style="text-align: center;">ڕیزبەندی خاڵەکان</h3>
+    <div class="rank-row" style="font-weight:bold; color:var(--secondary);">
+        <span>ناو</span>
+        <span>هەفتە / گشتی</span>
+    </div>
     <div id="rank-list"></div>
 </div>
 
@@ -71,95 +87,119 @@
         appId: "1:655783456427:web:1535d3dfd9b53515c391ee"
     };
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let currentUser = localStorage.getItem('bUser');
+    let user = localStorage.getItem('bUser');
 
-    // وێنەکان لە Transfermarkt - هەمان ئەو لینکەی کە پێشتر حەزت لێبوو
     const matchList = [
         { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
         { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/141.png", img2: "https://tmssl.akamaized.net/images/crest/big/31.png" },
-        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/800.png", img2: "https://tmssl.akamaized.net/images/crest/big/27.png" }
+        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/800.png", img2: "https://tmssl.akamaized.net/images/crest/big/27.png" },
+        { id: "m4", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/13.png", img2: "https://tmssl.akamaized.net/images/crest/big/148.png" },
+        { id: "m5", t1: "ئینتەر", t2: "لیپزیگ", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/46.png", img2: "https://tmssl.akamaized.net/images/crest/big/23826.png" },
+        { id: "m6", t1: "لیۆن", t2: "ئەرسیناڵ", p1: 5, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/1041.png", img2: "https://tmssl.akamaized.net/images/crest/big/11.png" },
+        { id: "m7", t1: "لیڤەرکوزن", t2: "سپۆرتینگ", p1: 2, pX: 3, p2: 3, img1: "https://tmssl.akamaized.net/images/crest/big/15.png", img2: "https://tmssl.akamaized.net/images/crest/big/336.png" },
+        { id: "m8", t1: "مان سیتی", t2: "ڕیال مەدرید", p1: 3, pX: 3, p2: 3, img1: "https://tmssl.akamaized.net/images/crest/big/281.png", img2: "https://tmssl.akamaized.net/images/crest/big/418.png" },
+        { id: "m9", t1: "پۆرتۆ", t2: "میلان", p1: 3, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/720.png", img2: "https://tmssl.akamaized.net/images/crest/big/5.png" },
+        { id: "m10", t1: "بەنفیکا", t2: "دۆرتمۆند", p1: 3, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/294.png", img2: "https://tmssl.akamaized.net/images/crest/big/16.png" },
+        { id: "m11", t1: "بارسێلۆنا", t2: "مۆناکۆ", p1: 2, pX: 3, p2: 5, img1: "https://tmssl.akamaized.net/images/crest/big/131.png", img2: "https://tmssl.akamaized.net/images/crest/big/162.png" },
+        { id: "m12", t1: "پاریس", t2: "برێست", p1: 2, pX: 4, p2: 5, img1: "https://tmssl.akamaized.net/images/crest/big/583.png", img2: "https://tmssl.akamaized.net/images/crest/big/3911.png" },
+        { id: "m13", t1: "ڤێردەر برێمن", t2: "ماینز", p1: 2, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/86.png", img2: "https://tmssl.akamaized.net/images/crest/big/39.png" }
     ];
 
     function login() {
         const n = document.getElementById('userName').value.trim();
-        if(n.length < 2) return alert("تکایە ناو بنووسە");
+        if(n.length < 2) return;
         localStorage.setItem('bUser', n);
-        currentUser = n;
         location.reload();
     }
 
-    if(currentUser) {
+    if(user) {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('displayUser').innerText = "سڵاو " + currentUser;
-        
-        let h = '';
+        document.getElementById('displayUser').innerText = user;
+        if(user === "Hedi" || user === "admin") document.getElementById('admin-panel').style.display = 'block';
+
+        let h = '', ah = '';
         matchList.forEach(m => {
             h += `<div class="match-card" id="${m.id}">
                 <div class="match-info">
-                    <div class="team-box"><img src="${m.img1}" class="team-logo" onerror="this.src='https://via.placeholder.com/60'"><span class="team-name">${m.t1}</span></div>
-                    <div style="font-weight:bold;">VS</div>
-                    <div class="team-box"><img src="${m.img2}" class="team-logo" onerror="this.src='https://via.placeholder.com/60'"><span class="team-name">${m.t2}</span></div>
+                    <div class="team-box"><img src="${m.img1}" class="team-logo"><span class="team-name">${m.t1}</span></div>
+                    <div style="font-weight:bold; color:#64748b;">VS</div>
+                    <div class="team-box"><img src="${m.img2}" class="team-logo"><span class="team-name">${m.t2}</span></div>
                 </div>
                 <div class="options">
-                    <button class="opt-btn" id="${m.id}-1" onclick="vote('${m.id}', 1)">1 (${m.p1})</button>
-                    <button class="opt-btn" id="${m.id}-2" onclick="vote('${m.id}', 2)">X (${m.pX})</button>
-                    <button class="opt-btn" id="${m.id}-3" onclick="vote('${m.id}', 3)">2 (${m.p2})</button>
+                    <button class="opt-btn" id="${m.id}-1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
+                    <button class="opt-btn" id="${m.id}-2" onclick="vote('${m.id}', 2, ${m.pX})">X (${m.pX})</button>
+                    <button class="opt-btn" id="${m.id}-3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
                 </div>
             </div>`;
+            ah += `<div style="margin-bottom:8px;">${m.t1} vs ${m.t2}: 
+                <button class="admin-btn" onclick="finish('${m.id}', 1, ${m.p1})">1</button>
+                <button class="admin-btn" onclick="finish('${m.id}', 2, ${m.pX})">X</button>
+                <button class="admin-btn" onclick="finish('${m.id}', 3, ${m.p2})">2</button></div>`;
         });
-        document.getElementById('matches').innerHTML = h;
+        document.getElementById('matches-container').innerHTML = h;
+        document.getElementById('admin-matches').innerHTML = ah;
 
-        db.ref('users/' + currentUser).on('value', s => {
-            const data = s.val();
-            if(!data) {
-                db.ref('users/' + currentUser).set({total:0});
-            } else {
-                document.getElementById('scoreTotal').innerText = data.total || 0;
-                if(data.predictions) {
-                    Object.keys(data.predictions).forEach(mid => {
-                        const choiceValue = data.predictions[mid];
-                        const btn = document.getElementById(mid + '-' + choiceValue);
-                        if(btn) {
-                            document.getElementById(mid).querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
-                            btn.classList.add('selected');
-                        }
-                    });
-                }
+        db.ref('users/' + user).on('value', s => {
+            const d = s.val() || {total:0, weekly:0};
+            document.getElementById('scoreT').innerText = d.total || 0;
+            document.getElementById('scoreW').innerText = d.weekly || 0;
+            if(d.preds) {
+                Object.keys(d.preds).forEach(mid => {
+                    const btn = document.getElementById(mid + '-' + d.preds[mid].choice);
+                    if(btn) {
+                        document.getElementById(mid).querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+                        btn.classList.add('selected');
+                    }
+                });
             }
         });
     }
 
-    function vote(mId, choice) {
-        if(confirm("پێشبینییەکەت جێگیر دەکەیت؟")) {
-            db.ref('users/' + currentUser + '/predictions/' + mId).set(choice);
+    function vote(mId, c, p) {
+        if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+user+'/preds/'+mId).set({choice:c, pts:p});
+    }
+
+    function finish(mId, res, p) {
+        db.ref('users').once('value', snap => {
+            snap.forEach(u => {
+                const d = u.val();
+                if(d.preds && d.preds[mId] && d.preds[mId].choice == res) {
+                    db.ref('users/'+u.key).update({
+                        total: (d.total || 0) + p,
+                        weekly: (d.weekly || 0) + p
+                    });
+                }
+            });
+            alert("ئەنجام سەیڤ کرا!");
+        });
+    }
+
+    function resetWeekly() {
+        if(confirm("دڵنیای هەموو خاڵەکانی هەفتە دەسڕیتەوە؟")) {
+            db.ref('users').once('value', s => {
+                s.forEach(u => db.ref('users/'+u.key).update({weekly: 0}));
+            });
         }
     }
 
     function showRank() {
         db.ref('users').once('value', s => {
             let arr = [];
-            s.forEach(u => {
-                arr.push({ name: u.key, total: u.val().total || 0 });
-            });
-            arr.sort((a, b) => b.total - a.total);
-            
-            let rankHtml = '';
-            arr.forEach((u, i) => {
-                rankHtml += `
-                    <div class="rank-row">
-                        <span>${i+1}. ${u.name}</span>
-                        <b>${u.total} خاڵ</b>
-                    </div>`;
-            });
-            document.getElementById('rank-list').innerHTML = rankHtml;
+            s.forEach(u => arr.push({ n: u.key, t: u.val().total || 0, w: u.val().weekly || 0 }));
+            arr.sort((a,b) => b.t - a.t);
+            document.getElementById('rank-list').innerHTML = arr.map((u,i) => `
+                <div class="rank-row">
+                    <span>${i+1}. ${u.n}</span>
+                    <span><b>${u.w}</b> / <b style="color:var(--secondary)">${u.t}</b></span>
+                </div>`).join('');
             document.getElementById('leaderboard').style.display = 'block';
         });
     }
+
+    function logout() { localStorage.removeItem('bUser'); location.reload(); }
 </script>
 </body>
 </html> 
