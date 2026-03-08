@@ -3,66 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی چاککراو</title>
+    <title>گروپی برایان - وەشانی پڕۆفیشناڵ</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root { --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.95); --border: rgba(255, 255, 255, 0.1); --danger: #ef4444; --success: #22c55e; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: #0f172a; color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 450px; padding: 20px; }
-        #login-page, #main-app, .admin-box { background: var(--card-bg); padding: 30px; border-radius: 25px; border: 1px solid var(--border); margin-top: 20px; text-align: center; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; margin-bottom: 20px; text-align: center; }
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .rank-toggle-btn { background: var(--secondary); color: #000; font-weight: bold; padding: 12px; border-radius: 12px; border: none; width: 100%; margin: 20px 0; cursor: pointer; }
-        .match-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-top: 20px; position: relative; }
-        .prediction-container { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px; gap: 5px; }
-        .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .team-logo { width: 45px; height: 45px; margin-bottom: 8px; object-fit: contain; background: white; border-radius: 8px; padding: 3px; }
-        .opt-btn { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; margin-bottom: 5px; }
-        .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 10px var(--primary); }
-        .pts-text { font-size: 11px; color: var(--secondary); margin-top: 5px; font-weight: bold; }
-        .deadline-text { font-size: 10px; color: #94a3b8; display: block; margin-top: 10px; }
-        .view-preds-btn { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--border); padding: 8px; border-radius: 10px; font-size: 11px; margin-top: 15px; cursor: pointer; width: 100%; display: none; }
+        .container { width: 100%; max-width: 480px; padding: 15px; }
+        #login-page, #main-app, .admin-box { background: var(--card-bg); padding: 25px; border-radius: 25px; border: 1px solid var(--border); margin-top: 15px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
+        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .rank-toggle-btn { background: var(--secondary); color: #000; font-weight: bold; padding: 14px; border-radius: 12px; border: none; width: 100%; margin: 15px 0; cursor: pointer; font-size: 15px; }
+        .match-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 22px; padding: 20px; margin-top: 20px; }
+        .prediction-container { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .team-logo { width: 65px; height: 65px; object-fit: contain; background: white; border-radius: 18px; padding: 6px; border: 2px solid var(--secondary); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        .team-name { font-size: 13px; font-weight: bold; color: #cbd5e1; margin-bottom: 5px; }
+        .opt-btn { width: 90%; background: rgba(255,255,255,0.07); border: 1px solid var(--border); color: white; padding: 12px 5px; border-radius: 10px; cursor: pointer; font-size: 12px; }
+        .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 15px var(--primary); transform: scale(1.05); }
+        .pts-text { font-size: 12px; color: var(--secondary); font-weight: bold; }
+        .deadline-text { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; font-style: italic; }
+        .admin-section { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #334155; text-align: right; }
+        .admin-btns { display: flex; gap: 5px; margin-top: 10px; }
         #leaderboard-overlay, #preds-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
-        .close-btn { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 20px; }
-        .rank-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); margin-bottom: 5px; border-radius: 10px; }
+        .close-btn { background: var(--danger); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
+        .rank-row { display: flex; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.03); margin-bottom: 6px; border-radius: 12px; align-items: center; }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: #1e293b; color: white; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: var(--secondary); color: black; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-page">
-        <h2 style="color: var(--secondary)">گروپی برایان</h2>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە...">
+        <h1 style="color: var(--secondary); margin-bottom: 5px;">🏆 گروپی برایان</h1>
+        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 25px;">سیستەمی پێشبینی کردنی یارییەکان</p>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە...">
         <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div style="text-align: right;">
-                <span id="welcomeText" style="font-weight: bold;"></span><br>
-                <button onclick="logoutUser()" style="color: var(--danger); background:none; border:none; cursor:pointer; font-size: 11px;">دەرچوون</button>
+                <span id="welcomeText" style="font-weight: bold; color: var(--secondary);"></span><br>
+                <button onclick="logoutUser()" style="color: var(--danger); background:none; border:none; cursor:pointer; font-size: 12px; padding:0;">دەرچوون</button>
             </div>
-            <div style="background: rgba(245, 158, 11, 0.1); padding: 5px 15px; border-radius: 10px; border: 1px solid var(--secondary);">
-                <span id="userPoints" style="color: var(--secondary); font-size: 18px; font-weight: bold;">0</span>
-                <span style="font-size: 10px; color: #94a3b8;">خاڵەکانت</span>
+            <div style="display: flex; gap: 10px;">
+                <div style="background: rgba(59, 130, 246, 0.1); padding: 8px 12px; border-radius: 12px; border: 1px solid var(--primary); text-align: center;">
+                    <div id="userWeeklyPoints" style="color: var(--primary); font-size: 18px; font-weight: bold;">0</div>
+                    <div style="font-size: 9px; color: #94a3b8;">ئەم هەفتەیە</div>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 8px 12px; border-radius: 12px; border: 1px solid var(--secondary); text-align: center;">
+                    <div id="userPoints" style="color: var(--secondary); font-size: 18px; font-weight: bold;">0</div>
+                    <div style="font-size: 9px; color: #94a3b8;">کۆی گشتی</div>
+                </div>
             </div>
         </div>
 
-        <button class="rank-toggle-btn" onclick="openLeaderboard()">🏆 ڕیزبەندی گشتی</button>
+        <button class="rank-toggle-btn" onclick="openLeaderboard()">📊 ڕیزبەندی و خشتەی خاڵەکان</button>
 
         <div id="matches-list"></div>
 
-        <div id="admin-panel" class="admin-box" style="display:none; border: 1px dashed var(--secondary);">
-            <h4 style="color:var(--secondary); margin-top:0;">بەشی Hedi</h4>
+        <div id="admin-panel" class="admin-box" style="display:none; border: 2px solid var(--danger);">
+            <h3 style="color:var(--danger); margin-top:0;">کۆنترۆڵی ئەدمین (Hedi)</h3>
             <div id="admin-controls"></div>
-            <button class="btn-main" style="background:var(--danger); margin-top:20px; font-size:12px;" onclick="resetWeekly()">🔄 سفرکردنەوەی هەموو پێشبینییەکان</button>
+            <hr style="border: 0.5px solid #333; margin: 20px 0;">
+            <button class="btn-main" style="background:var(--danger); font-size:13px;" onclick="resetWeeklyOnly()">⚠️ تەنها سفرکردنەوەی هەفتانە</button>
+            <p style="font-size: 10px; color: #94a3b8; margin-top: 10px;">ئەم دوگمەیە تەنها خاڵی هەفتانە و پێشبینییەکان دەسڕێتەوە، خاڵی گشتی وەک خۆی دەمێنێت.</p>
         </div>
     </div>
 
-    <div id="leaderboard-overlay"><button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button><div id="leaderboard-list"></div></div>
-    <div id="preds-overlay"><button class="close-btn" onclick="document.getElementById('preds-overlay').style.display='none'">گەڕانەوە ↩</button><div id="preds-content"></div></div>
+    <div id="leaderboard-overlay">
+        <button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
+        <div style="display: flex; margin-bottom: 20px; border-radius: 10px; overflow: hidden;">
+            <button id="tab-total" class="tab-btn active" onclick="switchTab('total')">ڕیزبەندی گشتی</button>
+            <button id="tab-weekly" class="tab-btn" onclick="switchTab('weekly')">ڕیزبەندی هەفتانە</button>
+        </div>
+        <div id="leaderboard-list"></div>
+    </div>
+
+    <div id="preds-overlay">
+        <button class="close-btn" onclick="document.getElementById('preds-overlay').style.display='none'">گەڕانەوە ↩</button>
+        <div id="preds-content"></div>
+    </div>
 </div>
 
 <script>
@@ -78,54 +102,60 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
+    let currentTab = 'total';
 
-    // لۆگۆکان هەموویان نوێکرانەوە بۆ لینکە فەرمییەکانی Wikimedia کە بە دڵنیایی کار دەکەن
     const matches = [
-        { id: "m1", stadium: "ئیسپانیۆل", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-09T23:00:00", img1: "https://upload.wikimedia.org/wikipedia/en/d/d6/RCD_Espanyol_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/6/60/Real_Oviedo_logo.svg" },
-        { id: "m2", stadium: "گەلەتەسەرای", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, time: "2026-03-10T20:45:00", img1: "https://upload.wikimedia.org/wikipedia/commons/3/31/Galatasaray_Star_Logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg" },
-        { id: "m3", stadium: "ئەتلەنتا", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, time: "2026-03-10T23:00:00", img1: "https://upload.wikimedia.org/wikipedia/en/6/66/Atalanta_BC_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg" },
-        { id: "m4", stadium: "ئەتلەتیکۆ مەدرید", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, time: "2026-03-10T23:00:00", img1: "https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/b/b4/Tottenham_Hotspur.svg" },
-        { id: "m5", stadium: "نیوکاسڵ", t1: "نیوکاسڵ", t2: "بارسا", p1: 4, pX: 3, p2: 2, time: "2026-03-10T23:00:00", img1: "https://upload.wikimedia.org/wikipedia/en/5/56/Newcastle_United_Logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg" },
-        { id: "m6", stadium: "لیڤەرکوزن", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, time: "2026-03-11T20:45:00", img1: "https://upload.wikimedia.org/wikipedia/en/5/59/Bayer_04_Leverkusen_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg" },
-        { id: "m7", stadium: "بۆدۆگلیمت", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, time: "2026-03-11T23:00:00", img1: "https://upload.wikimedia.org/wikipedia/en/d/d4/Bodo_Glimt.png", img2: "https://upload.wikimedia.org/wikipedia/en/3/3e/Sporting_Clube_de_Portugal.svg" },
-        { id: "m8", stadium: "پاریس", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, time: "2026-03-11T23:00:00", img1: "https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg", img2: "https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg" },
-        { id: "m9", stadium: "ڕیاڵ مەدرید", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 3, pX: 4, p2: 2, time: "2026-03-11T23:00:00", img1: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg", img2: "https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg" },
-        { id: "m10", stadium: "ڕۆما", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, time: "2026-03-12T20:45:00", img1: "https://upload.wikimedia.org/wikipedia/en/5/5b/Bologna_F.C._1909_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/f/f7/AS_Roma_logo_%282017%29.svg" },
-        { id: "m11", stadium: "لیل", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, time: "2026-03-12T20:45:00", img1: "https://upload.wikimedia.org/wikipedia/en/3/3f/Lille_OSC_2018_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/f/f9/Aston_Villa_FC_crest_%282016%29.svg" },
-        { id: "m12", stadium: "شتوتگارت", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-12T20:45:00", img1: "https://upload.wikimedia.org/wikipedia/commons/e/eb/VfB_Stuttgart_1893_Logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/f/f1/FC_Porto.svg" },
-        { id: "m13", stadium: "سێلتاڤیگۆ", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, time: "2026-03-12T20:45:00", img1: "https://upload.wikimedia.org/wikipedia/en/1/12/RC_Celta_de_Vigo_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/c/c6/Olympique_Lyonnais_logo.svg" }
+        { id: "m1", stadium: "ئیسپانیۆل", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-09T23:00:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=rcdespanyol.com", img2: "https://www.google.com/s2/favicons?sz=128&domain=realoviedo.es" },
+        { id: "m2", stadium: "گەلەتەسەرای", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, time: "2026-03-10T20:45:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=galatasaray.org", img2: "https://www.google.com/s2/favicons?sz=128&domain=liverpoolfc.com" },
+        { id: "m3", stadium: "ئەتلەنتا", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, time: "2026-03-10T23:00:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=atalanta.it", img2: "https://www.google.com/s2/favicons?sz=128&domain=fcbayern.com" },
+        { id: "m4", stadium: "ئەتلەتیکۆ مەدرید", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, time: "2026-03-10T23:00:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=atleticodemadrid.com", img2: "https://www.google.com/s2/favicons?sz=128&domain=tottenhamhotspur.com" },
+        { id: "m5", stadium: "نیوکاسڵ", t1: "نیوکاسڵ", t2: "بارسا", p1: 4, pX: 3, p2: 2, time: "2026-03-10T23:00:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=nufc.co.uk", img2: "https://www.google.com/s2/favicons?sz=128&domain=fcbarcelona.com" },
+        { id: "m6", stadium: "لیڤەرکوزن", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, time: "2026-03-11T20:45:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=bayer04.de", img2: "https://www.google.com/s2/favicons?sz=128&domain=arsenal.com" },
+        { id: "m7", stadium: "بۆدۆگلیمت", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, time: "2026-03-11T23:00:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=glimt.no", img2: "https://www.google.com/s2/favicons?sz=128&domain=sporting.pt" },
+        { id: "m8", stadium: "پاریس", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, time: "2026-03-11T23:00:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=psg.fr", img2: "https://www.google.com/s2/favicons?sz=128&domain=chelseafc.com" },
+        { id: "m9", stadium: "ڕیاڵ مەدرید", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 3, pX: 4, p2: 2, time: "2026-03-11T23:00:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=realmadrid.com", img2: "https://www.google.com/s2/favicons?sz=128&domain=mancity.com" },
+        { id: "m10", stadium: "ڕۆما", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, time: "2026-03-12T20:45:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=bolognafc.it", img2: "https://www.google.com/s2/favicons?sz=128&domain=asroma.com" },
+        { id: "m11", stadium: "لیل", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, time: "2026-03-12T20:45:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=losc.fr", img2: "https://www.google.com/s2/favicons?sz=128&domain=avfc.co.uk" },
+        { id: "m12", stadium: "شتوتگارت", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-12T20:45:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=vfb.de", img2: "https://www.google.com/s2/favicons?sz=128&domain=fcporto.pt" },
+        { id: "m13", stadium: "سێلتاڤیگۆ", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, time: "2026-03-12T20:45:00", img1: "https://www.google.com/s2/favicons?sz=128&domain=rccelta.es", img2: "https://www.google.com/s2/favicons?sz=128&domain=ol.fr" }
     ];
 
     function renderMatches() {
         let h = ''; let a = '';
         matches.forEach(m => {
-            h += `<div class="match-card" id="${m.id}" data-deadline="${m.time}" data-teams="${m.t1},یەکسان,${m.t2}">
-                <p style="font-size: 11px; margin:0; color: var(--secondary);">یاریگای ${m.stadium}</p>
+            h += `<div class="match-card" id="${m.id}" data-teams="${m.t1},یەکسان,${m.t2}">
+                <p style="font-size: 12px; margin:0; color: var(--secondary); font-weight:bold;">📍 ${m.stadium}</p>
                 <div class="prediction-container">
                     <div class="predict-box">
-                        <img src="${m.img1}" class="team-logo" alt="${m.t1}">
-                        <button class="opt-btn" id="${m.id}-btn1" onclick="makeChoice('${m.id}', 1, ${m.p1})">${m.t1}</button>
+                        <span class="team-name">${m.t1}</span>
+                        <img src="${m.img1}" class="team-logo">
+                        <button class="opt-btn" id="${m.id}-btn1" onclick="makeChoice('${m.id}', 1, ${m.p1})">بردنەوە</button>
                         <span class="pts-text">${m.p1} خاڵ</span>
                     </div>
                     <div class="predict-box">
-                        <div style="height:45px; display:flex; align-items:center; font-weight:bold; color:#475569;">VS</div>
+                        <span class="team-name">X</span>
+                        <div style="height:65px; display:flex; align-items:center; font-weight:bold; color:#475569; font-size:24px;">VS</div>
                         <button class="opt-btn" id="${m.id}-btn2" onclick="makeChoice('${m.id}', 2, ${m.pX})">یەکسان</button>
                         <span class="pts-text">${m.pX} خاڵ</span>
                     </div>
                     <div class="predict-box">
-                        <img src="${m.img2}" class="team-logo" alt="${m.t2}">
-                        <button class="opt-btn" id="${m.id}-btn3" onclick="makeChoice('${m.id}', 3, ${m.p2})">${m.t2}</button>
+                        <span class="team-name">${m.t2}</span>
+                        <img src="${m.img2}" class="team-logo">
+                        <button class="opt-btn" id="${m.id}-btn3" onclick="makeChoice('${m.id}', 3, ${m.p2})">بردنەوە</button>
                         <span class="pts-text">${m.p2} خاڵ</span>
                     </div>
                 </div>
                 <span class="deadline-text" id="timer-${m.id}"></span>
-                <button class="view-preds-btn" id="view-${m.id}" onclick="showAllPredictions('${m.id}')">👁 بینینی پێشبینییەکان</button>
+                <button class="view-preds-btn" id="view-${m.id}" style="background:rgba(255,255,255,0.1); color:white; border:1px solid var(--border); width:100%; padding:10px; border-radius:10px; margin-top:10px; cursor:pointer; display:none;" onclick="showAllPredictions('${m.id}')">👁 بینینی پێشبینی هەمووان</button>
             </div>`;
-            a += `<div style="border-bottom:1px solid #333; padding:10px;">
-                <span>${m.t1} - ${m.t2}</span><br>
-                <button class="opt-btn" style="background:var(--success); width:60px;" onclick="finishMatch('${m.id}', 1, ${m.p1})">1</button>
-                <button class="opt-btn" style="background:#444; width:60px;" onclick="finishMatch('${m.id}', 2, ${m.pX})">X</button>
-                <button class="opt-btn" style="background:var(--danger); width:60px;" onclick="finishMatch('${m.id}', 3, ${m.p2})">2</button>
+            
+            a += `<div class="admin-section">
+                <div style="font-weight:bold; margin-bottom:10px; color:var(--secondary);">${m.t1} VS ${m.t2}</div>
+                <div class="admin-btns">
+                    <button class="opt-btn" style="background:var(--success); flex:1;" onclick="finishMatch('${m.id}', 1, ${m.p1})">بردنەوەی ${m.t1}</button>
+                    <button class="opt-btn" style="background:#444; flex:1;" onclick="finishMatch('${m.id}', 2, ${m.pX})">یەکسانبوون</button>
+                    <button class="opt-btn" style="background:var(--danger); flex:1;" onclick="finishMatch('${m.id}', 3, ${m.p2})">بردنەوەی ${m.t2}</button>
+                </div>
             </div>`;
         });
         document.getElementById('matches-list').innerHTML = h;
@@ -136,7 +166,7 @@
         const name = document.getElementById('userNameInput').value.trim();
         if (name.length < 2) return alert("تکایە ناوەکەت بنووسە");
         db.ref('users/' + name).once('value').then((snap) => {
-            if (!snap.exists()) db.ref('users/' + name).set({ total: 0, predictions: {} });
+            if (!snap.exists()) db.ref('users/' + name).set({ total: 0, weekly: 0 });
             localStorage.setItem('groupBryanUser', name);
             currentUser = name;
             startApp();
@@ -150,8 +180,10 @@
         if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
         renderMatches();
         db.ref('users/' + currentUser).on('value', snap => {
-            if (snap.exists() && snap.val().predictions) highlight(snap.val().predictions);
-            document.getElementById('userPoints').innerText = snap.val()?.total || 0;
+            const data = snap.val();
+            if (data && data.predictions) highlight(data.predictions);
+            document.getElementById('userPoints').innerText = data?.total || 0;
+            document.getElementById('userWeeklyPoints').innerText = data?.weekly || 0;
         });
         checkDeadlines();
     }
@@ -162,20 +194,22 @@
                 const diff = new Date(m.time).getTime() - new Date().getTime();
                 const timer = document.getElementById('timer-' + m.id);
                 if (diff <= 0) {
-                    timer.innerText = "🔒 داخراوە";
+                    timer.innerText = "🔒 داخراوە (یاری دەستی پێکرد)";
                     document.getElementById(m.id).querySelectorAll('.opt-btn').forEach(b => { if(!b.classList.contains('selected')) b.disabled = true; });
                     document.getElementById('view-' + m.id).style.display = 'block';
                 } else {
                     const h = Math.floor(diff / 3600000);
                     const m_ = Math.floor((diff % 3600000) / 60000);
-                    timer.innerText = `⏰ دێدلاین: ${h}ک : ${m_}خ`;
+                    timer.innerText = `⏰ کات ماوە: ${h} کاتژمێر و ${m_} خولەک`;
                 }
             });
         }, 1000);
     }
 
     function makeChoice(mId, cId, pts) {
-        if(confirm("دڵنیای لەم پێشبینییە؟")) db.ref('users/' + currentUser + '/predictions/' + mId).set({ choice: cId, pts: pts });
+        if(confirm("ئایا دڵنیای لەم پێشبینییە؟ دواتر ناتوانی بیگۆڕیت")) {
+            db.ref('users/' + currentUser + '/predictions/' + mId).set({ choice: cId, pts: pts });
+        }
     }
 
     function highlight(preds) {
@@ -192,16 +226,51 @@
     }
 
     function finishMatch(mId, res, pts) {
-        if(!confirm("خاڵ بۆ براوەکان هەژمار بکرێت؟")) return;
+        if(!confirm("خاڵەکان بۆ براوەکان هەژمار بکرێت؟")) return;
         db.ref('users').once('value').then(snap => {
             snap.forEach(u => {
                 const data = u.val();
                 if(data.predictions && data.predictions[mId] && data.predictions[mId].choice == res) {
-                    db.ref('users/'+u.key).update({ total: (data.total||0)+pts });
+                    db.ref('users/'+u.key).update({ 
+                        total: (data.total||0)+pts,
+                        weekly: (data.weekly||0)+pts
+                    });
                 }
             });
-            alert("خاڵەکان بە سەرکەوتوویی دابەش کران");
+            alert("ئەنجامەکە تۆمارکرا و خاڵەکان دابەش کران");
         });
+    }
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('tab-total').classList.toggle('active', tab === 'total');
+        document.getElementById('tab-weekly').classList.toggle('active', tab === 'weekly');
+        updateLeaderboardDisplay();
+    }
+
+    function updateLeaderboardDisplay() {
+        db.ref('users').once('value', snap => {
+            let arr = [];
+            snap.forEach(u => {
+                arr.push({ name: u.key, total: u.val().total || 0, weekly: u.val().weekly || 0 });
+            });
+            
+            if(currentTab === 'total') arr.sort((a,b) => b.total - a.total);
+            else arr.sort((a,b) => b.weekly - a.weekly);
+
+            let html = arr.map((u,i) => `
+                <div class="rank-row">
+                    <span>${i+1}. ${u.name}</span>
+                    <b style="color:${currentTab==='total'?'var(--secondary)':'var(--primary)'}">${currentTab==='total' ? u.total : u.weekly} خاڵ</b>
+                </div>
+            `).join('');
+            document.getElementById('leaderboard-list').innerHTML = html;
+        });
+    }
+
+    function openLeaderboard() {
+        updateLeaderboardDisplay();
+        document.getElementById('leaderboard-overlay').style.display = 'block';
     }
 
     function showAllPredictions(mId) {
@@ -210,31 +279,24 @@
             let html = `<h3 style="text-align:center;color:var(--secondary)">پێشبینی برادەران</h3>`;
             snap.forEach(u => {
                 const p = u.val().predictions?.[mId];
-                html += `<div class="rank-row"><span>${u.key}</span><b>${p ? teamNames[p.choice-1] : '---'}</b></div>`;
+                html += `<div class="rank-row"><span>${u.key}</span><b>${p ? teamNames[p.choice-1] : 'پێشبینی نەکردووە'}</b></div>`;
             });
             document.getElementById('preds-content').innerHTML = html;
             document.getElementById('preds-overlay').style.display = 'block';
         });
     }
 
-    function openLeaderboard() {
-        db.ref('users').once('value', snap => {
-            let arr = [];
-            snap.forEach(child => {
-                arr.push({ name: child.key, pts: child.val().total || 0 });
+    function resetWeeklyOnly() {
+        if(confirm("ئایا دڵنیای تەنها خاڵەکانی 'ئەم هەفتەیە' و پێشبینییەکان سفر دەکەیتەوە؟ (خاڵە گشتییەکان وەک خۆی دەمێنێت)")) {
+            db.ref('users').once('value').then(snap => {
+                snap.forEach(u => {
+                    db.ref('users/' + u.key).update({ 
+                        weekly: 0,
+                        predictions: {} 
+                    });
+                });
+                alert("خاڵە هەفتانەییەکان سفر کرانەوە و پێشبینییەکان سڕانەوە.");
             });
-            arr.sort((a,b) => b.pts - a.pts);
-            let html = `<h3 style="text-align:center;color:var(--secondary)">ڕیزبەندی گشتی</h3>`;
-            html += arr.map((u,i) => `<div class="rank-row"><span>${i+1}. ${u.name}</span><b>${u.pts} خاڵ</b></div>`).join('');
-            document.getElementById('leaderboard-list').innerHTML = html;
-            document.getElementById('leaderboard-overlay').style.display = 'block';
-        });
-    }
-
-    function resetWeekly() {
-        if(confirm("ئایا دڵنیای هەموو پێشبینییەکان دەسڕیتەوە بۆ ئەم هەفتەیە؟ (خاڵە گشتییەکان نامێنن)")) {
-            db.ref('users').once('value').then(snap => snap.forEach(u => db.ref('users/' + u.key).update({ predictions: {} })));
-            alert("سفر کرایەوە");
         }
     }
 
