@@ -71,9 +71,9 @@
                     <div class="team-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png"><span class="team-name">میلان</span></div>
                 </div>
                 <div class="prediction-grid">
-                    <button class="opt-btn" onclick="makeChoice('m1', 1, 2)"><strong>بردنەوەی ئینتەر</strong><span class="pts-badge">2 خاڵ</span></button>
-                    <button class="opt-btn" onclick="makeChoice('m1', 2, 3)"><strong>یەکسانبوون</strong><span class="pts-badge">3 خاڵ</span></button>
-                    <button class="opt-btn" onclick="makeChoice('m1', 3, 4)"><strong>بردنەوەی میلان</strong><span class="pts-badge">4 خاڵ</span></button>
+                    <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1)"><strong>بردنەوەی ئینتەر</strong><span class="pts-badge">2 خاڵ</span></button>
+                    <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2)"><strong>یەکسانبوون</strong><span class="pts-badge">3 خاڵ</span></button>
+                    <button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3)"><strong>بردنەوەی میلان</strong><span class="pts-badge">4 خاڵ</span></button>
                 </div>
             </div>
         </div>
@@ -93,15 +93,25 @@
 </div>
 
 <script>
-    // --- گرنگ: لێرە زانیارییەکانی Firebase خۆت دابنێ ---
+    // ********************************************************
+    // const firebaseConfig = {
+    apiKey: "AIzaSy...",
+    authDomain: "your-app.firebaseapp.com",
+    databaseURL: "https://your-app-default-rtdb.firebaseio.com",
+    projectId: "your-app",
+    storageBucket: "your-app.appspot.com",
+    messagingSenderId: "...",
+    appId: "..."
+}; 
+    // ********************************************************
     const firebaseConfig = {
-        apiKey: "AIzaSy...",
-        authDomain: "your-app.firebaseapp.com",
-        databaseURL: "https://your-app-default-rtdb.firebaseio.com",
-        projectId: "your-app",
-        storageBucket: "your-app.appspot.com",
-        messagingSenderId: "...",
-        appId: "..."
+        apiKey: "لێرە دایبنێ",
+        authDomain: "لێرە دایبنێ",
+        databaseURL: "لێرە دایبنێ",
+        projectId: "لێرە دایبنێ",
+        storageBucket: "لێرە دایبنێ",
+        messagingSenderId: "لێرە دایبنێ",
+        appId: "لێرە دایبنێ"
     };
     
     firebase.initializeApp(firebaseConfig);
@@ -109,14 +119,13 @@
 
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // لۆگین
     function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
-        if (name.length < 2) return alert("ناوێکی ڕاست بنووسە");
+        if (name.length < 2) return alert("تکایە ناوێک بنووسە");
         
-        currentUser = name;
         localStorage.setItem('groupBryanUser', name);
-        
+        currentUser = name;
+
         // دروستکردنی بەکارهێنەر لە داتابەیس ئەگەر نەبێت
         db.ref('users/' + name).once('value', snapshot => {
             if (!snapshot.exists()) {
@@ -131,31 +140,41 @@
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
         
-        // بارکردنی خاڵەکان و پێشبینییە کۆنەکان
+        // گوێگرتن لە گۆڕانکارییەکانی خاڵ و پێشبینییەکان
         db.ref('users/' + currentUser).on('value', snapshot => {
             const data = snapshot.val();
-            document.getElementById('userPoints').innerText = data.points || 0;
-            if (data.predictions) {
-                // ڕەنگکردنی ئەو دوگمەیەی پێشتر هەڵبژێردراوە
-                Object.keys(data.predictions).forEach(mId => {
-                    const choice = data.predictions[mId];
-                    // لێرە دەتوانیت لۆجیکێک دابنێیت بۆ نیشاندانی هەڵبژاردەکان
-                });
+            if(data) {
+                document.getElementById('userPoints').innerText = data.points || 0;
+                highlightChoices(data.predictions || {});
             }
         });
     }
 
-    // ئەنجامدانی پێشبینی
-    function makeChoice(matchId, choiceId, points) {
+    function makeChoice(matchId, choiceId) {
         if (!currentUser) return;
         
         db.ref('users/' + currentUser + '/predictions/' + matchId).set(choiceId)
         .then(() => {
-            alert("پێشبینییەکەت تۆمارکرا!");
+            alert("پێشبینییەکەت بە سەرکەوتوویی تۆمارکرا!");
+        }).catch(err => {
+            alert("هەڵەیەک ڕوویدا: " + err.message);
         });
     }
 
-    // بارکردنی ڕیزبەندی
+    function highlightChoices(predictions) {
+        // لێرە دەتوانیت ڕەنگی دوگمە هەڵبژێردراوەکان بگۆڕیت
+        Object.keys(predictions).forEach(mId => {
+            const choiceId = predictions[mId];
+            const btn = document.getElementById(`${mId}-btn${choiceId}`);
+            if(btn) {
+                // پاککردنەوەی دوگمەکانی تر
+                document.querySelectorAll(`#${mId} .opt-btn`).forEach(b => b.classList.remove('selected'));
+                // ڕەنگکردنی دوگمە نوێیەکە
+                btn.classList.add('selected');
+            }
+        });
+    }
+
     function loadLeaderboard() {
         document.getElementById('leaderboard-modal').style.display = 'flex';
         const listDiv = document.getElementById('leaderboardList');
@@ -164,9 +183,9 @@
         db.ref('users').orderByChild('points').once('value', snapshot => {
             let users = [];
             snapshot.forEach(child => {
-                users.push({ name: child.key, points: child.val().points });
+                users.push({ name: child.key, points: child.val().points || 0 });
             });
-            users.reverse(); // بۆ ئەوەی زۆرترین خاڵ لە سەرەوە بێت
+            users.reverse();
 
             listDiv.innerHTML = "";
             users.forEach((u, index) => {
@@ -180,15 +199,16 @@
     }
 
     function logoutUser() {
-        localStorage.removeItem('groupBryanUser');
-        location.reload();
+        if(confirm("دڵنیایت لە دەرچوون؟")) {
+            localStorage.removeItem('groupBryanUser');
+            location.reload();
+        }
     }
 
-    // پشکنین لە کاتی کردنەوەی لاپەڕە
     if (currentUser) {
         startApp();
     }
 </script>
 
 </body>
-</html>
+                        </html>
