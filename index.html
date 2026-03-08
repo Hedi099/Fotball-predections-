@@ -13,7 +13,7 @@
         .container { width: 100%; max-width: 480px; padding: 15px; }
         
         #login-page, #main-app { background: rgba(30, 41, 59, 0.7); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-top: 20px; text-align: center; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 15px; text-align: center; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 15px; text-align: center; color: black; }
         button { cursor: pointer; border: none; font-weight: bold; }
         .btn-main { width: 100%; background: var(--primary); color: white; padding: 15px; border-radius: 10px; }
         
@@ -25,7 +25,7 @@
         
         .options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
         .opt-btn { background: rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; font-size: 12px; }
-        .opt-btn.selected { background: var(--secondary); color: black; }
+        .opt-btn.selected { background: var(--secondary) !important; color: black !important; }
         
         .rank-btn { background: white; color: black; width: 100%; padding: 12px; border-radius: 10px; margin-top: 15px; }
         #leaderboard { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; padding: 20px; overflow-y: auto; z-index: 100; }
@@ -55,7 +55,8 @@
 </div>
 
 <div id="leaderboard">
-    <button onclick="document.getElementById('leaderboard').style.display='none'" style="padding: 10px; margin-bottom: 20px;">داخستن ✖</button>
+    <button onclick="document.getElementById('leaderboard').style.display='none'" style="padding: 10px 20px; margin-bottom: 20px; background: red; color: white; border-radius: 10px;">داخستن ✖</button>
+    <h3 style="text-align: center;">ڕیزبەندی خاڵەکان</h3>
     <div id="rank-list"></div>
 </div>
 
@@ -69,11 +70,14 @@
         messagingSenderId: "655783456427",
         appId: "1:655783456427:web:1535d3dfd9b53515c391ee"
     };
-    firebase.initializeApp(firebaseConfig);
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.database();
     let currentUser = localStorage.getItem('bUser');
 
-    // وێنەکانم گۆڕی بۆ ئەم لینکە جێگیرانە بۆ ئەوەی بلۆک نەکرێن
+    // وێنەکان لە Transfermarkt - هەمان ئەو لینکەی کە پێشتر حەزت لێبوو
     const matchList = [
         { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
         { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/141.png", img2: "https://tmssl.akamaized.net/images/crest/big/31.png" },
@@ -82,7 +86,7 @@
 
     function login() {
         const n = document.getElementById('userName').value.trim();
-        if(n.length < 2) return;
+        if(n.length < 2) return alert("تکایە ناو بنووسە");
         localStorage.setItem('bUser', n);
         currentUser = n;
         location.reload();
@@ -97,14 +101,14 @@
         matchList.forEach(m => {
             h += `<div class="match-card" id="${m.id}">
                 <div class="match-info">
-                    <div class="team-box"><img src="${m.img1}" class="team-logo"><span class="team-name">${m.t1}</span></div>
+                    <div class="team-box"><img src="${m.img1}" class="team-logo" onerror="this.src='https://via.placeholder.com/60'"><span class="team-name">${m.t1}</span></div>
                     <div style="font-weight:bold;">VS</div>
-                    <div class="team-box"><img src="${m.img2}" class="team-logo"><span class="team-name">${m.t2}</span></div>
+                    <div class="team-box"><img src="${m.img2}" class="team-logo" onerror="this.src='https://via.placeholder.com/60'"><span class="team-name">${m.t2}</span></div>
                 </div>
                 <div class="options">
-                    <button class="opt-btn" id="${m.id}-1" onclick="vote('${m.id}', 1)">1 (${m.p1}خاڵ)</button>
-                    <button class="opt-btn" id="${m.id}-2" onclick="vote('${m.id}', 2)">X (${m.pX}خاڵ)</button>
-                    <button class="opt-btn" id="${m.id}-3" onclick="vote('${m.id}', 3)">2 (${m.p2}خاڵ)</button>
+                    <button class="opt-btn" id="${m.id}-1" onclick="vote('${m.id}', 1)">1 (${m.p1})</button>
+                    <button class="opt-btn" id="${m.id}-2" onclick="vote('${m.id}', 2)">X (${m.pX})</button>
+                    <button class="opt-btn" id="${m.id}-3" onclick="vote('${m.id}', 3)">2 (${m.p2})</button>
                 </div>
             </div>`;
         });
@@ -112,12 +116,14 @@
 
         db.ref('users/' + currentUser).on('value', s => {
             const data = s.val();
-            if(!data) db.ref('users/' + currentUser).set({total:0});
-            else {
+            if(!data) {
+                db.ref('users/' + currentUser).set({total:0});
+            } else {
                 document.getElementById('scoreTotal').innerText = data.total || 0;
                 if(data.predictions) {
                     Object.keys(data.predictions).forEach(mid => {
-                        const btn = document.getElementById(mid + '-' + data.predictions[mid]);
+                        const choiceValue = data.predictions[mid];
+                        const btn = document.getElementById(mid + '-' + choiceValue);
                         if(btn) {
                             document.getElementById(mid).querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
                             btn.classList.add('selected');
@@ -129,7 +135,7 @@
     }
 
     function vote(mId, choice) {
-        if(confirm("دڵنیای؟")) {
+        if(confirm("پێشبینییەکەت جێگیر دەکەیت؟")) {
             db.ref('users/' + currentUser + '/predictions/' + mId).set(choice);
         }
     }
@@ -137,14 +143,20 @@
     function showRank() {
         db.ref('users').once('value', s => {
             let arr = [];
-            s.forEach(u => { arr.push({ name: u.key, total: u.val().total || 0 }); });
-            arr.sort((a,b) => b.total - a.total);
-            document.getElementById('rank-list').innerHTML = arr.map((u, i) => `
-                <div class="rank-row">
-                    <span>${i+1}. ${u.name}</span>
-                    <b>${u.total} خاڵ</b>
-                </div>
-            `).join('');
+            s.forEach(u => {
+                arr.push({ name: u.key, total: u.val().total || 0 });
+            });
+            arr.sort((a, b) => b.total - a.total);
+            
+            let rankHtml = '';
+            arr.forEach((u, i) => {
+                rankHtml += `
+                    <div class="rank-row">
+                        <span>${i+1}. ${u.name}</span>
+                        <b>${u.total} خاڵ</b>
+                    </div>`;
+            });
+            document.getElementById('rank-list').innerHTML = rankHtml;
             document.getElementById('leaderboard').style.display = 'block';
         });
     }
