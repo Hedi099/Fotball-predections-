@@ -15,13 +15,12 @@
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: radial-gradient(circle at top right, #1e293b, #0f172a); color: white; margin: 0; min-height: 100vh; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 450px; padding: 20px; padding-bottom: 100px; }
+        .container { width: 100%; max-width: 480px; padding: 20px; padding-bottom: 120px; }
 
         /* لۆگین */
-        #login-page { margin-top: 80px; text-align: center; background: var(--card-bg); padding: 40px 20px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #login-page { margin-top: 80px; text-align: center; background: var(--card-bg); padding: 40px 20px; border-radius: 30px; border: 1px solid var(--border); }
         input { width: 100%; background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); padding: 15px; border-radius: 15px; color: white; margin-bottom: 15px; text-align: center; outline: none; }
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-main:hover { opacity: 0.9; transform: scale(0.98); }
+        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
         /* ئەپ */
         #main-app { display: none; width: 100%; animation: fadeIn 0.5s ease; }
@@ -30,80 +29,67 @@
         /* کارتى یاری */
         .match-card {
             background: var(--card-bg);
-            padding: 25px;
-            border-radius: 35px;
+            padding: 20px;
+            border-radius: 30px;
             border: 1px solid var(--border);
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
+
+        .match-info { font-size: 11px; color: #94a3b8; margin-bottom: 10px; display: block; }
 
         .teams-area {
             display: flex;
             justify-content: space-around;
             align-items: center;
-            margin: 25px 0;
+            margin: 15px 0;
         }
 
         .team { flex: 1; text-align: center; }
-        /* لۆگۆکانمان لێرە چاک کرد */
-        .team img { width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5)); }
-        .team div { margin-top: 10px; font-weight: bold; font-size: 14px; }
-        .vs { font-size: 20px; font-weight: 900; color: var(--secondary); background: rgba(245, 158, 11, 0.1); padding: 5px 10px; border-radius: 10px; }
+        .team img { width: 60px; height: 60px; object-fit: contain; }
+        .team div { margin-top: 8px; font-weight: bold; font-size: 13px; }
+        .vs { font-size: 18px; font-weight: 900; color: var(--secondary); opacity: 0.6; }
 
         /* دوگمەکانی پێشبینی */
         .prediction-options {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 25px;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .opt-btn {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 12px 5px;
+            border-radius: 15px;
+            padding: 10px 2px;
             cursor: pointer;
             transition: 0.3s;
             color: white;
         }
 
-        .opt-btn span { display: block; font-size: 10px; color: #94a3b8; margin-top: 4px; }
-        .opt-btn strong { display: block; font-size: 13px; }
+        .opt-btn span { display: block; font-size: 10px; color: #94a3b8; margin-top: 3px; }
+        .opt-btn strong { display: block; font-size: 12px; }
         
-        .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
-        .opt-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+        .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+        .opt-btn.disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* دوگمەی ڕیزبەندی */
+        /* بارى خوارەوە */
         .nav-bar {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            max-width: 380px;
-            background: rgba(30, 41, 59, 0.98);
-            backdrop-filter: blur(15px);
-            padding: 18px;
-            border-radius: 25px;
-            text-align: center;
-            border: 1px solid var(--border);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 400px; background: rgba(30, 41, 59, 0.98);
+            backdrop-filter: blur(15px); padding: 15px; border-radius: 20px;
+            text-align: center; border: 1px solid var(--border); z-index: 50;
         }
 
-        /* مۆداڵ */
         #leaderboard-modal {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
             z-index: 100; justify-content: center; align-items: center;
         }
 
-        .modal-content {
-            background: #1e293b; width: 90%; max-width: 350px;
-            padding: 30px; border-radius: 30px; border: 1px solid var(--border);
-        }
-
+        .modal-content { background: #1e293b; width: 90%; max-width: 350px; padding: 30px; border-radius: 30px; border: 1px solid var(--border); }
         .rank-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border); }
     </style>
 </head>
@@ -111,82 +97,107 @@
 
 <div class="container">
     <div id="login-page">
-        <h1 style="font-size: 24px; margin-bottom: 10px;">🏆 ئەپی پێشبینی</h1>
-        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 25px;">بۆ دەستپێکردن ناوت بنووسە</p>
-        <input type="text" id="userNameInput" placeholder="ناوی بەکارهێنەر">
+        <h1 style="font-size: 24px; margin-bottom: 10px;">⚽ پێشبینییەکانی هاوار</h1>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
         <button class="btn-main" onclick="saveUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <div id="welcomeText" style="font-weight: bold; font-size: 18px;"></div>
-            <div id="timer" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: bold;"></div>
+            <div id="welcomeText" style="font-weight: bold;"></div>
+            <div id="timer" style="color: #ef4444; font-size: 12px; font-weight: bold; background: rgba(239, 68, 68, 0.1); padding: 5px 10px; border-radius: 10px;"></div>
         </header>
 
-        <div class="match-card">
-            <div style="background: rgba(59, 130, 246, 0.1); color: var(--primary); display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-bottom: 15px; font-weight: bold;">
-                ئیتاڵیا - سری ئا
-            </div>
-            
+        <div class="match-card" id="match-1">
+            <span class="match-info">ئیتاڵیا - سان سیرۆ</span>
             <div class="teams-area">
                 <div class="team">
-                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png" alt="Inter">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/200px-Inter_Milan_2021.svg.png" alt="Inter">
                     <div>ئینتەر</div>
                 </div>
                 <div class="vs">VS</div>
                 <div class="team">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png" alt="Milan">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/200px-Logo_of_AC_Milan.svg.png" alt="Milan">
                     <div>میلان</div>
                 </div>
             </div>
-
             <div class="prediction-options">
-                <button class="opt-btn" id="opt-1" onclick="makeChoice(1, 'بردنەوەی ئینتەر')">
-                    <strong>بردنەوە</strong><span>2 خاڵ</span>
-                </button>
-                <button class="opt-btn" id="opt-2" onclick="makeChoice(2, 'یەکسانبوون')">
-                    <strong>یەکسان</strong><span>3 خاڵ</span>
-                </button>
-                <button class="opt-btn" id="opt-3" onclick="makeChoice(3, 'بردنەوەی میلان')">
-                    <strong>بردنەوە</strong><span>4 خاڵ</span>
-                </button>
+                <button class="opt-btn" id="m1-opt1" onclick="makeChoice(1, 1, 'بردنەوەی ئینتەر')"><strong>بردنەوە</strong><span>2 خاڵ</span></button>
+                <button class="opt-btn" id="m1-opt2" onclick="makeChoice(1, 2, 'یەکسانبوون')"><strong>یەکسان</strong><span>3 خاڵ</span></button>
+                <button class="opt-btn" id="m1-opt3" onclick="makeChoice(1, 3, 'بردنەوەی میلان')"><strong>بردنەوە</strong><span>4 خاڵ</span></button>
             </div>
-            <p id="lockStatus" style="margin-top: 20px; font-size: 12px; color: #10b981; display: none; font-weight: bold;">🔒 پێشبینییەکەت بە سەرکەوتوویی قوفڵ کرا</p>
+        </div>
+
+        <div class="match-card" id="match-2">
+            <span class="match-info">ئیسپانیا - ڕامۆن سانچێز</span>
+            <div class="teams-area">
+                <div class="team">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Sevilla_FC_logo.svg/200px-Sevilla_FC_logo.svg.png" alt="Sevilla">
+                    <div>سێڤییا</div>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1b/Rayo_Vallecano_logo.svg/200px-Rayo_Vallecano_logo.svg.png" alt="Rayo">
+                    <div>ڕایۆ ڤاییکانۆ</div>
+                </div>
+            </div>
+            <div class="prediction-options">
+                <button class="opt-btn" id="m2-opt1" onclick="makeChoice(2, 1, 'بردنەوەی سێڤییا')"><strong>بردنەوە</strong><span>2 خاڵ</span></button>
+                <button class="opt-btn" id="m2-opt2" onclick="makeChoice(2, 2, 'یەکسانبوون')"><strong>یەکسان</strong><span>3 خاڵ</span></button>
+                <button class="opt-btn" id="m2-opt3" onclick="makeChoice(2, 3, 'بردنەوەی ڕایۆ')"><strong>بردنەوە</strong><span>4 خاڵ</span></button>
+            </div>
+        </div>
+
+        <div class="match-card" id="match-3">
+            <span class="match-info">ئیتاڵیا - لوئیجی فێراریس</span>
+            <div class="teams-area">
+                <div class="team">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/6c/Genoa_C.F.C._logo.svg/200px-Genoa_C.F.C._logo.svg.png" alt="Genoa">
+                    <div>جەنەوا</div>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/AS_Roma_logo_%282017%29.svg/200px-AS_Roma_logo_%282017%29.svg.png" alt="Roma">
+                    <div>ڕۆما</div>
+                </div>
+            </div>
+            <div class="prediction-options">
+                <button class="opt-btn" id="m3-opt1" onclick="makeChoice(3, 1, 'بردنەوەی جەنەوا')"><strong>بردنەوە</strong><span>4 خاڵ</span></button>
+                <button class="opt-btn" id="m3-opt2" onclick="makeChoice(3, 2, 'یەکسانبوون')"><strong>یەکسان</strong><span>2 خاڵ</span></button>
+                <button class="opt-btn" id="m3-opt3" onclick="makeChoice(3, 3, 'بردنەوەی ڕۆما')"><strong>بردنەوە</strong><span>3 خاڵ</span></button>
+            </div>
         </div>
 
         <div class="nav-bar">
-            <button onclick="toggleLeaderboard(true)" style="background: none; border: none; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; margin: auto;">
-                🏆 ڕیزبەندی گشتی پێشبینیکەران
-            </button>
+            <button onclick="toggleLeaderboard(true)" style="background: none; border: none; color: white; font-weight: bold; cursor: pointer;">🏆 بینینی ڕیزبەندی</button>
         </div>
     </div>
 </div>
 
 <div id="leaderboard-modal">
     <div class="modal-content">
-        <h3 style="text-align: center; color: var(--secondary); margin-bottom: 20px;">🏆 لیستى ڕیزبەندی</h3>
-        <div id="myRankDisplay" class="rank-row" style="color: var(--primary); font-weight: bold; border-bottom: none;">
-            </div>
-        <button class="btn-main" style="margin-top: 25px; background: #334155;" onclick="toggleLeaderboard(false)">گەڕانەوە</button>
+        <h3 style="text-align: center; color: var(--secondary);">🏆 لیستى ڕیزبەندی</h3>
+        <div id="myRankDisplay" class="rank-row"></div>
+        <button class="btn-main" style="margin-top: 20px; background: #334155;" onclick="toggleLeaderboard(false)">داخستن</button>
     </div>
 </div>
 
 <script>
-    // کاتی یاری: ٨ی ئازار کاتژمێر ٩ی شەو
-    const matchDeadline = new Date(2026, 2, 8, 21, 0, 0).getTime();
+    // دێدلاین: ئەمشەو ٨:٣٠ (٨ی ئازار)
+    const matchDeadline = new Date(2026, 2, 8, 20, 30, 0).getTime();
 
     window.onload = function() {
         const name = localStorage.getItem('app_user_name');
         if (name) {
             showApp(name);
-            checkLock();
+            checkAllLocks();
             startTimer();
         }
     };
 
     function saveUser() {
         const name = document.getElementById('userNameInput').value;
-        if (!name || name.trim() === "") return alert("تکایە ناوەکەت بنووسە");
+        if (!name) return;
         localStorage.setItem('app_user_name', name);
         location.reload();
     }
@@ -194,48 +205,48 @@
     function showApp(name) {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('welcomeText').innerText = "سڵاو، " + name;
+        document.getElementById('welcomeText').innerText = "بەخێرهاتی " + name;
         document.getElementById('myRankDisplay').innerHTML = `<span>١. ${name}</span> <strong>0 خاڵ</strong>`;
     }
 
-    function makeChoice(id, text) {
-        if (localStorage.getItem('milan_choice')) return;
+    function makeChoice(matchId, optId, text) {
+        if (localStorage.getItem('match_' + matchId)) return;
+        if (new Date().getTime() > matchDeadline) return alert("کات تەواو بووە!");
 
-        if (confirm(`ئایا دڵنیایت لە پێشبینی: ${text}؟\nتێبینی: ئیتر ناگۆڕدرێت!`)) {
-            localStorage.setItem('milan_choice', id);
-            checkLock();
+        if (confirm(`ئایا دڵنیایت لە پێشبینی: ${text}؟\nئیتر ناگۆڕدرێت!`)) {
+            localStorage.setItem('match_' + matchId, optId);
+            checkAllLocks();
         }
     }
 
-    function checkLock() {
-        const saved = localStorage.getItem('milan_choice');
-        if (saved) {
-            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.add('disabled'));
-            document.getElementById('opt-' + saved).classList.add('selected');
-            document.getElementById('lockStatus').style.display = 'block';
+    function checkAllLocks() {
+        for (let i = 1; i <= 3; i++) {
+            const saved = localStorage.getItem('match_' + i);
+            if (saved) {
+                document.querySelectorAll(`#match-${i} .opt-btn`).forEach(btn => btn.classList.add('disabled'));
+                document.getElementById(`m${i}-opt${saved}`).classList.add('selected');
+                document.getElementById(`m${i}-opt${saved}`).classList.remove('disabled');
+            }
         }
     }
 
     function startTimer() {
-        const timerEl = document.getElementById('timer');
         setInterval(() => {
             const now = new Date().getTime();
             const diff = matchDeadline - now;
             if (diff <= 0) {
-                timerEl.innerText = "داخراوە";
+                document.getElementById('timer').innerText = "پێشبینی داخراوە";
                 document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.add('disabled'));
             } else {
                 const h = Math.floor(diff / (1000 * 60 * 60));
                 const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((diff % (1000 * 60)) / 1000);
-                timerEl.innerText = `کات ماوە: ${h}:${m}:${s}`;
+                document.getElementById('timer').innerText = `قوفڵ دەبێت لە: ${h}:${m}:${s}`;
             }
         }, 1000);
     }
 
-    function toggleLeaderboard(show) {
-        document.getElementById('leaderboard-modal').style.display = show ? 'flex' : 'none';
-    }
+    function toggleLeaderboard(show) { document.getElementById('leaderboard-modal').style.display = show ? 'flex' : 'none'; }
 </script>
 
 </body>
