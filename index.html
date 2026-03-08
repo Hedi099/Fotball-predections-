@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>گروپی برایان - ئۆنلاین</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     
@@ -13,33 +14,42 @@
         body { background: #0f172a; color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 450px; padding: 20px; }
         
-        /* Styles */
-        #login-page, #main-app { background: var(--card-bg); padding: 30px; border-radius: 25px; border: 1px solid var(--border); margin-top: 50px; text-align: center; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; margin-bottom: 20px; text-align: center; }
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        #login-page, #main-app { background: var(--card-bg); padding: 30px; border-radius: 25px; border: 1px solid var(--border); margin-top: 50px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; margin-bottom: 20px; text-align: center; font-size: 16px; outline: none; }
+        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        
         .match-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-top: 20px; }
-        .opt-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 10px; cursor: pointer; margin: 5px; width: 30%; font-size: 12px; }
-        .opt-btn.selected { background: var(--primary); border-color: white; }
-        .rank-btn { margin-top: 20px; background: none; border: 1px solid var(--secondary); color: var(--secondary); padding: 10px 20px; border-radius: 10px; cursor: pointer; }
+        .opt-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 12px; cursor: pointer; margin: 5px; width: 30%; font-size: 13px; transition: 0.3s; }
+        .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        
+        .leaderboard-section { margin-top: 30px; background: rgba(255,255,255,0.02); border-radius: 15px; padding: 15px; }
+        .rank-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-page">
-        <h2 style="color: var(--secondary)">چوونە ژوورەوە</h2>
+        <h2 style="color: var(--secondary); margin-bottom: 10px;">بەخێربێن بۆ گروپی برایان</h2>
+        <p style="color: #94a3b8; font-size: 14px;">بۆ بینینی پێشبینییەکان و ڕیزبەندی لۆگین بکە</p>
         <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە...">
-        <button class="btn-main" onclick="loginUser()">دەستپێبکە</button>
+        <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span id="welcomeText"></span>
-            <button onclick="logoutUser()" style="color: var(--danger); background:none; border:none; cursor:pointer;">دەرچوون</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="text-align: right;">
+                <span id="welcomeText" style="font-weight: bold;"></span><br>
+                <button onclick="logoutUser()" style="color: var(--danger); background:none; border:none; cursor:pointer; font-size: 12px; padding:0;">دەرچوون</button>
+            </div>
+            <div style="background: rgba(245, 158, 11, 0.1); padding: 5px 15px; border-radius: 10px; border: 1px solid var(--secondary);">
+                <span style="font-size: 12px; color: #94a3b8;">خاڵەکانت:</span>
+                <strong id="userPoints" style="color: var(--secondary); font-size: 18px;">0</strong>
+            </div>
         </div>
         
         <div class="match-card">
-            <p>ئیتاڵیا: ئینتەر - میلان</p>
+            <h4 style="margin-top: 0;">یاری ئەمشەو: ئینتەر vs میلان</h4>
             <div style="display: flex; justify-content: center;">
                 <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1)">ئینتەر</button>
                 <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2)">یەکسان</button>
@@ -47,44 +57,26 @@
             </div>
         </div>
 
-        <button class="rank-btn" onclick="showLeaderboard()">🏆 بینینی ڕیزبەندی</button>
-        <div id="leaderboard" style="margin-top: 20px; text-align: right;"></div>
+        <div class="leaderboard-section">
+            <h4 style="color: var(--secondary); margin-bottom: 15px;">🏆 ڕیزبەندی برادەران</h4>
+            <div id="leaderboardList"></div>
+        </div>
     </div>
 </div>
 
 <script>
-     // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ",
-  authDomain: "brayan-2a1ef.firebaseapp.com",
-  databaseURL: "https://brayan-2a1ef-default-rtdb.firebaseio.com",
-  projectId: "brayan-2a1ef",
-  storageBucket: "brayan-2a1ef.firebasestorage.app",
-  messagingSenderId: "655783456427",
-  appId: "1:655783456427:web:1535d3dfd9b53515c391ee",
-  measurementId: "G-ZJEW7HEPVE"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    // Config جێگیرکراوەکەی تۆ
     const firebaseConfig = {
-        apiKey: "AIzaSy...",
-        authDomain: "...",
-        databaseURL: "...", // دڵنیابە ئەم لینکە لێرەیە
-        projectId: "...",
-        storageBucket: "...",
-        messagingSenderId: "...",
-        appId: "..."
+        apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ",
+        authDomain: "brayan-2a1ef.firebaseapp.com",
+        databaseURL: "https://brayan-2a1ef-default-rtdb.firebaseio.com",
+        projectId: "brayan-2a1ef",
+        storageBucket: "brayan-2a1ef.firebasestorage.app",
+        messagingSenderId: "655783456427",
+        appId: "1:655783456427:web:1535d3dfd9b53515c391ee"
     };
 
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -92,33 +84,47 @@ const analytics = getAnalytics(app);
 
     function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
-        if (name.length < 2) return alert("ناوەکەت زۆر کورتە");
+        if (name.length < 2) return alert("تکایە ناوێکی تەواو بنووسە");
 
-        // پشکنین و پاشەکەوتکردن لە سێرڤەر
-        db.ref('users/' + name).once('value', (snap) => {
-            if (!snap.exists()) {
-                db.ref('users/' + name).set({ points: 0, predictions: {} });
-            }
-            localStorage.setItem('groupBryanUser', name);
-            currentUser = name;
-            startApp();
-        }).catch(err => alert("هەڵە لە فایەربەیس: " + err.message));
+        db.ref('users/' + name).once('value')
+            .then((snap) => {
+                if (!snap.exists()) {
+                    // ئەگەر یەکەمجاری بوو، خاڵەکانی بۆ سفر بکە
+                    return db.ref('users/' + name).set({ points: 0, predictions: {} });
+                }
+            })
+            .then(() => {
+                localStorage.setItem('groupBryanUser', name);
+                currentUser = name;
+                startApp();
+            })
+            .catch((err) => {
+                alert("هەڵە: " + err.message + "\nدڵنیابە لە Firebase بەشی Rules هەردووکیانت کردووەتە true");
+            });
     }
 
     function startApp() {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('welcomeText').innerText = "سڵاو " + currentUser;
+        document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
         
-        // هێنانی پێشبینییەکان
-        db.ref('users/' + currentUser + '/predictions').on('value', (snap) => {
-            const preds = snap.val() || {};
-            highlight(preds);
+        // گوێگرتن لە خاڵەکان و پێشبینییەکانی بەکارهێنەر
+        db.ref('users/' + currentUser).on('value', (snap) => {
+            const data = snap.val();
+            if (data) {
+                document.getElementById('userPoints').innerText = data.points || 0;
+                if (data.predictions) highlight(data.predictions);
+            }
         });
+
+        // نوێکردنەوەی ڕیزبەندی بە زیندوویی
+        loadLeaderboard();
     }
 
     function makeChoice(mId, cId) {
-        db.ref('users/' + currentUser + '/predictions/' + mId).set(cId);
+        if (!currentUser) return;
+        db.ref('users/' + currentUser + '/predictions/' + mId).set(cId)
+            .catch(err => alert("کێشە لە ناردن: " + err.message));
     }
 
     function highlight(preds) {
@@ -129,14 +135,21 @@ const analytics = getAnalytics(app);
         });
     }
 
-    function showLeaderboard() {
-        const list = document.getElementById('leaderboard');
-        db.ref('users').once('value', (snap) => {
-            let html = "<h4>ڕیزبەندی:</h4>";
-            snap.forEach(user => {
-                html += `<div>${user.key}: ${user.val().points} خاڵ</div>`;
+    function loadLeaderboard() {
+        db.ref('users').orderByChild('points').on('value', (snap) => {
+            let users = [];
+            snap.forEach(u => {
+                users.push({ name: u.key, points: u.val().points || 0 });
             });
-            list.innerHTML = html;
+            users.reverse(); // بۆ ئەوەی خاوەن خاڵی زۆر لە سەرەوە بێت
+
+            const listDiv = document.getElementById('leaderboardList');
+            listDiv.innerHTML = users.map((u, i) => `
+                <div class="rank-row">
+                    <span>${i+1}. ${u.name}</span>
+                    <span style="color: var(--secondary)">${u.points} خاڵ</span>
+                </div>
+            `).join('');
         });
     }
 
@@ -147,5 +160,6 @@ const analytics = getAnalytics(app);
 
     if (currentUser) startApp();
 </script>
+
 </body>
-    </html>
+</html> 
