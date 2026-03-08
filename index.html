@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئەپی پێشبینی وەرزشی - هاوار</title>
+    <title>ئەپی پێشبینی هاوار</title>
     <style>
-        /* --- بەشی دیزاین (CSS) --- */
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        /* --- ستایڵ و ڕەنگەکان --- */
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        
         body {
-            background-color: #0f172a; /* ڕەنگی ڕەشی مۆدێرن */
+            background-color: #0f172a;
             color: #f8fafc;
             margin: 0;
             padding: 20px;
@@ -20,165 +17,134 @@
             justify-content: center;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 500px;
-        }
+        .app-container { width: 100%; max-width: 500px; }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: #3b82f6; margin-bottom: 5px; }
 
-        .header h1 {
-            font-size: 24px;
-            color: #3b82f6;
-            margin-bottom: 5px;
-        }
-
-        /* سێ کارتە سەرەکییەکە */
-        .top-cards {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
+        /* سێ کارتەکە */
+        .top-cards { display: flex; gap: 10px; margin-bottom: 25px; }
         .card {
-            flex: 1;
-            padding: 15px;
-            border-radius: 16px;
-            text-align: center;
+            flex: 1; padding: 15px; border-radius: 15px;
+            text-align: center; background: #1e293b;
+            border-bottom: 4px solid #3b82f6;
+        }
+        .card h3 { font-size: 12px; margin: 0; color: #94a3b8; }
+        .card .count { font-size: 20px; font-weight: bold; display: block; margin-top: 5px; }
+
+        /* --- بەشی نوێ: فۆرمی ناردنی پێشبینی --- */
+        .prediction-form {
             background: #1e293b;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
             border: 1px solid #334155;
         }
-
-        .card h3 {
-            font-size: 13px;
-            margin: 0 0 10px 0;
-            color: #94a3b8;
+        .prediction-form h2 { font-size: 16px; margin-top: 0; color: #f59e0b; }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            outline: none;
         }
 
-        .card .count {
-            font-size: 20px;
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: #3b82f6;
+            color: white;
             font-weight: bold;
-            display: block;
+            cursor: pointer;
+            transition: 0.3s;
         }
+        button:hover { background: #2563eb; }
 
-        /* ڕەنگی جیاواز بۆ لای کارتەکان */
-        .card-blue { border-right: 4px solid #3b82f6; }
-        .card-green { border-right: 4px solid #10b981; }
-        .card-gold { border-right: 4px solid #f59e0b; }
-
-        /* لیستی یارییەکان */
-        .match-list h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-right: 5px;
-            border-right: 3px solid #3b82f6;
-        }
-
+        /* لیستی خوارەوە */
         .match-item {
             background: #1e293b;
-            padding: 18px;
+            padding: 15px;
             border-radius: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: transform 0.2s, background 0.2s;
-            cursor: pointer;
+            border-right: 4px solid #10b981;
         }
-
-        .match-item:hover {
-            background: #334155;
-            transform: scale(1.02);
-        }
-
-        .teams {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .match-time {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .prediction-badge {
-            background: #3b82f6;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
-        }
+        .teams { font-weight: bold; font-size: 14px; }
+        .prediction-text { color: #10b981; font-size: 13px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         <header class="header">
-            <h1>یارییەکانی ئەمڕۆ</h1>
-            <small style="color: #64748b;">بەخێرهاتی هاوار، پێشبینییەکانت بکە</small>
+            <h1>سیستەمی پێشبینی</h1>
+            <small>بەخێرهاتی هاوار گیان</small>
         </header>
 
         <div class="top-cards">
-            <div class="card card-blue">
-                <h3>بەردەست</h3>
-                <span class="count">١٢</span>
-            </div>
-            <div class="card card-green">
-                <h3>سەرکەوتوو</h3>
-                <span class="count">٨٥٪</span>
-            </div>
-            <div class="card card-gold">
-                <h3>خاڵەکان</h3>
-                <span class="count">١٢٥٠</span>
-            </div>
+            <div class="card"><h3>یارییەکان</h3><span class="count" id="match-count">0</span></div>
+            <div class="card" style="border-color: #10b981;"><h3>سەرکەوتوو</h3><span class="count">٨٥٪</span></div>
+            <div class="card" style="border-color: #f59e0b;"><h3>خاڵەکان</h3><span class="count">١٢٥٠</span></div>
         </div>
 
-        <main class="match-list">
-            <h2>نوێترین پێشبینییەکان</h2>
-            <div id="matches-container">
+        <div class="prediction-form">
+            <h2>پێشبینی نوێ بنووسە</h2>
+            <input type="text" id="matchInput" placeholder="نموونە: ڕیال مەدرید - لیڤەرپوول">
+            <input type="text" id="predictInput" placeholder="پێشبینی تۆ (بۆ نموونە: ٢-١)">
+            <button onclick="addPrediction()">ناردنی پێشبینی 🚀</button>
+        </div>
+
+        <div class="match-list">
+            <h2 style="font-size: 18px;">لیستی پێشبینییەکان</h2>
+            <div id="list-container">
                 </div>
-        </main>
+        </div>
     </div>
 
     <script>
-        /* --- بەشی کارکردن (JavaScript) --- */
-        const matchesData = [
-            { teams: "مانچستەر سیتی 🆚 لیڤەرپوول", time: "٢١:٠٠", prediction: "بردنەوەی سیتی" },
-            { teams: "بارسێلۆنا 🆚 ڕیال مەدرید", time: "٢٣:٠٠", prediction: "هەردوولا گۆڵ دەکەن" },
-            { teams: "ئارسناڵ 🆚 چێڵسی", time: "١٨:٣٠", prediction: "سەروو ٢.٥ گۆڵ" },
-            { teams: "بایەرن میونشن 🆚 دۆرتمۆند", time: "٢٠:٤٥", prediction: "بردنەوەی بایەرن" },
-            { teams: "میلان 🆚 ئینتەر میلان", time: "٢٢:٤٥", prediction: "یەکسانبوون" }
-        ];
+        let count = 0;
 
-        function loadMatches() {
-            const container = document.getElementById('matches-container');
-            container.innerHTML = '';
+        function addPrediction() {
+            const match = document.getElementById('matchInput').value;
+            const predict = document.getElementById('predictInput').value;
 
-            matchesData.forEach(match => {
-                const item = document.createElement('div');
-                item.className = 'match-item';
-                item.innerHTML = `
-                    <div class="info">
-                        <div class="teams">${match.teams}</div>
-                        <div class="match-time">🕒 کات: ${match.time}</div>
-                    </div>
-                    <div class="prediction-badge">
-                        ${match.prediction}
-                    </div>
-                `;
-                container.appendChild(item);
-            });
+            if (match === '' || predict === '') {
+                alert("تکایە هەموو خانەکان پڕ بکەرەوە!");
+                return;
+            }
+
+            const container = document.getElementById('list-container');
+            
+            // دروستکردنی دیزاینی یاری نوێ
+            const div = document.createElement('div');
+            div.className = 'match-item';
+            div.innerHTML = `
+                <div>
+                    <div class="teams">${match}</div>
+                    <small style="color: #94a3b8;">ئێستا</small>
+                </div>
+                <div class="prediction-text">${predict}</div>
+            `;
+
+            // زیادکردن بۆ سەرەوەی لیستەکە
+            container.prepend(div);
+
+            // زیادکردنی ژمارەی یارییەکان
+            count++;
+            document.getElementById('match-count').innerText = count;
+
+            // پاککردنەوەی خانەکان
+            document.getElementById('matchInput').value = '';
+            document.getElementById('predictInput').value = '';
         }
-
-        // کارپێکردن لە کاتی کردنەوە
-        window.onload = loadMatches;
     </script>
 </body>
 </html> 
