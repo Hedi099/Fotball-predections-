@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پێشبینی یارییەکان</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; background-color: #f0f2f5; text-align: center; padding: 20px; }
+        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        .match { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; }
+        button { padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; width: 100%; margin: 5px 0; }
+        .btn-city { background-color: #6cabdd; color: white; }
+        .btn-real { background-color: #1b2746; color: white; }
+        .btn-draw { background-color: #888; color: white; }
+        #result { margin-top: 20px; font-size: 1.2em; color: #2ecc71; font-weight: bold; }
+        .leaderboard { margin-top: 30px; text-align: right; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>پێشبینی یاری کۆتایی</h2>
+    
+    <div class="match">
+        <span>مانچستەر سیتی</span>
+        <span>VS</span>
+        <span>ڕیاڵ مەدرید</span>
+    </div>
+
+    <p>هەڵبژێرە کێ دەبێتە براوە؟</p>
+    
+    <button class="btn-city" onclick="checkPoints('city')">مانچستەر سیتی (3 خاڵ)</button>
+    <button class="btn-real" onclick="checkPoints('real')">ڕیاڵ مەدرید (4 خاڵ)</button>
+    <button class="btn-draw" onclick="checkPoints('draw')">یەکسانبوون (5 خاڵ)</button>
+
+    <div id="result"></div>
+
+    <div class="leaderboard">
+        <h3>ڕیزبەندی گروپ (Leaderboard):</h3>
+        <ul id="user-list">
+            <li>هاوار: 0 خاڵ</li>
+            <li>هاوڕێ ١: 0 خاڵ</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    function checkPoints(choice) {
+        let points = 0;
+        let message = "";
+
+        if (choice === 'city') {
+            points = 3;
+            message = "تۆ پێشبینی بردنەوەی سیتیت کرد! (3 خاڵ)";
+        } else if (choice === 'real') {
+            points = 4;
+            message = "تۆ پێشبینی بردنەوەی ڕیاڵت کرد! (4 خاڵ)";
+        } else if (choice === 'draw') {
+            points = 5;
+            message = "تۆ پێشبینی یەکسانبوونت کرد! (5 خاڵ)";
+        }
+
+        document.getElementById('result').innerHTML = message;
+        // لێرەدا دەکرێت کۆدێک زیاد بکرێت بۆ ناردنی داتا بۆ داتابەیس
+    }
+</script>
+
+</body>
+</html> 
