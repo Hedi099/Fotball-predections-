@@ -3,67 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پێشبینی یارییەکان</title>
-    <style>
-        body { font-family: Tahoma, sans-serif; background-color: #f0f2f5; text-align: center; padding: 20px; }
-        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        .match { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; }
-        button { padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; width: 100%; margin: 5px 0; }
-        .btn-city { background-color: #6cabdd; color: white; }
-        .btn-real { background-color: #1b2746; color: white; }
-        .btn-draw { background-color: #888; color: white; }
-        #result { margin-top: 20px; font-size: 1.2em; color: #2ecc71; font-weight: bold; }
-        .leaderboard { margin-top: 30px; text-align: right; }
-    </style>
+    <title>ئەپی پێشبینی وەرزشی</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="card">
-    <h2>پێشبینی یاری کۆتایی</h2>
-    
-    <div class="match">
-        <span>مانچستەر سیتی</span>
-        <span>VS</span>
-        <span>ڕیاڵ مەدرید</span>
+    <div class="app-container">
+        <header class="header">
+            <h1>پێشبینی یارییەکان</h1>
+            <div class="status-bar">ئەمڕۆ: ٢٠٢٦/٠٣/٠٨</div>
+        </header>
+
+        <div class="top-cards">
+            <div class="card card-blue">
+                <h3>یارییەکانی ئێستا</h3>
+                <p class="count">١٢</p>
+            </div>
+            <div class="card card-green">
+                <h3>پێشبینی سەرکەوتوو</h3>
+                <p class="count">٨٥٪</p>
+            </div>
+            <div class="card card-gold">
+                <h3>خاڵەکانت</h3>
+                <p class="count">١٢٥٠</p>
+            </div>
+        </div>
+
+        <main class="match-list">
+            <h2>لیستی یارییەکان و پێشبینی</h2>
+            <div id="matches-container">
+                </div>
+        </main>
     </div>
 
-    <p>هەڵبژێرە کێ دەبێتە براوە؟</p>
-    
-    <button class="btn-city" onclick="checkPoints('city')">مانچستەر سیتی (3 خاڵ)</button>
-    <button class="btn-real" onclick="checkPoints('real')">ڕیاڵ مەدرید (4 خاڵ)</button>
-    <button class="btn-draw" onclick="checkPoints('draw')">یەکسانبوون (5 خاڵ)</button>
-
-    <div id="result"></div>
-
-    <div class="leaderboard">
-        <h3>ڕیزبەندی گروپ (Leaderboard):</h3>
-        <ul id="user-list">
-            <li>هاوار: 0 خاڵ</li>
-            <li>هاوڕێ ١: 0 خاڵ</li>
-        </ul>
-    </div>
-</div>
-
-<script>
-    function checkPoints(choice) {
-        let points = 0;
-        let message = "";
-
-        if (choice === 'city') {
-            points = 3;
-            message = "تۆ پێشبینی بردنەوەی سیتیت کرد! (3 خاڵ)";
-        } else if (choice === 'real') {
-            points = 4;
-            message = "تۆ پێشبینی بردنەوەی ڕیاڵت کرد! (4 خاڵ)";
-        } else if (choice === 'draw') {
-            points = 5;
-            message = "تۆ پێشبینی یەکسانبوونت کرد! (5 خاڵ)";
-        }
-
-        document.getElementById('result').innerHTML = message;
-        // لێرەدا دەکرێت کۆدێک زیاد بکرێت بۆ ناردنی داتا بۆ داتابەیس
-    }
-</script>
-
+    <script src="script.js"></script>
 </body>
-</html> 
+</html>
+body {
+    background-color: #0f172a; /* ڕەنگی پشتێنەی زۆر تۆخ */
+    color: #f8fafc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.app-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* ستایڵی سێ کارتەکە */
+.top-cards {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.card {
+    flex: 1;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    background: #1e293b;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.card h3 { font-size: 14px; margin-bottom: 10px; color: #cbd5e1; }
+.card .count { font-size: 22px; font-weight: bold; }
+
+/* ڕەنگی جیاواز بۆ کارتەکان */
+.card-blue { border-bottom: 4px solid #3b82f6; }
+.card-green { border-bottom: 4px solid #10b981; }
+.card-gold { border-bottom: 4px solid #f59e0b; }
+
+/* ستایڵی لیستی خوارەوە */
+.match-list h2 { font-size: 18px; margin-bottom: 15px; }
+
+.match-item {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.match-item:hover { background: #334155; }
+
+.teams { font-weight: 500; }
+.odds {
+    background: #3b82f6;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+// داتای نموونەیی بۆ یارییەکان
+const matches = [
+    { teams: "مانچستەر سیتی - لیڤەرپوول", time: "٢١:٠٠", prediction: "بردنەوەی سیتی" },
+    { teams: "بارسێلۆنا - ڕیال مەدرید", time: "٢٣:٠٠", prediction: "هەردوولا گۆڵ دەکەن" },
+    { teams: "ئارسناڵ - چێڵسی", time: "١٨:٣٠", prediction: "سەروو ٢.٥ گۆڵ" },
+    { teams: "بایەرن میونشن - دۆرتمۆند", time: "٢٠:٤٥", prediction: "بردنەوەی بایەرن" }
+];
+
+function displayMatches() {
+    const container = document.getElementById('matches-container');
+    container.innerHTML = ''; // پاککردنەوەی پێشوەختە
+
+    matches.forEach(match => {
+        const div = document.createElement('div');
+        div.className = 'match-item';
+        div.innerHTML = `
+            <div class="match-info">
+                <div class="teams">${match.teams}</div>
+                <small style="color: #94a3b8;">کات: ${match.time}</small>
+            </div>
+            <div class="odds">${match.prediction}</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// کارپێکردنی فەرمانەکە لەکاتی کردنەوەی لاپەڕەکە
+window.onload = displayMatches;
