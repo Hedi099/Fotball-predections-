@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - ئۆنلاین</title>
+    <title>گروپی برایان - پێشبینی یەکجارە</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
@@ -18,10 +18,14 @@
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; margin-bottom: 20px; text-align: center; font-size: 16px; outline: none; }
         .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
         
-        .match-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-top: 20px; }
-        .opt-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 12px; cursor: pointer; margin: 5px; width: 30%; font-size: 13px; transition: 0.3s; }
-        .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        .match-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-top: 20px; position: relative; }
+        .prediction-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
         
+        .opt-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 12px 5px; border-radius: 12px; cursor: pointer; transition: 0.3s; position: relative; }
+        .opt-btn.selected { background: var(--primary); border-color: white; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); opacity: 1 !important; }
+        .opt-btn:disabled { cursor: not-allowed; }
+        
+        .pts-badge { display: block; font-size: 11px; color: var(--secondary); margin-top: 5px; font-weight: bold; }
         .leaderboard-section { margin-top: 30px; background: rgba(255,255,255,0.02); border-radius: 15px; padding: 15px; }
         .rank-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
@@ -30,8 +34,7 @@
 
 <div class="container">
     <div id="login-page">
-        <h2 style="color: var(--secondary); margin-bottom: 10px;">بەخێربێن بۆ گروپی برایان</h2>
-        <p style="color: #94a3b8; font-size: 14px;">بۆ بینینی پێشبینییەکان و ڕیزبەندی لۆگین بکە</p>
+        <h2 style="color: var(--secondary); margin-bottom: 10px;">گروپی برایان</h2>
         <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە...">
         <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
@@ -48,24 +51,45 @@
             </div>
         </div>
         
-        <div class="match-card">
-            <h4 style="margin-top: 0;">یاری ئەمشەو: ئینتەر vs میلان</h4>
-            <div style="display: flex; justify-content: center;">
-                <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1)">ئینتەر</button>
-                <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2)">یەکسان</button>
-                <button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3)">میلان</button>
+        <div class="match-card" id="m1">
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">خولی ئیتاڵیا - سان سیرۆ</p>
+            <div style="display: flex; justify-content: space-around; align-items: center;">
+                <div>
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Inter_Milan_2021.svg/1024px-Inter_Milan_2021.svg.png" width="45"><br>
+                    <small>ئینتەر</small>
+                </div>
+                <div style="font-weight: 900; color: var(--secondary);">VS</div>
+                <div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1024px-Logo_of_AC_Milan.svg.png" width="45"><br>
+                    <small>میلان</small>
+                </div>
             </div>
+
+            <div class="prediction-grid">
+                <button class="opt-btn" id="m1-btn1" onclick="makeChoice('m1', 1, 2)">
+                    <strong>ئینتەر</strong>
+                    <span class="pts-badge">2 خاڵ</span>
+                </button>
+                <button class="opt-btn" id="m1-btn2" onclick="makeChoice('m1', 2, 3)">
+                    <strong>یەکسان</strong>
+                    <span class="pts-badge">3 خاڵ</span>
+                </button>
+                <button class="opt-btn" id="m1-btn3" onclick="makeChoice('m1', 3, 4)">
+                    <strong>میلان</strong>
+                    <span class="pts-badge">4 خاڵ</span>
+                </button>
+            </div>
+            <p id="lock-msg" style="display:none; font-size: 11px; color: var(--secondary); margin-top: 10px;">⚠️ پێشبینییەکەت قفڵ کراوە و ناگۆڕدرێت</p>
         </div>
 
         <div class="leaderboard-section">
-            <h4 style="color: var(--secondary); margin-bottom: 15px;">🏆 ڕیزبەندی برادەران</h4>
+            <h4 style="color: var(--secondary); margin-bottom: 15px;">🏆 ڕیزبەندی گشتی</h4>
             <div id="leaderboardList"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // Config جێگیرکراوەکەی تۆ
     const firebaseConfig = {
         apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ",
         authDomain: "brayan-2a1ef.firebaseapp.com",
@@ -76,7 +100,6 @@
         appId: "1:655783456427:web:1535d3dfd9b53515c391ee"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -84,23 +107,16 @@
 
     function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
-        if (name.length < 2) return alert("تکایە ناوێکی تەواو بنووسە");
+        if (name.length < 2) return alert("ناوەکەت بنووسە");
 
-        db.ref('users/' + name).once('value')
-            .then((snap) => {
-                if (!snap.exists()) {
-                    // ئەگەر یەکەمجاری بوو، خاڵەکانی بۆ سفر بکە
-                    return db.ref('users/' + name).set({ points: 0, predictions: {} });
-                }
-            })
-            .then(() => {
-                localStorage.setItem('groupBryanUser', name);
-                currentUser = name;
-                startApp();
-            })
-            .catch((err) => {
-                alert("هەڵە: " + err.message + "\nدڵنیابە لە Firebase بەشی Rules هەردووکیانت کردووەتە true");
-            });
+        db.ref('users/' + name).once('value').then((snap) => {
+            if (!snap.exists()) {
+                db.ref('users/' + name).set({ points: 0, predictions: {} });
+            }
+            localStorage.setItem('groupBryanUser', name);
+            currentUser = name;
+            startApp();
+        });
     }
 
     function startApp() {
@@ -108,7 +124,6 @@
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
         
-        // گوێگرتن لە خاڵەکان و پێشبینییەکانی بەکارهێنەر
         db.ref('users/' + currentUser).on('value', (snap) => {
             const data = snap.val();
             if (data) {
@@ -116,22 +131,42 @@
                 if (data.predictions) highlight(data.predictions);
             }
         });
-
-        // نوێکردنەوەی ڕیزبەندی بە زیندوویی
         loadLeaderboard();
     }
 
-    function makeChoice(mId, cId) {
+    function makeChoice(matchId, choiceId, points) {
         if (!currentUser) return;
-        db.ref('users/' + currentUser + '/predictions/' + mId).set(cId)
-            .catch(err => alert("کێشە لە ناردن: " + err.message));
+
+        // سەرەتا دڵنیادەبینەوە کە پێشتر پێشبینی نەکردووە
+        db.ref('users/' + currentUser + '/predictions/' + matchId).once('value').then((snap) => {
+            if (snap.exists()) {
+                alert("تۆ پێشتر پێشبینیت کردووە!");
+            } else {
+                if(confirm("ئایا دڵنیایت؟ پێشبینییەکەت ناگۆڕدرێت.")) {
+                    db.ref('users/' + currentUser + '/predictions/' + matchId).set({
+                        choice: choiceId,
+                        potentialPoints: points
+                    });
+                }
+            }
+        });
     }
 
     function highlight(preds) {
-        document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
         Object.keys(preds).forEach(mId => {
-            const btn = document.getElementById(mId + '-btn' + preds[mId]);
-            if(btn) btn.classList.add('selected');
+            const choiceData = preds[mId];
+            const choiceId = typeof choiceData === 'object' ? choiceData.choice : choiceData;
+            
+            // قفڵکردنی دوگمەکان
+            document.querySelectorAll(`#${mId} .opt-btn`).forEach(btn => {
+                btn.disabled = true;
+                if (btn.id === `${mId}-btn${choiceId}`) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.style.opacity = "0.4";
+                }
+            });
+            document.getElementById('lock-msg').style.display = 'block';
         });
     }
 
@@ -141,13 +176,11 @@
             snap.forEach(u => {
                 users.push({ name: u.key, points: u.val().points || 0 });
             });
-            users.reverse(); // بۆ ئەوەی خاوەن خاڵی زۆر لە سەرەوە بێت
-
-            const listDiv = document.getElementById('leaderboardList');
-            listDiv.innerHTML = users.map((u, i) => `
+            users.reverse();
+            document.getElementById('leaderboardList').innerHTML = users.map((u, i) => `
                 <div class="rank-row">
                     <span>${i+1}. ${u.name}</span>
-                    <span style="color: var(--secondary)">${u.points} خاڵ</span>
+                    <span style="color: var(--secondary)">${u.points} xاڵ</span>
                 </div>
             `).join('');
         });
@@ -162,4 +195,4 @@
 </script>
 
 </body>
-</html> 
+            </html>
