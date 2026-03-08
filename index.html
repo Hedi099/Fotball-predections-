@@ -8,225 +8,148 @@
         :root {
             --primary: #3b82f6;
             --secondary: #f59e0b;
+            --danger: #ef4444;
             --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-bg: rgba(30, 41, 59, 0.85);
             --border: rgba(255, 255, 255, 0.1);
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-
-        body {
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            color: white;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
+        body { background: radial-gradient(circle at top right, #1e293b, #0f172a); color: white; margin: 0; min-height: 100vh; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 450px; padding: 20px; }
 
-        /* --- پەڕەی لۆگین --- */
-        #login-page {
-            text-align: center;
-            background: var(--card-bg);
-            padding: 40px 20px;
-            border-radius: 30px;
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
+        /* لۆگین */
+        #login-page { margin-top: 80px; text-align: center; background: var(--card-bg); padding: 40px 20px; border-radius: 30px; border: 1px solid var(--border); }
+        input { width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: white; margin-bottom: 15px; outline: none; text-align: center; }
+        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
-        .logo-icon {
-            font-size: 50px;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        input {
-            width: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 12px;
-            color: white;
-            margin-bottom: 15px;
-            outline: none;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .btn-main {
-            width: 100%;
-            background: linear-gradient(45deg, var(--primary), #2563eb);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
-
-        /* --- ئەپی سەرەکی (شاراوەیە لە سەرەتادا) --- */
+        /* ئەپ */
         #main-app { display: none; width: 100%; }
+        .match-card { background: var(--card-bg); padding: 25px; border-radius: 25px; border: 1px solid var(--border); position: relative; overflow: hidden; }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 25px;
-        }
+        /* کاتژمێر */
+        .timer-box { background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 14px; border: 1px solid rgba(239, 68, 68, 0.2); }
 
-        .stat-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 15px 5px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
+        .odds-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .odd-box { background: rgba(255, 255, 255, 0.05); padding: 15px 5px; border-radius: 15px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: 0.3s; }
+        .odd-box span { display: block; font-size: 11px; color: #94a3b8; }
+        .odd-box strong { color: var(--secondary); }
 
-        .stat-card span { display: block; font-size: 11px; color: #94a3b8; }
-        .stat-card strong { font-size: 18px; color: var(--primary); }
+        /* ستایڵی هەڵبژاردن و قوفڵ کردن */
+        .odd-box.selected { background: var(--primary); border-color: white; transform: scale(1.03); }
+        .odd-box.disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        .match-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 18px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border);
-            animation: fadeIn 0.5s ease;
-        }
-
-        .prediction-val {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .leaderboard {
-            background: rgba(15, 23, 42, 0.8);
-            border-radius: 25px;
-            padding: 20px;
-            margin-top: 30px;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-
-        .rank-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .rank-number { width: 30px; font-weight: bold; color: var(--secondary); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .status-msg { text-align: center; margin-top: 15px; font-size: 13px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    
     <div id="login-page">
-        <span class="logo-icon">⚽</span>
-        <h2 style="margin-bottom: 10px;">بەخێرهاتی بۆ فۆرمی پێشبینی</h2>
-        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 30px;">بۆ بەردەوامبوون ناوی خۆت بنووسە</p>
-        
-        <input type="text" id="userNameInput" placeholder="ناوی تەواوت لێرە بنووسە">
-        <button class="btn-main" onclick="startApp()">چوونە ناو ئەپ 🚀</button>
+        <h2>بەخێرهاتی ⚽</h2>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
+        <button class="btn-main" onclick="saveUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app">
-        <header style="text-align: center; margin-bottom: 25px;">
-            <h2 id="welcomeText" style="margin: 0; font-size: 20px;"></h2>
+        <header style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+            <span id="welcomeText"></span>
+            <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer;">دەرچوون</button>
         </header>
 
-        <div class="stats-grid">
-            <div class="stat-card"><span>یارییەکان</span><strong>٨</strong></div>
-            <div class="stat-card"><span>سەرکەوتوو</span><strong>٧٥٪</strong></div>
-            <div class="stat-card"><span>خاڵەکان</span><strong>١٥٠٠</strong></div>
-        </div>
+        <div class="match-card">
+            <div id="timer" class="timer-box">ماوە بۆ داخستن: --:--:--</div>
 
-        <div style="background: var(--card-bg); padding: 20px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 25px;">
-            <input type="text" id="mName" placeholder="ناوی یاری (بۆ نموونە: ڕیال - بارسا)" style="margin-bottom: 10px;">
-            <input type="text" id="pVal" placeholder="پێشبینی (بۆ نموونە: ٢-١)" style="margin-bottom: 15px;">
-            <button class="btn-main" onclick="addNew()">زیادکردنی پێشبینی</button>
-        </div>
-
-        <h3 style="font-size: 16px; margin-bottom: 15px; border-right: 3px solid var(--primary); padding-right: 10px;">یارییەکانی ئەمڕۆ</h3>
-        <div id="matchList">
+            <div style="text-align:center; margin-bottom:20px;">
+                <small style="color:#94a3b8;">دێربی میلانۆ 🇮🇹</small><br>
+                <strong style="font-size:20px;">ئینتەر 🆚 میلان</strong>
             </div>
 
-        <div class="leaderboard">
-            <h3 style="margin-top: 0; color: var(--secondary); font-size: 16px;">🏆 ڕیزبەندی پێشبینیکەران</h3>
-            <div class="rank-item">
-                <div class="rank-number">١</div>
-                <div id="topUser" class="user-name">هاوار زاریفی</div>
-                <div style="margin-right: auto; font-weight: bold;">٢٤٥٠</div>
+            <div class="odds-container" id="odds-wrapper">
+                <div class="odd-box" id="opt-1" onclick="makeChoice(1, 'بردنەوەی ئینتەر')"><span>ئینتەر</span><strong>2خ</strong></div>
+                <div class="odd-box" id="opt-2" onclick="makeChoice(2, 'یەکسانبوون')"><span>یەکسان</span><strong>3خ</strong></div>
+                <div class="odd-box" id="opt-3" onclick="makeChoice(3, 'میلان')"><span>میلان</span><strong>4خ</strong></div>
             </div>
-            <div class="rank-item">
-                <div class="rank-number">٢</div>
-                <div class="user-name">ئەحمەد فەرهاد</div>
-                <div style="margin-right: auto; font-weight: bold;">٢١٠٠</div>
-            </div>
+
+            <div id="statusMsg" class="status-msg"></div>
         </div>
     </div>
-
 </div>
 
 <script>
-    function startApp() {
-        const name = document.getElementById('userNameInput').value;
-        if (name.trim() === "") {
-            alert("تکایە ناوەکەت بنووسە!");
+    // کاتی دەستپێکی یاری (ساڵ، مانگ-١، ڕۆژ، کاتژمێر، خولەک)
+    // تێبینی: مانگ لە سفرەوە دەست پێ دەکات، واتە ئازار (٣) دەبێتە ٢.
+    const matchTime = new Date(2026, 2, 8, 21, 0, 0).getTime(); 
+    let isLocked = false;
+
+    window.onload = function() {
+        const name = localStorage.getItem('app_user_name');
+        if (name) {
+            showApp(name);
+            updateTimer(); 
+            setInterval(updateTimer, 1000);
+        }
+    };
+
+    function updateTimer() {
+        const now = new Date().getTime();
+        const distance = matchTime - now;
+
+        if (distance < 0) {
+            isLocked = true;
+            document.getElementById('timer').innerText = "⚠️ پێشبینی داخرا - یاری دەستی پێکرد";
+            document.getElementById('timer').style.color = "#94a3b8";
+            document.getElementById('timer').style.background = "rgba(255,255,255,0.05)";
+            lockOdds();
             return;
         }
 
-        // گۆڕینی پەڕەکان
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById('timer').innerText = `کات ماوە: ${hours}:${minutes}:${seconds}`;
+    }
+
+    function lockOdds() {
+        document.querySelectorAll('.odd-box').forEach(el => el.classList.add('disabled'));
+    }
+
+    function makeChoice(id, text) {
+        if (isLocked) {
+            alert("ببورە، کاتی پێشبینی کۆتایی هاتووە!");
+            return;
+        }
+
+        document.querySelectorAll('.odd-box').forEach(el => el.classList.remove('selected'));
+        document.getElementById('opt-' + id).classList.add('selected');
+        
+        localStorage.setItem('milan_choice', id);
+        document.getElementById('statusMsg').innerText = "✓ پێشبینییەکەت تۆمارکرا: " + text;
+        document.getElementById('statusMsg').style.color = "#10b981";
+    }
+
+    function saveUser() {
+        const name = document.getElementById('userNameInput').value;
+        if (!name) return;
+        localStorage.setItem('app_user_name', name);
+        location.reload();
+    }
+
+    function showApp(name) {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
+        document.getElementById('welcomeText').innerText = "سڵاو، " + name;
         
-        // دانانی ناوی بەکارهێنەر
-        document.getElementById('welcomeText').innerText = "سڵاو، " + name + " 👋";
-        document.body.style.alignItems = 'flex-start'; // بۆ ئەوەی ئەپەکە بچێتە سەرەوە
-        document.body.style.paddingTop = '40px';
+        const saved = localStorage.getItem('milan_choice');
+        if (saved) {
+            document.getElementById('opt-' + saved).classList.add('selected');
+            document.getElementById('statusMsg').innerText = "تۆ پێشتر پێشبینیت کردووە";
+        }
     }
 
-    function addNew() {
-        const match = document.getElementById('mName').value;
-        const predict = document.getElementById('pVal').value;
-        
-        if(!match || !predict) return;
-
-        const list = document.getElementById('matchList');
-        const item = document.createElement('div');
-        item.className = 'match-card';
-        item.innerHTML = `
-            <div><strong>${match}</strong><br><small style="color: #94a3b8;">ئێستا</small></div>
-            <div class="prediction-val">${predict}</div>
-        `;
-        list.prepend(item);
-
-        document.getElementById('mName').value = '';
-        document.getElementById('pVal').value = '';
-    }
+    function logout() { localStorage.clear(); location.reload(); }
 </script>
 
 </body>
-    </html> 
+</html> 
