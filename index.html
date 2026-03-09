@@ -23,7 +23,7 @@
         .stadium-info { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }
         .prediction-container { display: flex; justify-content: space-around; align-items: center; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .team-logo { width: 55px; height: 55px; object-fit: contain; }
+        .team-logo { width: 55px; height: 55px; object-fit: contain; background: white; border-radius: 10px; padding: 3px; }
         .team-name { font-size: 11px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; height: 35px; display: flex; align-items: center; }
         .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
@@ -129,21 +129,33 @@
 
         let h = '', a = '';
         matches.forEach(m => {
-            const logo1 = `https://tmssl.akamaized.net/images/crest/big/${m.img1}.png`;
-            const logo2 = `https://tmssl.akamaized.net/images/crest/big/${m.img2}.png`;
+            // سێرڤەری سەرەکی بۆ وێنەکان
+            const logo1 = `https://main.fsc-api.workers.dev/api/crest/${m.img1}`;
+            const logo2 = `https://main.fsc-api.workers.dev/api/crest/${m.img2}`;
             
             h += `<div class="match-card" id="${m.id}">
                 <div class="prediction-container">
-                    <div class="predict-box"><span class="team-name">${m.t1}</span><img src="${logo1}" class="team-logo"><button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button></div>
-                    <div class="predict-box"><span class="team-name">یەکسان</span><button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">X (${m.pX})</button></div>
-                    <div class="predict-box"><span class="team-name">${m.t2}</span><img src="${logo2}" class="team-logo"><button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button></div>
+                    <div class="predict-box">
+                        <span class="team-name">${m.t1}</span>
+                        <img src="${logo1}" class="team-logo" onerror="this.src='https://tmssl.akamaized.net/images/crest/big/${m.img1}.png'">
+                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
+                    </div>
+                    <div class="predict-box">
+                        <span class="team-name">یەکسان</span>
+                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">X (${m.pX})</button>
+                    </div>
+                    <div class="predict-box">
+                        <span class="team-name">${m.t2}</span>
+                        <img src="${logo2}" class="team-logo" onerror="this.src='https://tmssl.akamaized.net/images/crest/big/${m.img2}.png'">
+                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
+                    </div>
                 </div>
                 <div class="stadium-info">${m.stadium}</div>
             </div>`;
 
             a += `<div class="admin-item"><div>${m.t1} vs ${m.t2}</div><div class="admin-btns">
                 <button class="adm-btn" style="background:var(--success)" onclick="finish('${m.id}',1,${m.p1})">${m.t1}</button>
-                <button class="adm-btn" style="background:#555;" onclick="finish('${m.id}',2,${m.pX})">یەکسان بوون</button>
+                <button class="adm-btn" style="background:#555;" onclick="finish('${m.id}',2,${m.pX})">یەکسان</button>
                 <button class="adm-btn" style="background:var(--danger)" onclick="finish('${m.id}',3,${m.p2})">${m.t2}</button>
             </div></div>`;
         });
@@ -209,4 +221,4 @@
     function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
 </script>
 </body>
-</html> 
+</html>
