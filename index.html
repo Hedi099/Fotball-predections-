@@ -74,6 +74,7 @@
         <div style="font-size:15px; margin-top:10px; font-weight: bold; line-height: 1.6;">
             «أَسْتَغْفِرُ اللَّهَ العَظِيمَ الَّذِي لاَ إِلَهَ إِلَّا هُوَ الحَيُّ القَيُّومُ وَأَتُوبُ إِلَيْهِ»
         </div>
+        <div style="font-size: 14px; color: #cbd5e1; margin-top: 8px;">هەرکەسێک بیڵێت گوناهەکانی دەبەخشرێت ئەگەر لە مەیدانی جەنگیش ڕایکردبێت.</div>
     </div>
 
     <button id="pwaInstallBtn" class="install-app-btn">📲 دابەزاندنی ئەپی (گروپی برایان)</button>
@@ -136,17 +137,17 @@
     let currentUser = localStorage.getItem('groupBryanUser');
 
     const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ریال ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/71.png", stadium: "RCDE Stadium", deadline: "2026-03-09T23:00:00+03:00" },
-        { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "Anfield", deadline: "2026-03-10T20:45:00+03:00" },
-        { id: "m3", t1: "ئەتڵانتا", t2: "بایرن میونشن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/102.png", img2: "https://crests.football-data.org/5.png", stadium: "Gewiss Stadium", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", stadium: "Metropolitano", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m5", t1: "بارسێلۆنا", t2: "نیوکاسڵ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", stadium: "Camp Nou", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m6", t1: "ئارسناڵ", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", stadium: "Emirates Stadium", deadline: "2026-03-11T20:45:00+03:00" },
-        { id: "m7", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "Santiago Bernabéu", deadline: "2026-03-11T23:00:00+03:00" },
-        { id: "m8", t1: "بۆدۆ گلیمت", t2: "لیشبۆنە", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", stadium: "Aspmyra Stadion", deadline: "2026-03-11T23:00:00+03:00" },
-        { id: "m9", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "Parc des Princes", deadline: "2026-03-11T23:00:00+03:00" },
-        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "Stadio Renato Dall'Ara", deadline: "2026-03-12T20:45:00+03:00" },
-        { id: "m11", t1: "لیل", t2: "ئەستۆنڤێلا", p1: 3, pX: 2, p2: 4, img1: "https://crests.football-data.org/521.png", img2: "https://crests.football-data.org/58.png", stadium: "Stade Pierre-Mauroy", deadline: "2026-03-12T23:00:00+03:00" }
+        { id: "m1", t1: "ئیسپانیۆل", t2: "ریال ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/71.png", stadium: "یاریگای ئیسپانیۆل", deadline: "2026-03-09T23:00:00+03:00" },
+        { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "یاریگای لیڤەرپووڵ", deadline: "2026-03-10T20:45:00+03:00" },
+        { id: "m3", t1: "ئەتڵانتا", t2: "بایرن میونشن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/102.png", img2: "https://crests.football-data.org/5.png", stadium: "یاریگای ئەتڵانتا", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", stadium: "یاریگای ئەتلەتیکۆ مەدرید", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m5", t1: "بارسێلۆنا", t2: "نیوکاسڵ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", stadium: "یاریگای بارسێلۆنا", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m6", t1: "ئارسناڵ", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", stadium: "یاریگای ئارسناڵ", deadline: "2026-03-11T20:45:00+03:00" },
+        { id: "m7", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "یاریگای ڕیاڵ مەدرید", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m8", t1: "بۆدۆ گلیمت", t2: "لیشبۆنە", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", stadium: "یاریگای بۆدۆ گلیمت", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m9", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "یاریگای پاریس", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "یاریگای بۆلۆگنا", deadline: "2026-03-12T20:45:00+03:00" },
+        { id: "m11", t1: "لیل", t2: "ئەستۆنڤێلا", p1: 3, pX: 2, p2: 4, img1: "https://crests.football-data.org/521.png", img2: "https://crests.football-data.org/58.png", stadium: "یاریگای لیل", deadline: "2026-03-12T23:00:00+03:00" }
     ];
 
     async function loginUser() {
