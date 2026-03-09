@@ -39,10 +39,8 @@
         .adm-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 10px; color: white; }
         .close-btn { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; margin-bottom: 10px; }
         
-        /* ستایلی تابلۆی براوەی هەفتە */
         .winner-banner { background: linear-gradient(45deg, #f59e0b, #d97706); color: black; padding: 12px; border-radius: 15px; font-weight: bold; margin-bottom: 15px; font-size: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
         
-        /* دوگمەی دابەزاندنی ئەپ */
         #installBtn { display: none; background: #22c55e; border: none; color: white; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
     </style>
@@ -118,7 +116,6 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // لۆژیکی دابەزاندنی وێبسایت بۆ سەر شاشە
     let deferredPrompt;
     const installBtn = document.getElementById('installBtn');
 
@@ -195,16 +192,16 @@
                     <div class="predict-box">
                         <span class="team-name">${m.t1}</span>
                         <img src="${m.img1}" class="team-logo">
-                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
+                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">${m.p1} خاڵ</button>
                     </div>
                     <div class="predict-box">
                         <span class="team-name">یەکسان</span>
-                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">X (${m.pX})</button>
+                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">${m.pX} خاڵ</button>
                     </div>
                     <div class="predict-box">
                         <span class="team-name">${m.t2}</span>
                         <img src="${m.img2}" class="team-logo">
-                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
+                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">${m.p2} خاڵ</button>
                     </div>
                 </div>
                 <div class="stadium-info">${m.stadium}</div>
