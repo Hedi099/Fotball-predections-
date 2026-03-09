@@ -23,7 +23,7 @@
         .stadium-info { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }
         .prediction-container { display: flex; justify-content: space-around; align-items: center; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .team-logo { width: 55px; height: 55px; object-fit: contain; background: white; border-radius: 10px; padding: 3px; }
+        .team-logo { width: 55px; height: 55px; object-fit: contain; background: white; border-radius: 12px; padding: 5px; }
         .team-name { font-size: 11px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; height: 35px; display: flex; align-items: center; }
         .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
@@ -103,19 +103,19 @@
     let currentUser = localStorage.getItem('groupBryanUser');
 
     const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "Espanyol", img2: "Real+Oviedo", stadium: "یاریگای ئیسپانیۆل 🏟️" },
-        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "Galatasaray", img2: "Liverpool+FC", stadium: "یاریگای گەلتەسەرای 🏟️" },
-        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن میونشن", p1: 4, pX: 3, p2: 2, img1: "Atalanta+BC", img2: "Bayern+Munich", stadium: "یاریگای ئەتلەنتا 🏟️" },
-        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "Atletico+Madrid", img2: "Tottenham+Hotspur", stadium: "یاریگای ئەتلەتیکۆ مەدرید 🏟️" },
-        { id: "m5", t1: "نیوکاسڵ", t2: "بارسێلۆنا", p1: 4, pX: 3, p2: 2, img1: "Newcastle+United", img2: "FC+Barcelona", stadium: "یاریگای نیوکاسڵ 🏟️" },
-        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, img1: "Bayer+Leverkusen", img2: "Arsenal+FC", stadium: "یاریگای لیڤەرکوزن 🏟️" },
-        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, img1: "Bodo+Glimt", img2: "Sporting+CP", stadium: "یاریگای بۆدۆگلیمت 🏟️" },
-        { id: "m8", t1: "پاریس سان جێرمان", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "PSG+Logo", img2: "Chelsea+FC", stadium: "یاریگای پاریس 🏟️" },
-        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مانسیتی", p1: 3, pX: 4, p2: 2, img1: "Real+Madrid", img2: "Manchester+City", stadium: "یاریگای ڕیاڵ مەدرید 🏟️" },
-        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, img1: "Bologna+FC", img2: "AS+Roma", stadium: "یاریگای ڕۆما 🏟️" },
-        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, img1: "Lille+OSC", img2: "Aston+Villa", stadium: "یاریگای لیل 🏟️" },
-        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, img1: "VfB+Stuttgart", img2: "FC+Porto", stadium: "یاریگای شتوتگارت 🏟️" },
-        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, img1: "Celta+Vigo", img2: "Olympique+Lyonnais", stadium: "یاریگای سێلتاڤیگۆ 🏟️" }
+        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://upload.wikimedia.org/wikipedia/en/d/d6/RCD_Espanyol_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/6/60/Real_Oviedo_logo.svg", stadium: "یاریگای ئیسپانیۆل 🏟️" },
+        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "https://upload.wikimedia.org/wikipedia/en/3/31/Galatasaray_Star_Logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg", stadium: "یاریگای گەلتەسەرای 🏟️" },
+        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن میونشن", p1: 4, pX: 3, p2: 2, img1: "https://upload.wikimedia.org/wikipedia/en/6/66/Atalanta_BC_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/1/1b/FC_Bayern_München_logo_%282017%29.svg", stadium: "یاریگای ئەتلەنتا 🏟️" },
+        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/b/b4/Tottenham_Hotspur.svg", stadium: "یاریگای ئەتلەتیکۆ مەدرید 🏟️" },
+        { id: "m5", t1: "نیوکاسڵ", t2: "بارسێلۆنا", p1: 4, pX: 3, p2: 2, img1: "https://upload.wikimedia.org/wikipedia/en/5/56/Newcastle_United_Logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_logo.svg", stadium: "یاریگای نیوکاسڵ 🏟️" },
+        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, img1: "https://upload.wikimedia.org/wikipedia/en/5/59/Bayer_04_Leverkusen_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg", stadium: "یاریگای لیڤەرکوزن 🏟️" },
+        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, img1: "https://upload.wikimedia.org/wikipedia/en/e/e0/FK_Bodo_Glimt_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/3/3e/Sporting_Clube_de_Portugal.svg", stadium: "یاریگای بۆدۆگلیمت 🏟️" },
+        { id: "m8", t1: "پاریس سان جێرمان", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg", img2: "https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg", stadium: "یاریگای پاریس 🏟️" },
+        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مانسیتی", p1: 3, pX: 4, p2: 2, img1: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg", img2: "https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg", stadium: "یاریگای ڕیاڵ مەدرید 🏟️" },
+        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, img1: "https://upload.wikimedia.org/wikipedia/en/5/5b/Bologna_F.C._1909_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/f/f7/AS_Roma_logo_%282017%29.svg", stadium: "یاریگای ڕۆما 🏟️" },
+        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, img1: "https://upload.wikimedia.org/wikipedia/en/3/3f/Lille_OSC_2018_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/9/9f/Aston_Villa_logo_2024.svg", stadium: "یاریگای لیل 🏟️" },
+        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, img1: "https://upload.wikimedia.org/wikipedia/commons/e/eb/VfB_Stuttgart_1893_Logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/f/f1/FC_Porto.svg", stadium: "یاریگای شتوتگارت 🏟️" },
+        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, img1: "https://upload.wikimedia.org/wikipedia/en/1/12/RC_Celta_de_Vigo_logo.svg", img2: "https://upload.wikimedia.org/wikipedia/en/c/c6/Olympique_Lyonnais_2023_logo.svg", stadium: "یاریگای سێلتاڤیگۆ 🏟️" }
     ];
 
     function loginUser() {
@@ -132,23 +132,11 @@
 
         let h = '', a = '';
         matches.forEach(m => {
-            // بەکارهێنانی سێرڤەری وێنەی گووگڵ بۆ دڵنیایی ۱۰۰٪
-            const logo1 = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_Gxp5zQo5v_V6-S0Z_JvS-q6yGv-vXyZ_IA&s`; // ئەمە تەنها بۆ نموونەیە، لە خوارەوە ناوەکان دەگۆڕدرێن بۆ گەڕان
-            const searchLogo1 = `https://www.google.com/s2/favicons?domain=google.com&sz=128&url=${m.img1}.com`;
-            const searchLogo2 = `https://www.google.com/s2/favicons?domain=google.com&sz=128&url=${m.img2}.com`;
-            
-            // ئەم سێرڤەرە لۆگۆ لە ڕێگەی ناوی یانەکەوە دەهێنێت
-            const finalLogo1 = `https://logo.clearbit.com/${m.img1.replace(/\+/g, '').toLowerCase()}.com?size=100`;
-            const finalLogo2 = `https://logo.clearbit.com/${m.img2.replace(/\+/g, '').toLowerCase()}.com?size=100`;
-
-            // ڕێگەیەکی تر بۆ وێنەکان:
-            const fbLogo1 = `https://img.buymeacoffee.com/api/?url=https://www.google.com/s2/favicons?sz=128&domain_url=${m.img1}.com`;
-
             h += `<div class="match-card" id="${m.id}">
                 <div class="prediction-container">
                     <div class="predict-box">
                         <span class="team-name">${m.t1}</span>
-                        <img src="https://www.google.com/s2/favicons?sz=128&domain=${m.t1.split(' ')[0]}.com" class="team-logo" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${m.t1}'">
+                        <img src="${m.img1}" class="team-logo" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${m.t1}'">
                         <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
                     </div>
                     <div class="predict-box">
@@ -157,7 +145,7 @@
                     </div>
                     <div class="predict-box">
                         <span class="team-name">${m.t2}</span>
-                        <img src="https://www.google.com/s2/favicons?sz=128&domain=${m.t2.split(' ')[0]}.com" class="team-logo" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${m.t2}'">
+                        <img src="${m.img2}" class="team-logo" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${m.t2}'">
                         <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
                     </div>
                 </div>
