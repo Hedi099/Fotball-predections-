@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی نوێ</title>
+    <title>گروپی برایان - وەشانی VIP</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root { 
             --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; 
-            --card-bg: rgba(30, 41, 59, 0.7); --border: rgba(255, 255, 255, 0.1); 
+            --card-bg: rgba(30, 41, 59, 0.8); --border: rgba(255, 255, 255, 0.1); 
             --danger: #ef4444; --success: #22c55e;
         }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -17,31 +17,32 @@
         .container { width: 100%; max-width: 480px; padding: 15px; }
 
         .hadith-box { background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05)); border: 1px solid var(--secondary); border-radius: 20px; padding: 20px; margin-bottom: 25px; text-align: center; }
-        .hadith-title { color: var(--secondary); font-size: 13px; font-weight: bold; margin-bottom: 10px; display: block; }
         
         #login-page, #main-app, .admin-box { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; border: 1px solid var(--border); margin-top: 15px; text-align: center; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; }
         .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
 
-        /* ستایلی نوێی یارییەکان */
         .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; }
         .prediction-container { display: flex; justify-content: space-around; align-items: center; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .team-logo { width: 65px; height: 65px; object-fit: contain; background: white; border-radius: 15px; padding: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .team-logo { width: 65px; height: 65px; object-fit: contain; background: white; border-radius: 15px; padding: 5px; }
         .team-name { font-size: 12px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; }
         .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
 
-        /* خشتەی ڕیزبەندی داواکراو */
+        /* خشتەی ڕیزبەندی گشتگیر */
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         .rank-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
-        .rank-table th { background: #1e293b; color: var(--secondary); padding: 15px; font-size: 14px; border-bottom: 2px solid var(--border); }
+        .rank-table th { background: #1e293b; color: var(--secondary); padding: 15px; font-size: 14px; }
         .rank-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); text-align: center; font-size: 14px; }
-        .rank-table td.user-name { text-align: right; font-weight: bold; color: #f8fafc; }
-        .points-badge { background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 4px 8px; border-radius: 8px; font-weight: bold; }
-        .total-badge { background: rgba(245, 158, 11, 0.2); color: var(--secondary); padding: 4px 8px; border-radius: 8px; font-weight: bold; }
+        .rank-table td.user-name { text-align: right; font-weight: bold; }
+        
+        /* دیزاینی بەشی ئەدمین */
+        .admin-item { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 15px; border-right: 4px solid var(--primary); }
+        .admin-btns { display: flex; gap: 8px; margin-top: 10px; }
+        .adm-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 11px; }
 
-        .close-btn { background: var(--danger); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; margin-bottom: 10px; width: 100%; font-weight: bold; }
+        .close-btn { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -49,35 +50,34 @@
 <div class="container">
     <div class="hadith-box">
         <span class="hadith-title">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
-        <div style="font-size: 15px;">«الدَّالُّ عَلَى الخَيْرِ كَفَاعِلِهِ» (ئەوەی ڕێنمایی کەسێک بکات بۆ کارێکی چاک، وەک ئەوە وایە خۆی کردبێتی)</div>
+        <div style="font-size: 15px;">«الدَّالُّ عَلَى الخَيْرِ كَفَاعِلِهِ»</div>
     </div>
 
     <div id="login-page">
         <h1>🏆 گروپی برایان</h1>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە...">
+        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
         <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px;">
             <div style="text-align: right;">
-                <span id="welcomeText" style="font-weight: bold; color: var(--secondary);"></span><br>
-                <small onclick="logoutUser()" style="color: var(--danger); cursor:pointer;">دەرچوون ↩</small>
+                <span id="welcomeText" style="color: var(--secondary); font-weight: bold;"></span><br>
+                <small onclick="logoutUser()" style="color: var(--danger); cursor:pointer;">Logout ↩</small>
             </div>
             <div style="display: flex; gap: 15px;">
-                <div style="text-align:center;"><div id="userWeeklyPoints" style="color:var(--success); font-size:18px; font-weight:bold;">0</div><small>هەفتە</small></div>
-                <div style="text-align:center;"><div id="userPoints" style="color:var(--secondary); font-size:18px; font-weight:bold;">0</div><small>گشتی</small></div>
+                <div style="text-align:center;"><div id="uWeekly" style="color:var(--success); font-weight:bold;">0</div><small>هەفتە</small></div>
+                <div style="text-align:center;"><div id="uTotal" style="color:var(--secondary); font-weight:bold;">0</div><small>گشتی</small></div>
             </div>
         </div>
 
-        <button class="btn-main" style="background: white; color: black; margin-top: 20px;" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
-
+        <button class="btn-main" style="background: white; color: black; margin: 20px 0;" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
         <div id="matches-list"></div>
 
-        <div id="admin-panel" class="admin-box" style="display:none; border-color: var(--danger);">
-            <h3 style="color:var(--danger)">بەشی ئەدمین (Hedi)</h3>
+        <div id="admin-panel" class="admin-box" style="display:none;">
+            <h3 style="color:var(--danger)">کۆنتڕۆڵی ئەنجامەکان (Hedi)</h3>
             <div id="admin-controls"></div>
-            <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 نوێکردنەوەی هەفتە</button>
+            <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 سفرکردنەوەی هەفتە</button>
         </div>
     </div>
 </div>
@@ -86,11 +86,7 @@
     <button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
     <table class="rank-table">
         <thead>
-            <tr>
-                <th style="text-align: right;">یاریزان</th>
-                <th>هەفتە</th>
-                <th>گشتی</th>
-            </tr>
+            <tr><th style="text-align: right;">ناوی یاریزان</th><th>هەفتە</th><th>گشتی</th></tr>
         </thead>
         <tbody id="leaderboard-body"></tbody>
     </table>
@@ -111,24 +107,24 @@
     let currentUser = localStorage.getItem('groupBryanUser');
 
     const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-09T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
-        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, time: "2026-03-10T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/141.png", img2: "https://tmssl.akamaized.net/images/crest/big/31.png" },
-        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, time: "2026-03-10T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/800.png", img2: "https://tmssl.akamaized.net/images/crest/big/27.png" },
-        { id: "m4", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, time: "2026-03-10T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/13.png", img2: "https://tmssl.akamaized.net/images/crest/big/148.png" },
-        { id: "m5", t1: "نیوکاسڵ", t2: "بارسا", p1: 4, pX: 3, p2: 2, time: "2026-03-10T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/762.png", img2: "https://tmssl.akamaized.net/images/crest/big/131.png" },
-        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, time: "2026-03-11T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/15.png", img2: "https://tmssl.akamaized.net/images/crest/big/11.png" },
-        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, time: "2026-03-11T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/777.png", img2: "https://tmssl.akamaized.net/images/crest/big/336.png" },
-        { id: "m8", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, time: "2026-03-11T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/583.png", img2: "https://tmssl.akamaized.net/images/crest/big/631.png" },
-        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 3, pX: 4, p2: 2, time: "2026-03-11T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/418.png", img2: "https://tmssl.akamaized.net/images/crest/big/281.png" },
-        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, time: "2026-03-12T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/1025.png", img2: "https://tmssl.akamaized.net/images/crest/big/12.png" },
-        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, time: "2026-03-12T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/1082.png", img2: "https://tmssl.akamaized.net/images/crest/big/405.png" },
-        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-12T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/79.png", img2: "https://tmssl.akamaized.net/images/crest/big/720.png" },
-        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, time: "2026-03-12T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/940.png", img2: "https://tmssl.akamaized.net/images/crest/big/1041.png" }
+        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
+        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/141.png", img2: "https://tmssl.akamaized.net/images/crest/big/31.png" },
+        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/800.png", img2: "https://tmssl.akamaized.net/images/crest/big/27.png" },
+        { id: "m4", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/13.png", img2: "https://tmssl.akamaized.net/images/crest/big/148.png" },
+        { id: "m5", t1: "نیوکاسڵ", t2: "بارسا", p1: 4, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/762.png", img2: "https://tmssl.akamaized.net/images/crest/big/131.png" },
+        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/15.png", img2: "https://tmssl.akamaized.net/images/crest/big/11.png" },
+        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/777.png", img2: "https://tmssl.akamaized.net/images/crest/big/336.png" },
+        { id: "m8", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/583.png", img2: "https://tmssl.akamaized.net/images/crest/big/631.png" },
+        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 3, pX: 4, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/418.png", img2: "https://tmssl.akamaized.net/images/crest/big/281.png" },
+        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, img1: "https://tmssl.akamaized.net/images/crest/big/1025.png", img2: "https://tmssl.akamaized.net/images/crest/big/12.png" },
+        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/1082.png", img2: "https://tmssl.akamaized.net/images/crest/big/405.png" },
+        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, img1: "https://tmssl.akamaized.net/images/crest/big/79.png", img2: "https://tmssl.akamaized.net/images/crest/big/720.png" },
+        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, img1: "https://tmssl.akamaized.net/images/crest/big/940.png", img2: "https://tmssl.akamaized.net/images/crest/big/1041.png" }
     ];
 
     function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
-        if (name.length < 2) return alert("ناو بنووسە");
+        if (name.length < 2) return;
         localStorage.setItem('groupBryanUser', name); location.reload();
     }
 
@@ -138,40 +134,43 @@
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
         if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
 
-        let h = ''; let a = '';
+        let h = '', a = '';
         matches.forEach(m => {
             h += `<div class="match-card" id="${m.id}">
                 <div class="prediction-container">
                     <div class="predict-box">
                         <span class="team-name">${m.t1}</span>
-                        <img src="${m.img1}" class="team-logo" onerror="this.src='https://via.placeholder.com/80?text=Logo'">
+                        <img src="${m.img1}" class="team-logo">
                         <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
                     </div>
-                    <div style="font-weight:bold; color:rgba(255,255,255,0.2); font-size:24px;">VS</div>
                     <div class="predict-box">
-                        <span class="team-name">یەکسان</span>
-                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:70px;">X (${m.pX})</button>
+                        <span class="team-name">X</span>
+                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:60px;">X (${m.pX})</button>
                     </div>
-                    <div style="font-weight:bold; color:rgba(255,255,255,0.2); font-size:24px;">VS</div>
                     <div class="predict-box">
                         <span class="team-name">${m.t2}</span>
-                        <img src="${m.img2}" class="team-logo" onerror="this.src='https://via.placeholder.com/80?text=Logo'">
+                        <img src="${m.img2}" class="team-logo">
                         <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
                     </div>
                 </div>
             </div>`;
-            a += `<div style="margin-bottom:10px;">${m.t1} vs ${m.t2}: 
-                <button onclick="finish('${m.id}',1,${m.p1})">1</button>
-                <button onclick="finish('${m.id}',2,${m.pX})">X</button>
-                <button onclick="finish('${m.id}',3,${m.p2})">2</button></div>`;
+            
+            a += `<div class="admin-item">
+                <div style="font-size:12px; font-weight:bold;">${m.t1} VS ${m.t2}</div>
+                <div class="admin-btns">
+                    <button class="adm-btn" style="background:var(--success)" onclick="finish('${m.id}',1,${m.p1})">${m.t1}</button>
+                    <button class="adm-btn" style="background:#555" onclick="finish('${m.id}',2,${m.pX})">یەکسان بوون</button>
+                    <button class="adm-btn" style="background:var(--danger)" onclick="finish('${m.id}',3,${m.p2})">${m.t2}</button>
+                </div>
+            </div>`;
         });
         document.getElementById('matches-list').innerHTML = h;
         document.getElementById('admin-controls').innerHTML = a;
 
         db.ref('users/' + currentUser).on('value', snap => {
             const d = snap.val() || {total:0, weekly:0};
-            document.getElementById('userPoints').innerText = d.total;
-            document.getElementById('userWeeklyPoints').innerText = d.weekly;
+            document.getElementById('uTotal').innerText = d.total;
+            document.getElementById('uWeekly').innerText = d.weekly;
             if (d.predictions) {
                 Object.keys(d.predictions).forEach(mid => {
                     const btn = document.getElementById(mid + '-btn' + d.predictions[mid].choice);
@@ -184,32 +183,33 @@
         });
     }
 
-    function vote(mId, cId, pts) {
-        if(confirm("قفڵی دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:cId, pts:pts});
+    function vote(mId, c, p) {
+        if(confirm("قفڵی دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p});
     }
 
-    function finish(mId, res, pts) {
+    function finish(mId, res, p) {
         db.ref('users').once('value').then(snap => {
             snap.forEach(u => {
                 const d = u.val();
                 if(d.predictions?.[mId]?.choice == res) {
-                    db.ref('users/'+u.key).update({total: (d.total||0)+pts, weekly: (d.weekly||0)+pts});
+                    db.ref('users/'+u.key).update({total: (d.total||0)+p, weekly: (d.weekly||0)+p});
                 }
             });
-            alert("کرا!");
+            alert("ئەنجام سەیڤ کرا!");
         });
     }
 
     function openLeaderboard() {
         db.ref('users').once('value').then(snap => {
-            let arr = []; snap.forEach(u => arr.push({name: u.key, total: u.val().total||0, weekly: u.val().weekly||0}));
-            arr.sort((a,b) => b.weekly - a.weekly); // سەرەتا بەپێی خاڵی هەفتە ڕیزی بکە
+            let arr = [];
+            snap.forEach(u => arr.push({name: u.key, t: u.val().total||0, w: u.val().weekly||0}));
+            arr.sort((a,b) => b.w - a.w);
             let html = '';
             arr.forEach((u, i) => {
                 html += `<tr>
                     <td class="user-name">${i+1}. ${u.name}</td>
-                    <td><span class="points-badge">${u.weekly}</span></td>
-                    <td><span class="total-badge">${u.total}</span></td>
+                    <td style="color:var(--success); font-weight:bold;">${u.w}</td>
+                    <td style="color:var(--secondary); font-weight:bold;">${u.t}</td>
                 </tr>`;
             });
             document.getElementById('leaderboard-body').innerHTML = html;
@@ -218,7 +218,7 @@
     }
 
     function resetWeeklyOnly() {
-        if(confirm("سفرکردنەوەی هەفتە؟")) {
+        if(confirm("خاڵی هەمووان سفر دەکەیتەوە؟")) {
             db.ref('users').once('value').then(snap => snap.forEach(u => db.ref('users/'+u.key).update({weekly:0, predictions:{}})));
         }
     }
