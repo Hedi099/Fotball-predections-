@@ -102,8 +102,39 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // لێرەدا وێنەکان گۆڕاون بۆ سیستەمی ئۆتۆماتیکی بۆ ئەوەی هەمیشە کار بکەن
-    const getLogo = (name) => `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://www.${name.replace(/\s+/g, '').toLowerCase()}.com&size=128`;
+    // سیستەمی هێنانی وێنە بۆ Clearbit API گۆڕدرا کە زۆر وردترە بۆ یانەکان
+    const getLogo = (name) => {
+        const domains = {
+            'Espanyol': 'rcdespanyol.com',
+            'Oviedo': 'realoviedo.es',
+            'Galatasaray': 'galatasaray.org',
+            'Liverpool': 'liverpoolfc.com',
+            'Atalanta': 'atalanta.it',
+            'BayernMunchen': 'fcbayern.com',
+            'AtleticoMadrid': 'atleticodemadrid.com',
+            'Tottenham': 'tottenhamhotspur.com',
+            'NewcastleUnited': 'nufc.co.uk',
+            'FCBarcelona': 'fcbarcelona.com',
+            'BayerLeverkusen': 'bayer04.de',
+            'Arsenal': 'arsenal.com',
+            'Bodoglimt': 'glimt.no',
+            'SportingLisbon': 'sporting.pt',
+            'PSG': 'psg.fr',
+            'Chelsea': 'chelseafc.com',
+            'RealMadrid': 'realmadrid.com',
+            'ManCity': 'mancity.com',
+            'Bologna': 'bolognafc.it',
+            'ASRoma': 'asroma.com',
+            'Lille': 'losc.fr',
+            'AstonVilla': 'avfc.co.uk',
+            'Stuttgart': 'vfb.de',
+            'FCPorto': 'fcporto.pt',
+            'CeltaVigo': 'rccelta.es',
+            'Lyon': 'ol.fr'
+        };
+        const domain = domains[name] || name.toLowerCase() + '.com';
+        return `https://logo.clearbit.com/${domain}`;
+    };
 
     const matches = [
         { id: "m1", t1: "Espanyol", t2: "Oviedo", p1: 2, pX: 3, p2: 4, stadium: "یاریگای ئیسپانیۆل 🏟️" },
@@ -139,7 +170,7 @@
                 <div class="prediction-container">
                     <div class="predict-box">
                         <span class="team-name">${m.t1}</span>
-                        <img src="${getLogo(m.t1)}" class="team-logo" onerror="this.src='https://via.placeholder.com/55?text=FC'">
+                        <img src="${getLogo(m.t1)}" class="team-logo" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${m.t1}'">
                         <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
                     </div>
                     <div class="predict-box">
@@ -148,7 +179,7 @@
                     </div>
                     <div class="predict-box">
                         <span class="team-name">${m.t2}</span>
-                        <img src="${getLogo(m.t2)}" class="team-logo" onerror="this.src='https://via.placeholder.com/55?text=FC'">
+                        <img src="${getLogo(m.t2)}" class="team-logo" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${m.t2}'">
                         <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
                     </div>
                 </div>
