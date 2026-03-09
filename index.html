@@ -28,8 +28,11 @@
         #login-page, #main-app, .admin-box { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; border: 1px solid var(--border); margin-top: 15px; text-align: center; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
         .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        .btn-outline { width: 100%; background: transparent; color: white; border: 1px solid var(--border); padding: 12px; border-radius: 15px; cursor: pointer; font-size: 13px; }
         
+        /* ستایلی ئاگادارکردنەوەی پاسوۆرد */
+        #password-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #1e293b; padding: 30px; border-radius: 25px; border: 1px solid var(--secondary); text-align: center; width: 100%; max-width: 350px; }
+
         .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; position: relative; }
         .stadium-info { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }
         .timer { font-size: 12px; color: var(--secondary); font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 50px; margin-bottom: 10px; display: inline-block; direction: ltr; }
@@ -65,20 +68,10 @@
     <button id="pwaInstallBtn" class="install-app-btn">📲 دابەزاندنی ئەپی (گروپی برایان)</button>
 
     <div id="login-page">
-        <h1 id="login-title">🏆 چوونە ژوورەوە</h1>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت (Username)">
-        <input type="password" id="userPassInput" placeholder="پاسوۆرد (Password)">
-        
-        <div id="login-actions">
-            <button class="btn-main" onclick="handleAuth('login')">چوونە ژوورەوە</button>
-            <p style="font-size: 12px; color: #94a3b8;">هەژمارت نییە؟</p>
-            <button class="btn-outline" onclick="toggleAuthMode('signup')">دروستکردنی هەژماری نوێ</button>
-        </div>
-        
-        <div id="signup-actions" style="display: none;">
-            <button class="btn-main" style="background: var(--success);" onclick="handleAuth('signup')">تۆمارکردن و دەستپێکردن</button>
-            <button class="btn-outline" onclick="toggleAuthMode('login')" style="margin-top: 10px;">گەڕانەوە بۆ چوونە ژوورەوە</button>
-        </div>
+        <h1>🏆 گروپی برایان</h1>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
+        <input type="password" id="userPassInput" placeholder="پاسوۆرد (ئەگەر هەتبێت)">
+        <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display: none;">
@@ -95,9 +88,7 @@
                 <div style="text-align:center;"><div id="uTotal" style="color:var(--secondary); font-weight:bold;">0</div><small>گشتی</small></div>
             </div>
         </div>
-
         <button class="btn-main" style="background: white; color: black; margin: 20px 0;" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
-        
         <div id="matches-list"></div>
 
         <div id="admin-panel" class="admin-box" style="display:none; border: 2px solid var(--danger); margin-top: 30px;">
@@ -105,6 +96,15 @@
             <div id="admin-controls"></div>
             <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 سڕینەوەی خاڵی هەفتە</button>
         </div>
+    </div>
+</div>
+
+<div id="password-modal">
+    <div class="modal-content">
+        <h3 style="color: var(--secondary);">پاراستنی هەژمار 🛡️</h3>
+        <p style="font-size: 13px; color: #cbd5e1;">بۆ پاراستنی خاڵەکانت و هەژمارەکەت، تکایە پاسوۆردێک دابنێ:</p>
+        <input type="password" id="newPassInput" placeholder="پاسوۆردی نوێ بنووسە">
+        <button class="btn-main" onclick="saveNewPassword()">پاشەکەوتکردن</button>
     </div>
 </div>
 
@@ -145,35 +145,29 @@
         { id: "m12", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/523.png", stadium: "یاریگای سێلتاڤیگۆ", deadline: "2026-03-12T23:00:00+03:00" }
     ];
 
-    function toggleAuthMode(mode) {
-        document.getElementById('login-title').innerText = (mode === 'signup') ? "📝 دروستکردنی هەژمار" : "🏆 چوونە ژوورەوە";
-        document.getElementById('login-actions').style.display = (mode === 'signup') ? 'none' : 'block';
-        document.getElementById('signup-actions').style.display = (mode === 'signup') ? 'block' : 'none';
-    }
-
-    async function handleAuth(mode) {
+    async function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
         const pass = document.getElementById('userPassInput').value.trim();
-        if(!name || !pass) { alert("تکایە ناو و پاسوۆرد بنووسە"); return; }
+        if(name.length < 2) return;
 
-        const userRef = db.ref('users/' + name);
-        const snap = await userRef.once('value');
+        const snap = await db.ref('users/' + name).once('value');
         const userData = snap.val();
 
-        if(mode === 'signup') {
-            if(userData) { alert("ئەم ناوە پێشتر تۆمار کراوە!"); return; }
-            await userRef.set({ password: pass, total: 0, weekly: 0 });
-            loginSuccess(name);
-        } else {
-            if(!userData) { alert("ئەم هەژمارە بوونی نییە!"); return; }
-            if(userData.password !== pass) { alert("پاسوۆردەکە هەڵەیە!"); return; }
-            loginSuccess(name);
+        if(userData && userData.password) {
+            if(userData.password !== pass) { alert("⚠️ پاسوۆرد هەڵەیە!"); return; }
         }
-    }
-
-    function loginSuccess(name) {
+        
         localStorage.setItem('groupBryanUser', name);
         location.reload();
+    }
+
+    function saveNewPassword() {
+        const pass = document.getElementById('newPassInput').value.trim();
+        if(pass.length < 4) { alert("تکایە پاسوۆردێکی بەهێزتر بنووسە"); return; }
+        db.ref('users/' + currentUser).update({ password: pass }).then(() => {
+            document.getElementById('password-modal').style.display = 'none';
+            alert("🛡️ پاسوۆردەکەت بەسەرکەوتوویی پاشەکەوت کرا!");
+        });
     }
 
     function updateTimers() {
@@ -200,6 +194,15 @@
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
         if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
 
+        // پشکنین بۆ هەبوونی پاسوۆرد
+        db.ref('users/' + currentUser).once('value', snap => {
+            const d = snap.val();
+            if(!d || !d.password) {
+                document.getElementById('password-modal').style.display = 'flex';
+            }
+        });
+
+        // پیشاندانی یارییەکان
         let h = '', a = '';
         matches.forEach(m => {
             h += `<div class="match-card" id="${m.id}">
@@ -242,7 +245,6 @@
     }
 
     function vote(mId, c, p) { if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
-
     function finish(mId, res, p) {
         db.ref('users').once('value').then(snap => {
             snap.forEach(u => {
@@ -280,4 +282,4 @@
     });
 </script>
 </body>
-    </html>
+</html> 
