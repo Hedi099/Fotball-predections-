@@ -129,8 +129,8 @@
 
         let h = '', a = '';
         matches.forEach(m => {
-            const logo1 = `https://www.directpng.com/images/crest/big/${m.img1}.png`;
-            const logo2 = `https://www.directpng.com/images/crest/big/${m.img2}.png`;
+            const logo1 = `https://tmssl.akamaized.net/images/crest/big/${m.img1}.png`;
+            const logo2 = `https://tmssl.akamaized.net/images/crest/big/${m.img2}.png`;
             
             h += `<div class="match-card" id="${m.id}">
                 <div class="prediction-container">
@@ -183,7 +183,10 @@
     function openLeaderboard() {
         db.ref('users').once('value').then(snap => {
             let arr = [];
-            snap.forEach(u => arr.push({name: u.key, t: u.val().total||0, w: u.val().weekly||0}));
+            snap.forEach(u => {
+                const data = u.val();
+                arr.push({name: u.key, t: data.total || 0, w: data.weekly || 0});
+            });
             arr.sort((a,b) => b.w - a.w);
             let row = '';
             arr.forEach((u, i) => {
@@ -195,10 +198,10 @@
     }
 
     function resetWeeklyOnly() {
-        if(confirm("دڵنیایت لە سڕینەوەی خاڵی هەفتانە؟ (خاڵی گشتی وەک خۆی دەمێنێتەوە)")) {
+        if(confirm("دڵنیایت لە سڕینەوەی خاڵی هەفتانە؟")) {
             db.ref('users').once('value').then(snap => {
                 snap.forEach(u => db.ref('users/'+u.key).update({weekly:0, predictions:{}}));
-                alert("خاڵی هەفتانە بۆ هەمووان سفر کرایەوە!");
+                alert("خاڵی هەفتانە سفر کرایەوە!");
             });
         }
     }
