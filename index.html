@@ -19,7 +19,7 @@
         #login-page, #main-app, .admin-box { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; border: 1px solid var(--border); margin-top: 15px; text-align: center; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; }
         .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
-        .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; }
+        .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; position: relative; }
         .stadium-info { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }
         .time-badge { font-size: 10px; background: rgba(245, 158, 11, 0.2); color: var(--secondary); padding: 2px 8px; border-radius: 10px; margin-top: 5px; display: inline-block; }
         .prediction-container { display: flex; justify-content: space-around; align-items: center; }
@@ -28,6 +28,8 @@
         .team-name { font-size: 11px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; height: 35px; display: flex; align-items: center; }
         .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
+        .expired { opacity: 0.6; filter: grayscale(0.5); }
+        .closed-tag { color: var(--danger); font-size: 10px; font-weight: bold; display: block; margin-top: 5px; }
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         .rank-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
         .rank-table th { background: #1e293b; color: var(--secondary); padding: 15px; font-size: 14px; }
@@ -103,20 +105,13 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
+    // کاتەکان بە شێوازی (Year, Month[0-11], Day, Hour, Minute) بۆ کاتی هەولێر دانراون
     const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/714.png", img2: "https://crests.football-data.org/oviedo.png", stadium: "یاریگای ئیسپانیۆل 🏟️", time: "ئەمڕۆ 10:30 PM" },
-        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "https://crests.football-data.org/610.png", img2: "https://crests.football-data.org/64.png", stadium: "یاریگای گەلتەسەرای 🏟️", time: "سبەی 08:45 PM" },
-        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن میونشن", p1: 4, pX: 3, p2: 2, img1: "https://crests.football-data.org/102.png", img2: "https://crests.football-data.org/5.png", stadium: "یاریگای ئەتلەنتا 🏟️", time: "سبەی 11:00 PM" },
-        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", stadium: "یاریگای ئەتلەتیکۆ مەدرید 🏟️", time: "چوارشەممە 11:00 PM" },
-        { id: "m5", t1: "نیوکاسڵ", t2: "بارسێلۆنا", p1: 4, pX: 3, p2: 2, img1: "https://crests.football-data.org/67.png", img2: "https://crests.football-data.org/81.png", stadium: "یاریگای نیوکاسڵ 🏟️", time: "چوارشەممە 11:00 PM" },
-        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, img1: "https://crests.football-data.org/3.png", img2: "https://crests.football-data.org/57.png", stadium: "یاریگای لیڤەرکوزن 🏟️", time: "پێنجشەممە 08:45 PM" },
-        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, img1: "https://crests.football-data.org/bodoglimt.png", img2: "https://crests.football-data.org/sporting.png", stadium: "یاریگای بۆدۆگلیمت 🏟️", time: "پێنجشەممە 08:45 PM" },
-        { id: "m8", t1: "پاریس سان جێرمان", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "یاریگای پاریس 🏟️", time: "پێنجشەممە 11:00 PM" },
-        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مانسیتی", p1: 3, pX: 4, p2: 2, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "یاریگای ڕیاڵ مەدرید 🏟️", time: "هەینی 11:00 PM" },
-        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "یاریگای ڕۆما 🏟️", time: "شەممە 05:00 PM" },
-        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, img1: "https://crests.football-data.org/521.png", img2: "https://crests.football-data.org/58.png", stadium: "یاریگای لیل 🏟️", time: "شەممە 07:30 PM" },
-        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/10.png", img2: "https://crests.football-data.org/503.png", stadium: "یاریگای شتوتگارت 🏟️", time: "شەممە 10:30 PM" },
-        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, img1: "https://crests.football-data.org/338.png", img2: "https://crests.football-data.org/523.png", stadium: "یاریگای سێلتاڤیگۆ 🏟️", time: "یەکشەممە 09:00 PM" }
+        { id: "m1", t1: "ڕیاڵ مەدرید", t2: "لیڤەرپوول", p1: 3, pX: 4, p2: 2, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/64.png", stadium: "بێرنابیۆ 🏟️", deadline: new Date(2026, 2, 10, 23, 0), timeLabel: "سێشەممە 11:00 PM" },
+        { id: "m2", t1: "ئەرسناڵ", t2: "میلان", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/98.png", stadium: "ئیمارات 🏟️", deadline: new Date(2026, 2, 10, 23, 0), timeLabel: "سێشەممە 11:00 PM" },
+        { id: "m3", t1: "بارسێلۆنا", t2: "بێنفیکا", p1: 2, pX: 4, p2: 5, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/1903.png", stadium: "کامپ نۆ 🏟️", deadline: new Date(2026, 2, 11, 23, 0), timeLabel: "چوارشەممە 11:00 PM" },
+        { id: "m4", t1: "مان سیتی", t2: "یوڤێنتوس", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/109.png", stadium: "ئیتیحاد 🏟️", deadline: new Date(2026, 2, 11, 23, 0), timeLabel: "چوارشەممە 11:00 PM" },
+        { id: "m5", t1: "بایرن میونشن", t2: "ئەتلەتیکۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/78.png", stadium: "ئەلیانز ئارێنا 🏟️", deadline: new Date(2026, 2, 12, 23, 0), timeLabel: "پێنجشەممە 11:00 PM" }
     ];
 
     function loginUser() {
@@ -132,23 +127,30 @@
         if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
 
         let h = '', a = '';
+        const now = new Date();
+
         matches.forEach(m => {
-            h += `<div class="match-card" id="${m.id}">
-                <div style="text-align:center; margin-bottom:10px;"><span class="time-badge">${m.time}</span></div>
+            const isExpired = now >= m.deadline;
+            
+            h += `<div class="match-card ${isExpired ? 'expired' : ''}" id="${m.id}">
+                <div style="text-align:center; margin-bottom:10px;">
+                    <span class="time-badge">${m.timeLabel}</span>
+                    ${isExpired ? '<span class="closed-tag">داخراوە 🔒</span>' : ''}
+                </div>
                 <div class="prediction-container">
                     <div class="predict-box">
                         <span class="team-name">${m.t1}</span>
-                        <img src="${m.img1}" class="team-logo" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${m.t1}'">
-                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
+                        <img src="${m.img1}" class="team-logo">
+                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})" ${isExpired ? 'disabled' : ''}>1 (${m.p1})</button>
                     </div>
                     <div class="predict-box">
                         <span class="team-name">یەکسان</span>
-                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">X (${m.pX})</button>
+                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;" ${isExpired ? 'disabled' : ''}>X (${m.pX})</button>
                     </div>
                     <div class="predict-box">
                         <span class="team-name">${m.t2}</span>
-                        <img src="${m.img2}" class="team-logo" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${m.t2}'">
-                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
+                        <img src="${m.img2}" class="team-logo">
+                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})" ${isExpired ? 'disabled' : ''}>2 (${m.p2})</button>
                     </div>
                 </div>
                 <div class="stadium-info">${m.stadium}</div>
