@@ -30,7 +30,7 @@
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
         .expired { opacity: 0.6; filter: grayscale(0.4); }
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
-        .rank-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
+        .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
         .rank-table th { background: #1e293b; color: var(--secondary); padding: 15px; font-size: 14px; }
         .rank-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); text-align: center; font-size: 14px; }
         .rank-table td.u-n { text-align: right; font-weight: bold; }
@@ -39,8 +39,12 @@
         .adm-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 10px; color: white; }
         .close-btn { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; margin-bottom: 10px; }
         
-        /* شێوازی دوگمە نوێیەکە */
-        #installBtn { display: none; background: #22c55e; margin-bottom: 15px; border: none; color: white; padding: 12px; border-radius: 15px; font-weight: bold; cursor: pointer; width: 100%; }
+        /* ستایلی تابلۆی براوەی هەفتە */
+        .winner-banner { background: linear-gradient(45deg, #f59e0b, #d97706); color: black; padding: 12px; border-radius: 15px; font-weight: bold; margin-bottom: 15px; font-size: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        
+        /* دوگمەی دابەزاندنی ئەپ */
+        #installBtn { display: none; background: #22c55e; border: none; color: white; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -53,8 +57,6 @@
             واتە: "ئەو کەسەی ڕێنمایی خەڵکی دەکات بۆ کاری چاکە، وەک ئەوە وایە کە خۆی کارەکەی کردبێت."
         </div>
     </div>
-
-    <button id="installBtn">📲 دابەزاندن بۆ سەر شاشە (Install)</button>
 
     <div id="login-page">
         <h1>🏆 گروپی برایان</h1>
@@ -74,6 +76,8 @@
             </div>
         </div>
 
+        <button id="installBtn">📲 دابەزاندنی ئەپی (گروپی برایان)</button>
+
         <button class="btn-main" style="background: white; color: black; margin: 20px 0;" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
         <div id="matches-list"></div>
 
@@ -87,6 +91,11 @@
 
 <div id="leaderboard-overlay">
     <button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
+    
+    <div class="winner-banner">
+        <span>👏 براوەی هەفتە دەبێتە خاوەن چەپڵەیەکی گەرم</span>
+    </div>
+
     <table class="rank-table">
         <thead>
             <tr><th style="text-align: right;">یاریزان</th><th>هەفتە</th><th>گشتی</th></tr>
