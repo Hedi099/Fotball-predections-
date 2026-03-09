@@ -20,11 +20,11 @@
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; }
         .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
         .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; }
-        .stadium-name { font-size: 10px; color: #94a3b8; display: block; margin-top: 10px; text-align: center; }
+        .stadium-info { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }
         .prediction-container { display: flex; justify-content: space-around; align-items: center; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .team-logo { width: 60px; height: 60px; object-fit: contain; background: white; border-radius: 12px; padding: 5px; }
-        .team-name { font-size: 11px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; height: 30px; display: flex; align-items: center; }
+        .team-logo { width: 55px; height: 55px; object-fit: contain; }
+        .team-name { font-size: 11px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; height: 35px; display: flex; align-items: center; }
         .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
@@ -67,10 +67,10 @@
         <button class="btn-main" style="background: white; color: black; margin: 20px 0;" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
         <div id="matches-list"></div>
 
-        <div id="admin-panel" class="admin-box" style="display:none; border: 1px solid var(--danger);">
+        <div id="admin-panel" class="admin-box" style="display:none; border: 2px solid var(--danger);">
             <h3 style="color:var(--danger)">کۆنتڕۆڵی ئەنجامەکان (Hedi)</h3>
             <div id="admin-controls"></div>
-            <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 سڕینەوەی ئەنجامەکانی هەفتە</button>
+            <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 سڕینەوەی خاڵی هەفتە</button>
         </div>
     </div>
 </div>
@@ -100,19 +100,19 @@
     let currentUser = localStorage.getItem('groupBryanUser');
 
     const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "714", img2: "2893", stadium: "یاریگای کۆرنێلا" },
-        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "141", img2: "31", stadium: "ڕامس پارک" },
-        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن", p1: 4, pX: 3, p2: 2, img1: "800", img2: "27", stadium: "گێویس ستادیۆم" },
-        { id: "m4", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "13", img2: "148", stadium: "میترۆپۆلیتانۆ" },
-        { id: "m5", t1: "نیوکاسڵ", t2: "بارسا", p1: 4, pX: 3, p2: 2, img1: "762", img2: "131", stadium: "سانت جەیمس پارک" },
-        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, img1: "15", img2: "11", stadium: "بای ئەرینا" },
-        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, img1: "777", img2: "336", stadium: "ئەسپمیرا ستادیۆم" },
-        { id: "m8", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "583", img2: "631", stadium: "پارک دی پرێنس" },
-        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 3, pX: 4, p2: 2, img1: "418", img2: "281", stadium: "سانتیاگۆ بێرنابیۆ" },
-        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, img1: "1025", img2: "12", stadium: "ڕێناتۆ داڵ ئارا" },
-        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, img1: "1082", img2: "405", stadium: "دیکاتلۆن ئەرینا" },
-        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, img1: "79", img2: "720", stadium: "ئێم ئێچ پی ئەرینا" },
-        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, img1: "940", img2: "1041", stadium: "یاریگای بالایدۆس" }
+        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "714", img2: "2893", stadium: "یاریگای ئیسپانیۆل 🏟️" },
+        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "141", img2: "31", stadium: "یاریگای گەلتەسەرای 🏟️" },
+        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن میونشن", p1: 4, pX: 3, p2: 2, img1: "800", img2: "27", stadium: "یاریگای ئەتلەنتا 🏟️" },
+        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "13", img2: "148", stadium: "یاریگای ئەتلەتیکۆ مەدرید 🏟️" },
+        { id: "m5", t1: "نیوکاسڵ", t2: "بارسێلۆنا", p1: 4, pX: 3, p2: 2, img1: "762", img2: "131", stadium: "یاریگای نیوکاسڵ 🏟️" },
+        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, img1: "15", img2: "11", stadium: "یاریگای لیڤەرکوزن 🏟️" },
+        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, img1: "777", img2: "336", stadium: "یاریگای بۆدۆگلیمت 🏟️" },
+        { id: "m8", t1: "پاریس سان جێرمان", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "583", img2: "631", stadium: "یاریگای پاریس 🏟️" },
+        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مانسیتی", p1: 3, pX: 4, p2: 2, img1: "418", img2: "281", stadium: "یاریگای ڕیاڵ مەدرید 🏟️" },
+        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, img1: "1025", img2: "12", stadium: "یاریگای ڕۆما 🏟️" },
+        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, img1: "1082", img2: "405", stadium: "یاریگای لیل 🏟️" },
+        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, img1: "79", img2: "720", stadium: "یاریگای شتوتگارت 🏟️" },
+        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, img1: "940", img2: "1041", stadium: "یاریگای سێلتاڤیگۆ 🏟️" }
     ];
 
     function loginUser() {
@@ -129,19 +129,21 @@
 
         let h = '', a = '';
         matches.forEach(m => {
-            const l1 = `https://www.transfermarkt.com/images/crest/big/${m.img1}.png`;
-            const l2 = `https://www.transfermarkt.com/images/crest/big/${m.img2}.png`;
+            const logo1 = `https://www.directpng.com/images/crest/big/${m.img1}.png`;
+            const logo2 = `https://www.directpng.com/images/crest/big/${m.img2}.png`;
+            
             h += `<div class="match-card" id="${m.id}">
                 <div class="prediction-container">
-                    <div class="predict-box"><span class="team-name">${m.t1}</span><img src="${l1}" class="team-logo" onerror="this.src='https://tmssl.akamaized.net/images/crest/big/${m.img1}.png'"><button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button></div>
+                    <div class="predict-box"><span class="team-name">${m.t1}</span><img src="${logo1}" class="team-logo"><button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button></div>
                     <div class="predict-box"><span class="team-name">یەکسان</span><button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">X (${m.pX})</button></div>
-                    <div class="predict-box"><span class="team-name">${m.t2}</span><img src="${l2}" class="team-logo" onerror="this.src='https://tmssl.akamaized.net/images/crest/big/${m.img2}.png'"><button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button></div>
+                    <div class="predict-box"><span class="team-name">${m.t2}</span><img src="${logo2}" class="team-logo"><button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button></div>
                 </div>
-                <span class="stadium-name">🏟️ ${m.stadium}</span>
+                <div class="stadium-info">${m.stadium}</div>
             </div>`;
+
             a += `<div class="admin-item"><div>${m.t1} vs ${m.t2}</div><div class="admin-btns">
                 <button class="adm-btn" style="background:var(--success)" onclick="finish('${m.id}',1,${m.p1})">${m.t1}</button>
-                <button class="adm-btn" style="background:#555;" onclick="finish('${m.id}',2,${m.pX})">یەکسان</button>
+                <button class="adm-btn" style="background:#555;" onclick="finish('${m.id}',2,${m.pX})">یەکسان بوون</button>
                 <button class="adm-btn" style="background:var(--danger)" onclick="finish('${m.id}',3,${m.p2})">${m.t2}</button>
             </div></div>`;
         });
@@ -193,10 +195,10 @@
     }
 
     function resetWeeklyOnly() {
-        if(confirm("دڵنیایت لە سڕینەوەی خاڵی هەفتانە و پێشبینی هەمووان؟")) {
+        if(confirm("دڵنیایت لە سڕینەوەی خاڵی هەفتانە؟ (خاڵی گشتی وەک خۆی دەمێنێتەوە)")) {
             db.ref('users').once('value').then(snap => {
                 snap.forEach(u => db.ref('users/'+u.key).update({weekly:0, predictions:{}}));
-                alert("هەموو پێشبینییەکان سڕدرانەوە و هەفتەیەکی نوێ دەستی پێکرد!");
+                alert("خاڵی هەفتانە بۆ هەمووان سفر کرایەوە!");
             });
         }
     }
