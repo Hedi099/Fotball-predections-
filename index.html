@@ -104,12 +104,19 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // کاتەکان بە وردی بەپێی FotMob (کاتی هەولێر) دانراون
+    // دێدلاینەکان بە وردی بەپێی کاتی هەولێر (9، 10، 11، 12ی مانگی 3) ڕێکخراون
     const matches = [
-        { id: "m1", t1: "Real Madrid", t2: "Liverpool", p1: 3, pX: 4, p2: 2, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/64.png", stadium: "Santiago Bernabéu 🏟️", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m2", t1: "Arsenal", t2: "AC Milan", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/98.png", stadium: "Emirates Stadium 🏟️", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m3", t1: "Barcelona", t2: "Benfica", p1: 2, pX: 4, p2: 5, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/1903.png", stadium: "Spotify Camp Nou 🏟️", deadline: "2026-03-11T23:00:00+03:00" },
-        { id: "m4", t1: "Manchester City", t2: "Juventus", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/109.png", stadium: "Etihad Stadium 🏟️", deadline: "2026-03-11T23:00:00+03:00" }
+        { id: "m1", t1: "یاری یەکەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/64.png", stadium: "یاریگای ١", deadline: "2026-03-09T23:00:00+03:00" },
+        { id: "m2", t1: "یاری دووەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/98.png", stadium: "یاریگای ٢", deadline: "2026-03-10T20:45:00+03:00" },
+        { id: "m3", t1: "یاری سێیەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/1903.png", stadium: "یاریگای ٣", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m4", t1: "یاری چوارەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/109.png", stadium: "یاریگای ٤", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m5", t1: "یاری پێنجەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/78.png", stadium: "یاریگای ٥", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m6", t1: "یاری شەشەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/3.png", img2: "https://crests.football-data.org/1.png", stadium: "یاریگای ٦", deadline: "2026-03-11T20:45:00+03:00" },
+        { id: "m7", t1: "یاری حەوتەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/141.png", img2: "https://crests.football-data.org/5.png", stadium: "یاریگای ٧", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m8", t1: "یاری هەشتەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/12.png", img2: "https://crests.football-data.org/615.png", stadium: "یاریگای ٨", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m9", t1: "یاری نۆیەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/557.png", img2: "https://crests.football-data.org/22.png", stadium: "یاریگای ٩", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m10", t1: "یاری دەهەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/521.png", img2: "https://crests.football-data.org/58.png", stadium: "یاریگای ١٠", deadline: "2026-03-12T02:45:00+03:00" },
+        { id: "m11", t1: "یاری یازدەهەم", t2: "نەناسراو", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/10.png", img2: "https://crests.football-data.org/503.png", stadium: "یاریگای ١١", deadline: "2026-03-12T02:45:00+03:00" }
     ];
 
     function loginUser() {
@@ -127,7 +134,7 @@
             const cardEl = document.getElementById(m.id);
 
             if (diff <= 0) {
-                if (timerEl) timerEl.innerHTML = "🔒 یاری دەستی پێکرد";
+                if (timerEl) timerEl.innerHTML = "🔒 داخراوە";
                 if (cardEl) cardEl.classList.add('expired');
                 document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b => b.disabled = true);
             } else {
@@ -148,7 +155,7 @@
         let h = '', a = '';
         matches.forEach(m => {
             h += `<div class="match-card" id="${m.id}">
-                <div style="text-align:center;"><div class="timer" id="timer-${m.id}">بارگاوی دەبێت...</div></div>
+                <div style="text-align:center;"><div class="timer" id="timer-${m.id}">...</div></div>
                 <div class="prediction-container">
                     <div class="predict-box">
                         <span class="team-name">${m.t1}</span>
