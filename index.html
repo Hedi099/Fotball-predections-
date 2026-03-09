@@ -15,7 +15,30 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: radial-gradient(circle at top right, #1e293b, #0f172a); color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 480px; padding: 15px; }
-        .hadith-box { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--secondary); border-radius: 20px; padding: 20px; margin-bottom: 25px; text-align: center; }
+        .hadith-box { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--secondary); border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        
+        /* ستایلی دوگمەی دابەزاندن لەژێر فەرموودە */
+        .install-app-btn {
+            display: none;
+            width: 100%;
+            background: linear-gradient(45deg, #059669, #10b981);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: 0.3s;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
         #login-page, #main-app, .admin-box { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; border: 1px solid var(--border); margin-top: 15px; text-align: center; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; }
         .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
@@ -38,11 +61,7 @@
         .admin-btns { display: flex; gap: 8px; margin-top: 10px; }
         .adm-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 10px; color: white; }
         .close-btn { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; margin-bottom: 10px; }
-        
         .winner-banner { background: linear-gradient(45deg, #f59e0b, #d97706); color: black; padding: 12px; border-radius: 15px; font-weight: bold; margin-bottom: 15px; font-size: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
-        
-        #installBtn { display: none; background: #22c55e; border: none; color: white; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -55,6 +74,8 @@
             واتە: "ئەو کەسەی ڕێنمایی خەڵکی دەکات بۆ کاری چاکە، وەک ئەوە وایە کە خۆی کارەکەی کردبێت."
         </div>
     </div>
+
+    <button id="pwaInstallBtn" class="install-app-btn">📲 دابەزاندنی ئەپی (گروپی برایان)</button>
 
     <div id="login-page">
         <h1>🏆 گروپی برایان</h1>
@@ -74,8 +95,6 @@
             </div>
         </div>
 
-        <button id="installBtn">📲 دابەزاندنی ئەپی (گروپی برایان)</button>
-
         <button class="btn-main" style="background: white; color: black; margin: 20px 0;" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
         <div id="matches-list"></div>
 
@@ -89,11 +108,9 @@
 
 <div id="leaderboard-overlay">
     <button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
-    
     <div class="winner-banner">
         <span>👏 براوەی هەفتە دەبێتە خاوەن چەپڵەیەکی گەرم</span>
     </div>
-
     <table class="rank-table">
         <thead>
             <tr><th style="text-align: right;">یاریزان</th><th>هەفتە</th><th>گشتی</th></tr>
@@ -116,23 +133,26 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
+    // لۆژیکی ناسینەوەی دابەزاندنی ئەپ
     let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
+    const pwaBtn = document.getElementById('pwaInstallBtn');
 
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installBtn.style.display = 'block';
+        pwaBtn.style.display = 'block';
     });
 
-    installBtn.addEventListener('click', async () => {
+    pwaBtn.addEventListener('click', async () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
-                installBtn.style.display = 'none';
+                pwaBtn.style.display = 'none';
             }
             deferredPrompt = null;
+        } else {
+            alert("ئەم خزمەتگوزارییە لە ئێستادا تەنها لەسەر ئەندرۆید و وێبگەڕی Chrome بەردەستە. ئەگەر ئایفۆنت هەیە، لە ڕێگەی Share پاشان Add to Home Screen ئەپەکە دابەزێنە.");
         }
     });
 
