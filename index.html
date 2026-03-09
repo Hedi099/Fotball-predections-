@@ -34,6 +34,9 @@
             padding: 14px; border-radius: 20px; font-weight: bold; cursor: pointer; margin: 20px 0;
             display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
         }
+        .btn-leaderboard:hover { background: var(--secondary); color: black; }
+
+        .delete-account-btn { background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 8px; font-size: 9px; cursor: pointer; font-weight: bold; }
 
         .match-card { 
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1000&auto=format&fit=crop');
@@ -52,25 +55,14 @@
         
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         
-        .leaderboard-header { 
-            text-align: center; 
-            background: linear-gradient(45deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05)); 
-            padding: 20px; border-radius: 20px; margin-bottom: 25px; 
-            border: 1px solid var(--secondary);
-        }
-        .header-title { color: var(--secondary); font-weight: 900; font-size: 15px; margin: 0; }
-
         .rank-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
         .rank-table thead th { color: #94a3b8; font-size: 13px; padding: 10px; font-weight: bold; }
         .rank-row { background: rgba(255, 255, 255, 0.05); }
         .rank-row td { padding: 15px 12px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
         .rank-row td:first-child { border-right: 1px solid var(--border); border-top-right-radius: 15px; border-bottom-right-radius: 15px; text-align: right; }
         .rank-row td:last-child { border-left: 1px solid var(--border); border-top-left-radius: 15px; border-bottom-left-radius: 15px; text-align: left; }
-        
-        .pts-badge { color: var(--success); font-weight: bold; font-size: 13px; }
+        .pts-badge { color: var(--success); font-weight: bold; }
         .total-badge { color: #94a3b8; font-size: 13px; margin-left: 5px; }
-
-        .delete-account-btn { background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 8px; font-size: 9px; cursor: pointer; margin-top: 4px; display: inline-block; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -119,11 +111,6 @@
 
 <div id="leaderboard-overlay">
     <button class="btn-main" style="background:var(--danger); margin-bottom:15px;" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
-    
-    <div class="leaderboard-header">
-        <p class="header-title">براوەی هەفتە دەبێتە خاوەن چەپڵەیەکی گەرم 👏</p>
-    </div>
-
     <table class="rank-table">
         <thead>
             <tr>
@@ -136,7 +123,6 @@
 </div>
 
 <script>
-    // ... Firebase config and all logic remain same as previous working version ...
     const firebaseConfig = {
         apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ",
         authDomain: "brayan-2a1ef.firebaseapp.com",
@@ -152,7 +138,15 @@
 
     const matches = [
         { id: "m1", t1: "ئیسپانیۆل", t2: "ریال ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/71.png", stadium: "RCDE Stadium", deadline: "2026-03-09T23:00:00+03:00" },
-        { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "Anfield", deadline: "2026-03-10T20:45:00+03:00" }
+        { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "Anfield", deadline: "2026-03-10T20:45:00+03:00" },
+        { id: "m3", t1: "ئەتڵانتا", t2: "بایرن میونشن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/102.png", img2: "https://crests.football-data.org/5.png", stadium: "Gewiss Stadium", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", stadium: "Metropolitano", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m5", t1: "بارسێلۆنا", t2: "نیوکاسڵ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", stadium: "Camp Nou", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m6", t1: "ئارسناڵ", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", stadium: "Emirates Stadium", deadline: "2026-03-11T20:45:00+03:00" },
+        { id: "m7", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "Santiago Bernabéu", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m8", t1: "بۆدۆ گلیمت", t2: "لیشبۆنە", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", stadium: "Aspmyra Stadion", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m9", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "Parc des Princes", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "Stadio Renato Dall'Ara", deadline: "2026-03-12T20:45:00+03:00" }
     ];
 
     async function loginUser() {
@@ -190,6 +184,12 @@
             const d = snap.val() || {total:0, weekly:0};
             document.getElementById('uTotal').innerText = d.total || 0;
             document.getElementById('uWeekly').innerText = d.weekly || 0;
+            if (d.predictions) {
+                Object.keys(d.predictions).forEach(mid => {
+                    const btn = document.getElementById(mid + '-btn' + d.predictions[mid].choice);
+                    if(btn) btn.classList.add('selected');
+                });
+            }
         });
     }
 
@@ -212,7 +212,7 @@
 
     function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
     function deleteAccount() { if(confirm("دڵنیای؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
-    function vote(mId, c, p) { if(confirm("قفڵ؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
+    function vote(mId, c, p) { if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
 </script>
 </body>
-</html> 
+</html>
