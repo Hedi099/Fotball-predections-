@@ -18,29 +18,18 @@
         .hadith-box { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--secondary); border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; }
         
         .install-app-btn {
-            display: block;
-            width: 100%;
-            background: linear-gradient(45deg, #059669, #10b981);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            transition: 0.3s;
-            animation: bounce 2s infinite;
+            display: block; width: 100%; background: linear-gradient(45deg, #059669, #10b981);
+            color: white; border: none; padding: 14px; border-radius: 15px; font-weight: bold;
+            font-size: 14px; cursor: pointer; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: 0.3s; animation: bounce 2s infinite;
         }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
         #login-page, #main-app, .admin-box { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; border: 1px solid var(--border); margin-top: 15px; text-align: center; }
-        input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; }
-        .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
+        input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
+        .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .btn-outline { width: 100%; background: transparent; color: white; border: 1px solid var(--border); padding: 12px; border-radius: 15px; cursor: pointer; font-size: 13px; }
+        
         .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; position: relative; }
         .stadium-info { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }
         .timer { font-size: 12px; color: var(--secondary); font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 50px; margin-bottom: 10px; display: inline-block; direction: ltr; }
@@ -51,20 +40,17 @@
         .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
         .expired { opacity: 0.6; filter: grayscale(0.4); }
+        
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
         .rank-table th { background: #1e293b; color: var(--secondary); padding: 15px; font-size: 14px; }
         .rank-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); text-align: center; font-size: 14px; }
         .rank-table td.u-n { text-align: right; font-weight: bold; }
+        
+        .delete-account-btn { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 10px; font-size: 10px; cursor: pointer; transition: 0.3s; margin-top: 5px; display: inline-block; }
         .admin-item { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 15px; border-right: 4px solid var(--primary); }
         .admin-btns { display: flex; gap: 8px; margin-top: 10px; }
         .adm-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 10px; color: white; }
-        .close-btn { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; margin-bottom: 10px; }
-        .winner-banner { background: linear-gradient(45deg, #f59e0b, #d97706); color: black; padding: 12px; border-radius: 15px; font-weight: bold; margin-bottom: 15px; font-size: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
-
-        /* ستایلی نوێ بۆ دوگمەی سڕینەوە */
-        .delete-account-btn { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 10px; font-size: 10px; cursor: pointer; transition: 0.3s; margin-top: 5px; display: inline-block; }
-        .delete-account-btn:hover { background: var(--danger); color: white; }
     </style>
 </head>
 <body>
@@ -73,17 +59,26 @@
     <div class="hadith-box">
         <span style="color:var(--secondary); font-size:12px; font-weight:bold;">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
         <div style="font-size:15px; margin-top:10px; font-weight: bold; line-height: 1.6;">«أَسْتَغْفِرُ اللَّهَ العَظِيمَ الَّذِي لاَ إِلَهَ إِلَّا هُوَ الحَيُّ القَيُّومُ وَأَتُوبُ إِلَيْهِ»</div>
-        <div style="font-size:12px; margin-top:8px; color: #cbd5e1; border-top: 1px dashed rgba(255,255,255,0.2); padding-top:8px;">
-            هەرکەسێک ئەمە بڵێت گوناهەکانی دەبەخشرێ ئەگەر لە مەیدانی جەنگیش ڕایکردبێت.
-        </div>
+        <div style="font-size:12px; margin-top:8px; color: #cbd5e1; border-top: 1px dashed rgba(255,255,255,0.2); padding-top:8px;">گوناهەکانی دەبەخشرێ ئەگەر لە مەیدانی جەنگیش ڕایکردبێت.</div>
     </div>
 
     <button id="pwaInstallBtn" class="install-app-btn">📲 دابەزاندنی ئەپی (گروپی برایان)</button>
 
     <div id="login-page">
-        <h1>🏆 گروپی برایان</h1>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
-        <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
+        <h1 id="login-title">🏆 چوونە ژوورەوە</h1>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت (Username)">
+        <input type="password" id="userPassInput" placeholder="پاسوۆرد (Password)">
+        
+        <div id="login-actions">
+            <button class="btn-main" onclick="handleAuth('login')">چوونە ژوورەوە</button>
+            <p style="font-size: 12px; color: #94a3b8;">هەژمارت نییە؟</p>
+            <button class="btn-outline" onclick="toggleAuthMode('signup')">دروستکردنی هەژماری نوێ</button>
+        </div>
+        
+        <div id="signup-actions" style="display: none;">
+            <button class="btn-main" style="background: var(--success);" onclick="handleAuth('signup')">تۆمارکردن و دەستپێکردن</button>
+            <button class="btn-outline" onclick="toggleAuthMode('login')" style="margin-top: 10px;">گەڕانەوە بۆ چوونە ژوورەوە</button>
+        </div>
     </div>
 
     <div id="main-app" style="display: none;">
@@ -102,9 +97,10 @@
         </div>
 
         <button class="btn-main" style="background: white; color: black; margin: 20px 0;" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
+        
         <div id="matches-list"></div>
 
-        <div id="admin-panel" class="admin-box" style="display:none; border: 2px solid var(--danger);">
+        <div id="admin-panel" class="admin-box" style="display:none; border: 2px solid var(--danger); margin-top: 30px;">
             <h3 style="color:var(--danger)">کۆنتڕۆڵی ئەنجامەکان (Hedi)</h3>
             <div id="admin-controls"></div>
             <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 سڕینەوەی خاڵی هەفتە</button>
@@ -113,14 +109,9 @@
 </div>
 
 <div id="leaderboard-overlay">
-    <button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
-    <div class="winner-banner">
-        <span>👏 براوەی هەفتە دەبێتە خاوەن چەپڵەیەکی گەرم</span>
-    </div>
+    <button class="btn-main" style="background:var(--danger); margin-bottom:15px;" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
     <table class="rank-table">
-        <thead>
-            <tr><th style="text-align: right;">یاریزان</th><th>هەفتە</th><th>گشتی</th></tr>
-        </thead>
+        <thead><tr><th style="text-align: right;">یاریزان</th><th>هەفتە</th><th>گشتی</th></tr></thead>
         <tbody id="leaderboard-body"></tbody>
     </table>
 </div>
@@ -139,24 +130,6 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    let deferredPrompt;
-    const pwaBtn = document.getElementById('pwaInstallBtn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-    });
-
-    pwaBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            deferredPrompt = null;
-        } else {
-            alert("ڕێنمایی:\n١- ئەگەر ئەندرۆیدیت: لە سێ خاڵەکەی سەرەوەی براوزەر 'Install app' هەڵبژێرە.\n٢- ئەگەر ئایفۆنیت: کلیک لە Share بکە و 'Add to Home Screen' هەڵبژێرە.");
-        }
-    });
-
     const matches = [
         { id: "m1", t1: "ئیسپانیۆل", t2: "ریال ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/71.png", stadium: "یاریگای ئیسپانیۆل", deadline: "2026-03-09T23:00:00+03:00" },
         { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "یاریگای لیڤەرپووڵ", deadline: "2026-03-10T20:45:00+03:00" },
@@ -172,19 +145,35 @@
         { id: "m12", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/523.png", stadium: "یاریگای سێلتاڤیگۆ", deadline: "2026-03-12T23:00:00+03:00" }
     ];
 
-    function loginUser() {
-        const name = document.getElementById('userNameInput').value.trim();
-        if (name.length < 2) return;
-        localStorage.setItem('groupBryanUser', name); location.reload();
+    function toggleAuthMode(mode) {
+        document.getElementById('login-title').innerText = (mode === 'signup') ? "📝 دروستکردنی هەژمار" : "🏆 چوونە ژوورەوە";
+        document.getElementById('login-actions').style.display = (mode === 'signup') ? 'none' : 'block';
+        document.getElementById('signup-actions').style.display = (mode === 'signup') ? 'block' : 'none';
     }
 
-    function deleteAccount() {
-        if(confirm("ئایا دڵنیایت لە سڕینەوەی هەژمارەکەت؟ هەموو خاڵەکانت دەسڕێنەوە.")) {
-            db.ref('users/' + currentUser).remove().then(() => {
-                localStorage.removeItem('groupBryanUser');
-                location.reload();
-            });
+    async function handleAuth(mode) {
+        const name = document.getElementById('userNameInput').value.trim();
+        const pass = document.getElementById('userPassInput').value.trim();
+        if(!name || !pass) { alert("تکایە ناو و پاسوۆرد بنووسە"); return; }
+
+        const userRef = db.ref('users/' + name);
+        const snap = await userRef.once('value');
+        const userData = snap.val();
+
+        if(mode === 'signup') {
+            if(userData) { alert("ئەم ناوە پێشتر تۆمار کراوە!"); return; }
+            await userRef.set({ password: pass, total: 0, weekly: 0 });
+            loginSuccess(name);
+        } else {
+            if(!userData) { alert("ئەم هەژمارە بوونی نییە!"); return; }
+            if(userData.password !== pass) { alert("پاسوۆردەکە هەڵەیە!"); return; }
+            loginSuccess(name);
         }
+    }
+
+    function loginSuccess(name) {
+        localStorage.setItem('groupBryanUser', name);
+        location.reload();
     }
 
     function updateTimers() {
@@ -193,11 +182,8 @@
             const target = new Date(m.deadline).getTime();
             const diff = target - now;
             const timerEl = document.getElementById('timer-' + m.id);
-            const cardEl = document.getElementById(m.id);
-
             if (diff <= 0) {
                 if (timerEl) timerEl.innerHTML = "🔒 داخراوە";
-                if (cardEl) cardEl.classList.add('expired');
                 document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b => b.disabled = true);
             } else {
                 const h = Math.floor(diff / (1000 * 60 * 60));
@@ -219,23 +205,13 @@
             h += `<div class="match-card" id="${m.id}">
                 <div style="text-align:center;"><div class="timer" id="timer-${m.id}">...</div></div>
                 <div class="prediction-container">
-                    <div class="predict-box">
-                        <span class="team-name">${m.t1}</span>
-                        <img src="${m.img1}" class="team-logo">
-                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">${m.p1} خاڵ</button>
-                    </div>
-                    <div class="predict-box">
-                        <span class="team-name">یەکسان</span>
-                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">${m.pX} خاڵ</button>
-                    </div>
-                    <div class="predict-box">
-                        <span class="team-name">${m.t2}</span>
-                        <img src="${m.img2}" class="team-logo">
-                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">${m.p2} خاڵ</button>
-                    </div>
-                </div>
-                <div class="stadium-info">${m.stadium}</div>
-            </div>`;
+                    <div class="predict-box"><span class="team-name">${m.t1}</span><img src="${m.img1}" class="team-logo">
+                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">${m.p1} خاڵ</button></div>
+                    <div class="predict-box"><span class="team-name">یەکسان</span>
+                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">${m.pX} خاڵ</button></div>
+                    <div class="predict-box"><span class="team-name">${m.t2}</span><img src="${m.img2}" class="team-logo">
+                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">${m.p2} خاڵ</button></div>
+                </div><div class="stadium-info">${m.stadium}</div></div>`;
 
             a += `<div class="admin-item"><div>${m.t1} vs ${m.t2}</div><div class="admin-btns">
                 <button class="adm-btn" style="background:var(--success)" onclick="finish('${m.id}',1,${m.p1})">${m.t1}</button>
@@ -245,6 +221,7 @@
         });
         document.getElementById('matches-list').innerHTML = h;
         document.getElementById('admin-controls').innerHTML = a;
+
         setInterval(updateTimers, 1000);
         updateTimers();
 
@@ -281,29 +258,26 @@
     function openLeaderboard() {
         db.ref('users').once('value').then(snap => {
             let arr = [];
-            snap.forEach(u => {
-                const data = u.val();
-                arr.push({name: u.key, t: data.total || 0, w: data.weekly || 0});
-            });
+            snap.forEach(u => { const data = u.val(); arr.push({name: u.key, t: data.total || 0, w: data.weekly || 0}); });
             arr.sort((a,b) => b.w - a.w);
             let row = '';
-            arr.forEach((u, i) => {
-                row += `<tr><td class="u-n">${i+1}. ${u.name}</td><td>${u.w}</td><td>${u.t}</td></tr>`;
-            });
+            arr.forEach((u, i) => { row += `<tr><td class="u-n">${i+1}. ${u.name}</td><td>${u.w}</td><td>${u.t}</td></tr>`; });
             document.getElementById('leaderboard-body').innerHTML = row;
             document.getElementById('leaderboard-overlay').style.display = 'block';
         });
     }
 
-    function resetWeeklyOnly() {
-        if(confirm("سفرکردنەوەی هەفتانە؟")) {
-            db.ref('users').once('value').then(snap => {
-                snap.forEach(u => db.ref('users/'+u.key).update({weekly:0, predictions:{}}));
-            });
-        }
-    }
-
+    function resetWeeklyOnly() { if(confirm("سفرکردنەوەی هەفتانە؟")) db.ref('users').once('value').then(snap => snap.forEach(u => db.ref('users/'+u.key).update({weekly:0, predictions:{}}))); }
     function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
+    function deleteAccount() { if(confirm("دڵنیای لە سڕینەوە؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
+
+    // PWA Install Prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+    document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
+        if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+        else { alert("لە مینیوی براوزەر Add to Home Screen هەڵبژێرە"); }
+    });
 </script>
 </body>
 </html> 
