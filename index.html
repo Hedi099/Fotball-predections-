@@ -29,14 +29,11 @@
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
         .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
         
-        /* دوگمەی ڕیزبەندی نوێ */
         .btn-leaderboard {
             width: 100%; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid var(--secondary);
             padding: 14px; border-radius: 20px; font-weight: bold; cursor: pointer; margin: 20px 0;
             display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.15);
         }
-        .btn-leaderboard:hover { background: var(--secondary); color: black; transform: scale(1.02); }
 
         .match-card { 
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1000&auto=format&fit=crop');
@@ -53,12 +50,29 @@
         .opt-btn { width: 90%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px 2px; border-radius: 12px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: 900; border-color: white; }
         
+        /* دیزاینی نوێی ڕیزبەندی */
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
-        .leaderboard-header { text-align: center; background: rgba(245, 158, 11, 0.15); padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px dashed var(--secondary); color: var(--secondary); font-weight: bold; font-size: 14px; }
-        .rank-table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
-        .rank-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); text-align: center; }
+        
+        .leaderboard-header { 
+            text-align: center; 
+            background: linear-gradient(45deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05)); 
+            padding: 20px; border-radius: 20px; margin-bottom: 25px; 
+            border: 1px solid var(--secondary);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
+        }
+        .header-title { color: var(--secondary); font-weight: 900; font-size: 16px; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
 
-        .delete-account-btn { background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 8px; font-size: 9px; cursor: pointer; margin-top: 4px; display: inline-block; font-weight: bold; opacity: 0.8; }
+        .rank-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .rank-table thead th { color: #94a3b8; font-size: 12px; padding: 10px; font-weight: normal; }
+        .rank-row { background: rgba(255, 255, 255, 0.05); transition: 0.3s; }
+        .rank-row td { padding: 15px 12px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .rank-row td:first-child { border-right: 1px solid var(--border); border-top-right-radius: 15px; border-bottom-right-radius: 15px; text-align: right; font-weight: bold; }
+        .rank-row td:last-child { border-left: 1px solid var(--border); border-top-left-radius: 15px; border-bottom-left-radius: 15px; text-align: left; }
+        
+        .pts-badge { background: rgba(34, 197, 94, 0.2); color: var(--success); padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-left: 5px; }
+        .total-badge { color: #cbd5e1; font-size: 12px; }
+
+        .delete-account-btn { background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 8px; font-size: 9px; cursor: pointer; margin-top: 4px; display: inline-block; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -98,12 +112,6 @@
         </button>
 
         <div id="matches-list"></div>
-
-        <div id="admin-panel" class="admin-box" style="display:none; border: 2px solid var(--danger); margin-top: 30px;">
-            <h3 style="color:var(--danger)">کۆنتڕۆڵی ئەنجامەکان (Hedi)</h3>
-            <div id="admin-controls"></div>
-            <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 سڕینەوەی خاڵی هەفتە</button>
-        </div>
     </div>
 </div>
 
@@ -111,10 +119,16 @@
     <button class="btn-main" style="background:var(--danger); margin-bottom:15px;" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
     
     <div class="leaderboard-header">
-        براوەی هەفتە دەبێتە خاوەن چەپڵەیەکی گەرم 👏
+        <p class="header-title">براوەی هەفتە دەبێتە خاوەن چەپڵەیەکی گەرم 👏</p>
     </div>
 
     <table class="rank-table">
+        <thead>
+            <tr>
+                <th style="text-align: right;">ناوی یاریزان</th>
+                <th style="text-align: left;">خاڵی (هەفتە / گشتی)</th>
+            </tr>
+        </thead>
         <tbody id="leaderboard-body"></tbody>
     </table>
 </div>
@@ -153,7 +167,6 @@
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
-        if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
 
         let h = '';
         matches.forEach(m => {
@@ -177,19 +190,26 @@
         });
     }
 
-    function vote(mId, c, p) { if(confirm("قفڵ؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
-    function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
-    function deleteAccount() { if(confirm("دڵنیای؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
-    
     function openLeaderboard() {
         db.ref('users').once('value').then(snap => {
             let arr = []; snap.forEach(u => { const data = u.val(); arr.push({name: u.key, t: data.total || 0, w: data.weekly || 0}); });
             arr.sort((a,b) => b.w - a.w);
-            let row = ''; arr.forEach((u, i) => { row += `<tr><td>${i+1}. ${u.name}</td><td>${u.w} خاڵ</td><td>${u.t} گشتی</td></tr>`; });
+            let row = ''; 
+            arr.forEach((u, i) => { 
+                let medal = i === 0 ? "🥇 " : i === 1 ? "🥈 " : i === 2 ? "🥉 " : (i+1) + ". ";
+                row += `<tr class="rank-row">
+                    <td>${medal}${u.name}</td>
+                    <td><span class="pts-badge">${u.w}w</span> <span class="total-badge">${u.t}t</span></td>
+                </tr>`; 
+            });
             document.getElementById('leaderboard-body').innerHTML = row;
             document.getElementById('leaderboard-overlay').style.display = 'block';
         });
     }
+
+    function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
+    function deleteAccount() { if(confirm("دڵنیای؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
+    function vote(mId, c, p) { if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
 </script>
 </body>
-</html>
+</html> 
