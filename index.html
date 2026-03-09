@@ -52,6 +52,7 @@
         .team-name { font-size: 12px; font-weight: bold; color: #ffffff; text-align: center; height: 35px; display: flex; align-items: center; text-shadow: 2px 2px 5px rgba(0,0,0,1); }
         .opt-btn { width: 90%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px 2px; border-radius: 12px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: 900; border-color: white; }
+        .expired { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
         
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         
@@ -72,8 +73,6 @@
         <span style="color:var(--secondary); font-size:12px; font-weight:bold;">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
         <div style="font-size:15px; margin-top:10px; font-weight: bold; line-height: 1.6;">
             «أَسْتَغْفِرُ اللَّهَ العَظِيمَ الَّذِي لاَ إِلَهَ إِلَّا هُوَ الحَيُّ القَيُّومُ وَأَتُوبُ إِلَيْهِ»
-            <br>
-            <span style="font-size: 13px; color: #cbd5e1; font-weight: normal;">هەرکەسێک بیڵێت گوناهەکانی دەبەخشرێت ئەگەر لە مەیدانی جەنگیش ڕایکردبێت</span>
         </div>
     </div>
 
@@ -146,7 +145,8 @@
         { id: "m7", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "Santiago Bernabéu", deadline: "2026-03-11T23:00:00+03:00" },
         { id: "m8", t1: "بۆدۆ گلیمت", t2: "لیشبۆنە", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", stadium: "Aspmyra Stadion", deadline: "2026-03-11T23:00:00+03:00" },
         { id: "m9", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "Parc des Princes", deadline: "2026-03-11T23:00:00+03:00" },
-        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "Stadio Renato Dall'Ara", deadline: "2026-03-12T20:45:00+03:00" }
+        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "Stadio Renato Dall'Ara", deadline: "2026-03-12T20:45:00+03:00" },
+        { id: "m11", t1: "لیل", t2: "ئەستۆنڤێلا", p1: 3, pX: 2, p2: 4, img1: "https://crests.football-data.org/521.png", img2: "https://crests.football-data.org/58.png", stadium: "Stade Pierre-Mauroy", deadline: "2026-03-12T23:00:00+03:00" }
     ];
 
     async function loginUser() {
@@ -158,6 +158,25 @@
         if(userData && userData.password && userData.password !== pass) { alert("⚠️ پاسوۆرد هەڵەیە!"); return; }
         localStorage.setItem('groupBryanUser', name);
         location.reload();
+    }
+
+    function updateTimers() {
+        matches.forEach(m => {
+            const now = new Date().getTime();
+            const target = new Date(m.deadline).getTime();
+            const diff = target - now;
+            const timerEl = document.getElementById('timer-' + m.id);
+            if (diff <= 0) {
+                if (timerEl) timerEl.innerHTML = "🔒 داخراوە";
+                document.getElementById(m.id).classList.add('expired');
+                document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b => b.disabled = true);
+            } else {
+                const h = Math.floor(diff / (1000 * 60 * 60));
+                const m_rem = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                if (timerEl) timerEl.innerHTML = `⏳ ${h}h ${m_rem}m ${s}s`;
+            }
+        });
     }
 
     if (currentUser) {
@@ -179,6 +198,7 @@
                 </div><div class="stadium-info">🏟️ ${m.stadium}</div></div>`;
         });
         document.getElementById('matches-list').innerHTML = h;
+        setInterval(updateTimers, 1000); updateTimers();
 
         db.ref('users/' + currentUser).on('value', snap => {
             const d = snap.val() || {total:0, weekly:0};
@@ -212,7 +232,11 @@
 
     function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
     function deleteAccount() { if(confirm("دڵنیای؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
-    function vote(mId, c, p) { if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
+    function vote(mId, c, p) { 
+        const match = matches.find(m => m.id === mId);
+        if(new Date().getTime() > new Date(match.deadline).getTime()) { alert("ئەم یارییە داخراوە!"); return; }
+        if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); 
+    }
 </script>
 </body>
-</html>
+</html> 
