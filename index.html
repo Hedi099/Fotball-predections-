@@ -9,7 +9,7 @@
     <style>
         :root { 
             --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; 
-            --card-bg: rgba(30, 41, 59, 0.8); --border: rgba(255, 255, 255, 0.1); 
+            --card-bg: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); 
             --danger: #ef4444; --success: #22c55e;
         }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -25,35 +25,44 @@
         }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-        #login-page, #main-app, .admin-box { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; border: 1px solid var(--border); margin-top: 15px; text-align: center; }
+        #login-page, #main-app, .admin-box { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; border: 1px solid var(--border); margin-top: 15px; text-align: center; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
         .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
         
-        /* ستایلی ئاگادارکردنەوەی پاسوۆرد */
         #password-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: #1e293b; padding: 30px; border-radius: 25px; border: 1px solid var(--secondary); text-align: center; width: 100%; max-width: 350px; }
 
-        .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; position: relative; }
-        .stadium-info { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }
-        .timer { font-size: 12px; color: var(--secondary); font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 50px; margin-bottom: 10px; display: inline-block; direction: ltr; }
-        .prediction-container { display: flex; justify-content: space-around; align-items: center; }
+        /* شێوازی شوشەیی نوێ بۆ کارتەکان */
+        .match-card { 
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            border: 1px solid var(--border); 
+            border-radius: 25px; 
+            padding: 20px 10px; 
+            margin-top: 25px; 
+            position: relative; 
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            overflow: hidden;
+        }
+        .stadium-info { font-size: 11px; color: #cbd5e1; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; font-style: italic; }
+        .timer { font-size: 12px; color: var(--secondary); font-weight: bold; background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 50px; margin-bottom: 15px; display: inline-block; direction: ltr; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .prediction-container { display: flex; justify-content: space-around; align-items: center; position: relative; z-index: 1; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .team-logo { width: 55px; height: 55px; object-fit: contain; background: white; border-radius: 12px; padding: 5px; }
-        .team-name { font-size: 11px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; height: 35px; display: flex; align-items: center; }
-        .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
-        .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
-        .expired { opacity: 0.6; filter: grayscale(0.4); }
+        .team-logo { width: 55px; height: 55px; object-fit: contain; background: rgba(255,255,255,0.9); border-radius: 15px; padding: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .team-name { font-size: 11px; font-weight: 600; color: #ffffff; text-align: center; margin-bottom: 5px; height: 35px; display: flex; align-items: center; text-shadow: 1px 1px 4px rgba(0,0,0,1); }
+        .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 12px; cursor: pointer; font-size: 11px; backdrop-filter: blur(2px); transition: 0.2s; }
+        .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; box-shadow: 0 0 15px rgba(245, 158, 11, 0.5); }
+        .expired { opacity: 0.5; filter: grayscale(0.8); }
         
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
         .rank-table th { background: #1e293b; color: var(--secondary); padding: 15px; font-size: 14px; }
         .rank-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); text-align: center; font-size: 14px; }
-        .rank-table td.u-n { text-align: right; font-weight: bold; }
         
         .delete-account-btn { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 10px; font-size: 10px; cursor: pointer; transition: 0.3s; margin-top: 5px; display: inline-block; }
         .admin-item { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 15px; border-right: 4px solid var(--primary); }
-        .admin-btns { display: flex; gap: 8px; margin-top: 10px; }
-        .adm-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 10px; color: white; }
     </style>
 </head>
 <body>
@@ -62,7 +71,6 @@
     <div class="hadith-box">
         <span style="color:var(--secondary); font-size:12px; font-weight:bold;">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
         <div style="font-size:15px; margin-top:10px; font-weight: bold; line-height: 1.6;">«أَسْتَغْفِرُ اللَّهَ العَظِيمَ الَّذِي لاَ إِلَهَ إِلَّا هُوَ الحَيُّ القَيُّومُ وَأَتُوبُ إِلَيْهِ»</div>
-        <div style="font-size:12px; margin-top:8px; color: #cbd5e1; border-top: 1px dashed rgba(255,255,255,0.2); padding-top:8px;">گوناهەکانی دەبەخشرێ ئەگەر لە مەیدانی جەنگیش ڕایکردبێت.</div>
     </div>
 
     <button id="pwaInstallBtn" class="install-app-btn">📲 دابەزاندنی ئەپی (گروپی برایان)</button>
@@ -102,7 +110,7 @@
 <div id="password-modal">
     <div class="modal-content">
         <h3 style="color: var(--secondary);">پاراستنی هەژمار 🛡️</h3>
-        <p style="font-size: 13px; color: #cbd5e1;">بۆ پاراستنی خاڵەکانت و هەژمارەکەت، تکایە پاسوۆردێک دابنێ:</p>
+        <p style="font-size: 13px; color: #cbd5e1;">بۆ پاراستنی هەژمارەکەت، تکایە پاسوۆردێک دابنێ:</p>
         <input type="password" id="newPassInput" placeholder="پاسوۆردی نوێ بنووسە">
         <button class="btn-main" onclick="saveNewPassword()">پاشەکەوتکردن</button>
     </div>
@@ -111,7 +119,6 @@
 <div id="leaderboard-overlay">
     <button class="btn-main" style="background:var(--danger); margin-bottom:15px;" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
     <table class="rank-table">
-        <thead><tr><th style="text-align: right;">یاریزان</th><th>هەفتە</th><th>گشتی</th></tr></thead>
         <tbody id="leaderboard-body"></tbody>
     </table>
 </div>
@@ -131,32 +138,25 @@
     let currentUser = localStorage.getItem('groupBryanUser');
 
     const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ریال ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/71.png", stadium: "یاریگای ئیسپانیۆل", deadline: "2026-03-09T23:00:00+03:00" },
-        { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "یاریگای لیڤەرپووڵ", deadline: "2026-03-10T20:45:00+03:00" },
-        { id: "m3", t1: "ئەتڵانتا", t2: "بایرن میونشن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/102.png", img2: "https://crests.football-data.org/5.png", stadium: "یاریگای ئەتڵانتا", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", stadium: "یاریگای ئەتلەتیکۆ مەدرید", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m5", t1: "بارسێلۆنا", t2: "نیوکاسڵ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", stadium: "یاریگای بارسێلۆنا", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m6", t1: "ئارسناڵ", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", stadium: "یاریگای ئارسناڵ", deadline: "2026-03-11T20:45:00+03:00" },
-        { id: "m7", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "یاریگای ڕیاڵ مەدرید", deadline: "2026-03-11T23:00:00+03:00" },
-        { id: "m8", t1: "بۆدۆ گلیمت", t2: "لیشبۆنە", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", stadium: "یاریگای بۆدۆ گلیمت", deadline: "2026-03-11T23:00:00+03:00" },
-        { id: "m9", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "یاریگای پاریس", deadline: "2026-03-11T23:00:00+03:00" },
-        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "یاریگای بۆلۆگنا", deadline: "2026-03-12T20:45:00+03:00" },
-        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/521.png", img2: "https://crests.football-data.org/58.png", stadium: "یاریگای لیل", deadline: "2026-03-12T23:00:00+03:00" },
-        { id: "m12", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/523.png", stadium: "یاریگای سێلتاڤیگۆ", deadline: "2026-03-12T23:00:00+03:00" }
+        { id: "m1", t1: "ئیسپانیۆل", t2: "ریال ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/71.png", stadium: "RCDE Stadium", deadline: "2026-03-09T23:00:00+03:00" },
+        { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "Anfield", deadline: "2026-03-10T20:45:00+03:00" },
+        { id: "m3", t1: "ئەتڵانتا", t2: "بایرن میونشن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/102.png", img2: "https://crests.football-data.org/5.png", stadium: "Gewiss Stadium", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", stadium: "Metropolitano", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m5", t1: "بارسێلۆنا", t2: "نیوکاسڵ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", stadium: "Camp Nou", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m6", t1: "ئارسناڵ", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", stadium: "Emirates Stadium", deadline: "2026-03-11T20:45:00+03:00" },
+        { id: "m7", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "Santiago Bernabéu", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m8", t1: "بۆدۆ گلیمت", t2: "لیشبۆنە", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", stadium: "Aspmyra Stadion", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m9", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "Parc des Princes", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "Stadio Renato Dall'Ara", deadline: "2026-03-12T20:45:00+03:00" }
     ];
 
     async function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
         const pass = document.getElementById('userPassInput').value.trim();
         if(name.length < 2) return;
-
         const snap = await db.ref('users/' + name).once('value');
         const userData = snap.val();
-
-        if(userData && userData.password) {
-            if(userData.password !== pass) { alert("⚠️ پاسوۆرد هەڵەیە!"); return; }
-        }
-        
+        if(userData && userData.password && userData.password !== pass) { alert("⚠️ پاسوۆرد هەڵەیە!"); return; }
         localStorage.setItem('groupBryanUser', name);
         location.reload();
     }
@@ -166,7 +166,6 @@
         if(pass.length < 4) { alert("تکایە پاسوۆردێکی بەهێزتر بنووسە"); return; }
         db.ref('users/' + currentUser).update({ password: pass }).then(() => {
             document.getElementById('password-modal').style.display = 'none';
-            alert("🛡️ پاسوۆردەکەت بەسەرکەوتوویی پاشەکەوت کرا!");
         });
     }
 
@@ -179,6 +178,7 @@
             if (diff <= 0) {
                 if (timerEl) timerEl.innerHTML = "🔒 داخراوە";
                 document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b => b.disabled = true);
+                document.getElementById(m.id).classList.add('expired');
             } else {
                 const h = Math.floor(diff / (1000 * 60 * 60));
                 const m_rem = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -194,15 +194,10 @@
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
         if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
 
-        // پشکنین بۆ هەبوونی پاسوۆرد
         db.ref('users/' + currentUser).once('value', snap => {
-            const d = snap.val();
-            if(!d || !d.password) {
-                document.getElementById('password-modal').style.display = 'flex';
-            }
+            if(!snap.val() || !snap.val().password) document.getElementById('password-modal').style.display = 'flex';
         });
 
-        // پیشاندانی یارییەکان
         let h = '', a = '';
         matches.forEach(m => {
             h += `<div class="match-card" id="${m.id}">
@@ -214,7 +209,7 @@
                         <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">${m.pX} خاڵ</button></div>
                     <div class="predict-box"><span class="team-name">${m.t2}</span><img src="${m.img2}" class="team-logo">
                         <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">${m.p2} خاڵ</button></div>
-                </div><div class="stadium-info">${m.stadium}</div></div>`;
+                </div><div class="stadium-info">🏟️ ${m.stadium}</div></div>`;
 
             a += `<div class="admin-item"><div>${m.t1} vs ${m.t2}</div><div class="admin-btns">
                 <button class="adm-btn" style="background:var(--success)" onclick="finish('${m.id}',1,${m.p1})">${m.t1}</button>
@@ -224,9 +219,7 @@
         });
         document.getElementById('matches-list').innerHTML = h;
         document.getElementById('admin-controls').innerHTML = a;
-
-        setInterval(updateTimers, 1000);
-        updateTimers();
+        setInterval(updateTimers, 1000); updateTimers();
 
         db.ref('users/' + currentUser).on('value', snap => {
             const d = snap.val() || {total:0, weekly:0};
@@ -245,41 +238,17 @@
     }
 
     function vote(mId, c, p) { if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
-    function finish(mId, res, p) {
-        db.ref('users').once('value').then(snap => {
-            snap.forEach(u => {
-                const d = u.val();
-                if(d.predictions?.[mId]?.choice == res) {
-                    db.ref('users/'+u.key).update({total: (d.total||0)+p, weekly: (d.weekly||0)+p});
-                }
-            });
-            alert("ئەنجام هەژمار کرا!");
-        });
-    }
-
+    function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
+    function deleteAccount() { if(confirm("دڵنیای لە سڕینەوە؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
     function openLeaderboard() {
         db.ref('users').once('value').then(snap => {
-            let arr = [];
-            snap.forEach(u => { const data = u.val(); arr.push({name: u.key, t: data.total || 0, w: data.weekly || 0}); });
+            let arr = []; snap.forEach(u => { const data = u.val(); arr.push({name: u.key, t: data.total || 0, w: data.weekly || 0}); });
             arr.sort((a,b) => b.w - a.w);
-            let row = '';
-            arr.forEach((u, i) => { row += `<tr><td class="u-n">${i+1}. ${u.name}</td><td>${u.w}</td><td>${u.t}</td></tr>`; });
+            let row = ''; arr.forEach((u, i) => { row += `<tr><td>${i+1}. ${u.name}</td><td>${u.w}</td><td>${u.t}</td></tr>`; });
             document.getElementById('leaderboard-body').innerHTML = row;
             document.getElementById('leaderboard-overlay').style.display = 'block';
         });
     }
-
-    function resetWeeklyOnly() { if(confirm("سفرکردنەوەی هەفتانە؟")) db.ref('users').once('value').then(snap => snap.forEach(u => db.ref('users/'+u.key).update({weekly:0, predictions:{}}))); }
-    function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
-    function deleteAccount() { if(confirm("دڵنیای لە سڕینەوە؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
-
-    // PWA Install Prompt
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
-    document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
-        if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
-        else { alert("لە مینیوی براوزەر Add to Home Screen هەڵبژێرە"); }
-    });
 </script>
 </body>
 </html> 
