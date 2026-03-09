@@ -64,6 +64,9 @@
         .rank-row td:last-child { border-left: 1px solid var(--border); border-top-left-radius: 15px; border-bottom-left-radius: 15px; text-align: left; }
         .pts-badge { color: var(--success); font-weight: bold; }
         .total-badge { color: #94a3b8; font-size: 13px; margin-left: 5px; }
+
+        .admin-box { margin-top: 40px; border: 2px solid var(--primary); }
+        .admin-match-item { background: rgba(255,255,255,0.05); padding: 10px; margin-bottom: 10px; border-radius: 10px; text-align: right; }
     </style>
 </head>
 <body>
@@ -106,6 +109,11 @@
         </button>
 
         <div id="matches-list"></div>
+
+        <div id="admin-panel" class="admin-box" style="display: none;">
+            <h3>🛠 بەشی بەڕێوبەر (ئەنجامەکان)</h3>
+            <div id="admin-matches-list"></div>
+        </div>
     </div>
 </div>
 
@@ -185,6 +193,21 @@
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
 
+        // Show Admin if name is 'Bryan'
+        if(currentUser === 'Bryan') {
+            document.getElementById('admin-panel').style.display = 'block';
+            let admH = '';
+            matches.forEach(m => {
+                admH += `<div class="admin-match-item">
+                    <span>${m.t1} vs ${m.t2}</span><br>
+                    <button onclick="settleMatch('${m.id}', 1)">T1</button>
+                    <button onclick="settleMatch('${m.id}', 2)">Draw</button>
+                    <button onclick="settleMatch('${m.id}', 3)">T2</button>
+                </div>`;
+            });
+            document.getElementById('admin-matches-list').innerHTML = admH;
+        }
+
         let h = '';
         matches.forEach(m => {
             h += `<div class="match-card" id="${m.id}">
@@ -211,6 +234,28 @@
                     if(btn) btn.classList.add('selected');
                 });
             }
+        });
+    }
+
+    function settleMatch(mId, winnerChoice) {
+        if(!confirm("دڵنیای لە ئەنجام؟")) return;
+        db.ref('users').once('value').then(snap => {
+            snap.forEach(userSnap => {
+                const userData = userSnap.val();
+                if(userData.predictions && userData.predictions[mId]) {
+                    if(userData.predictions[mId].choice == winnerChoice) {
+                        const pts = userData.predictions[mId].pts;
+                        db.ref('users/' + userSnap.key).update({
+                            weekly: (userData.weekly || 0) + pts,
+                            total: (userData.total || 0) + pts
+                        });
+                        db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
+                    } else {
+                        db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
+                    }
+                }
+            });
+            alert("ئەنجامەکە تۆمارکرا و خاڵەکان دابەشکران!");
         });
     }
 
