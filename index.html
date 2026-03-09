@@ -3,115 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی VIP</title>
+    <title>گروپی برایان - وەشانی نوێ</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root { 
-            --primary: #3b82f6; 
-            --secondary: #f59e0b; 
-            --bg: #0f172a; 
-            --card-bg: rgba(30, 41, 59, 0.7); 
-            --border: rgba(255, 255, 255, 0.1); 
-            --danger: #ef4444; 
-            --success: #22c55e;
-            --accent: #8b5cf6;
+            --primary: #3b82f6; --secondary: #f59e0b; --bg: #0f172a; 
+            --card-bg: rgba(30, 41, 59, 0.7); --border: rgba(255, 255, 255, 0.1); 
+            --danger: #ef4444; --success: #22c55e;
         }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { 
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            color: white; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 100vh; 
-        }
+        body { background: radial-gradient(circle at top right, #1e293b, #0f172a); color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 480px; padding: 15px; }
 
-        /* بەشی فەرموودە */
-        .hadith-box {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
-            border: 1px solid var(--secondary);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-        }
+        .hadith-box { background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05)); border: 1px solid var(--secondary); border-radius: 20px; padding: 20px; margin-bottom: 25px; text-align: center; }
         .hadith-title { color: var(--secondary); font-size: 13px; font-weight: bold; margin-bottom: 10px; display: block; }
-        .hadith-text { font-size: 16px; line-height: 1.6; color: #f8fafc; font-weight: 500; }
-
-        #login-page, #main-app, .admin-box { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(10px);
-            padding: 25px; 
-            border-radius: 30px; 
-            border: 1px solid var(--border); 
-            margin-top: 15px; 
-            text-align: center; 
-        }
-
-        input { 
-            width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); 
-            background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; font-size: 16px; 
-        }
-
-        .btn-main { 
-            width: 100%; background: linear-gradient(to left, var(--primary), var(--accent)); 
-            color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 16px;
-        }
-
-        .rank-toggle-btn { 
-            background: white; color: #0f172a; font-weight: bold; padding: 14px; border-radius: 15px; border: none; 
-            width: 100%; margin: 15px 0; cursor: pointer; transition: 0.3s;
-        }
+        
+        #login-page, #main-app, .admin-box { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; border: 1px solid var(--border); margin-top: 15px; text-align: center; }
+        input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 15px; text-align: center; }
+        .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
 
         /* ستایلی نوێی یارییەکان */
-        .match-card { 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid var(--border); 
-            border-radius: 25px; 
-            padding: 25px 15px; 
-            margin-top: 25px; 
-            transition: transform 0.3s;
-        }
-        .match-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
-
+        .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; }
         .prediction-container { display: flex; justify-content: space-around; align-items: center; }
-        .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        
-        .team-logo { 
-            width: 80px; height: 80px; object-fit: contain; 
-            background: white; border-radius: 20px; padding: 8px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            border: 2px solid transparent;
-            transition: 0.3s;
-        }
-        
-        .team-name { font-size: 14px; font-weight: 600; color: #f1f5f9; text-align: center; min-height: 40px; display: flex; align-items: center; }
+        .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .team-logo { width: 65px; height: 65px; object-fit: contain; background: white; border-radius: 15px; padding: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .team-name { font-size: 12px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; }
+        .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
+        .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
 
-        .opt-btn { 
-            width: 95%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); 
-            color: white; padding: 12px 5px; border-radius: 12px; cursor: pointer; font-size: 12px; transition: 0.3s;
-        }
-        .opt-btn.selected { 
-            background: var(--secondary); color: black; font-weight: bold; border-color: white; box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); 
-        }
+        /* خشتەی ڕیزبەندی داواکراو */
+        #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
+        .rank-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
+        .rank-table th { background: #1e293b; color: var(--secondary); padding: 15px; font-size: 14px; border-bottom: 2px solid var(--border); }
+        .rank-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); text-align: center; font-size: 14px; }
+        .rank-table td.user-name { text-align: right; font-weight: bold; color: #f8fafc; }
+        .points-badge { background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 4px 8px; border-radius: 8px; font-weight: bold; }
+        .total-badge { background: rgba(245, 158, 11, 0.2); color: var(--secondary); padding: 4px 8px; border-radius: 8px; font-weight: bold; }
 
-        .pts-text { font-size: 12px; color: var(--secondary); font-weight: bold; margin-top: 5px; }
-        .deadline-text { font-size: 11px; color: #64748b; margin-top: 15px; display: block; }
-        
-        .rank-row { 
-            display: flex; justify-content: space-between; padding: 18px; border-bottom: 1px solid var(--border); 
-            background: rgba(255,255,255,0.02); margin-bottom: 8px; border-radius: 15px; align-items: center;
-        }
-        
-        #leaderboard-overlay, #preds-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
-        .close-btn { background: var(--danger); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: #1e293b; color: white; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: var(--secondary); color: black; }
+        .close-btn { background: var(--danger); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; margin-bottom: 10px; width: 100%; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -119,66 +49,54 @@
 <div class="container">
     <div class="hadith-box">
         <span class="hadith-title">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
-        <div class="hadith-text">
-            «الدَّالُّ عَلَى الخَيْرِ كَفَاعِلِهِ»<br>
-            <span style="font-size: 13px; opacity: 0.8;">(ئەوەی ڕێنمایی کەسێک بکات بۆ کارێکی چاک، وەک ئەوە وایە خۆی کردبێتی)</span>
-        </div>
+        <div style="font-size: 15px;">«الدَّالُّ عَلَى الخَيْرِ كَفَاعِلِهِ» (ئەوەی ڕێنمایی کەسێک بکات بۆ کارێکی چاک، وەک ئەوە وایە خۆی کردبێتی)</div>
     </div>
 
     <div id="login-page">
-        <h1 style="color: white; margin-bottom: 10px;">🏆 گروپی برایان</h1>
-        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 25px;">بەخێربێن بۆ پێشبینییەکان</p>
+        <h1>🏆 گروپی برایان</h1>
         <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە...">
         <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px;">
             <div style="text-align: right;">
                 <span id="welcomeText" style="font-weight: bold; color: var(--secondary);"></span><br>
-                <button onclick="logoutUser()" style="color: var(--danger); background:none; border:none; cursor:pointer; font-size: 12px; padding:0; margin-top:5px;">Logout ↩</button>
+                <small onclick="logoutUser()" style="color: var(--danger); cursor:pointer;">دەرچوون ↩</small>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <div style="text-align: center;">
-                    <div id="userWeeklyPoints" style="color: var(--primary); font-size: 20px; font-weight: bold;">0</div>
-                    <div style="font-size: 9px; color: #94a3b8;">هەفتانە</div>
-                </div>
-                <div style="width: 1px; background: var(--border); height: 30px; align-self: center;"></div>
-                <div style="text-align: center;">
-                    <div id="userPoints" style="color: var(--secondary); font-size: 20px; font-weight: bold;">0</div>
-                    <div style="font-size: 9px; color: #94a3b8;">گشتی</div>
-                </div>
+            <div style="display: flex; gap: 15px;">
+                <div style="text-align:center;"><div id="userWeeklyPoints" style="color:var(--success); font-size:18px; font-weight:bold;">0</div><small>هەفتە</small></div>
+                <div style="text-align:center;"><div id="userPoints" style="color:var(--secondary); font-size:18px; font-weight:bold;">0</div><small>گشتی</small></div>
             </div>
         </div>
 
-        <button class="rank-toggle-btn" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
+        <button class="btn-main" style="background: white; color: black; margin-top: 20px;" onclick="openLeaderboard()">📊 خشتەی ڕیزبەندی</button>
 
         <div id="matches-list"></div>
 
-        <div id="admin-panel" class="admin-box" style="display:none; border: 1px solid var(--danger);">
+        <div id="admin-panel" class="admin-box" style="display:none; border-color: var(--danger);">
             <h3 style="color:var(--danger)">بەشی ئەدمین (Hedi)</h3>
             <div id="admin-controls"></div>
-            <button class="btn-main" style="background:var(--danger); margin-top:20px; font-size:14px;" onclick="resetWeeklyOnly()">🔄 پاککردنەوەی هەفتە</button>
+            <button class="btn-main" style="background:var(--danger); margin-top:20px;" onclick="resetWeeklyOnly()">🔄 نوێکردنەوەی هەفتە</button>
         </div>
-    </div>
-
-    <div id="leaderboard-overlay">
-        <button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
-        <div style="display: flex; margin-bottom: 20px; border-radius: 15px; overflow: hidden; border: 1px solid var(--border);">
-            <button id="tab-total" class="tab-btn active" onclick="switchTab('total')">گشتی</button>
-            <button id="tab-weekly" class="tab-btn" onclick="switchTab('weekly')">هەفتانە</button>
-        </div>
-        <div id="leaderboard-list"></div>
-    </div>
-
-    <div id="preds-overlay">
-        <button class="close-btn" onclick="document.getElementById('preds-overlay').style.display='none'">گەڕانەوە ↩</button>
-        <div id="preds-content"></div>
     </div>
 </div>
 
+<div id="leaderboard-overlay">
+    <button class="close-btn" onclick="document.getElementById('leaderboard-overlay').style.display='none'">داخستن ✖</button>
+    <table class="rank-table">
+        <thead>
+            <tr>
+                <th style="text-align: right;">یاریزان</th>
+                <th>هەفتە</th>
+                <th>گشتی</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-body"></tbody>
+    </table>
+</div>
+
 <script>
-    // کۆنفیگی فایەربەیس (وەک خۆیەتی)
     const firebaseConfig = {
         apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ",
         authDomain: "brayan-2a1ef.firebaseapp.com",
@@ -191,7 +109,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
-    let currentTab = 'total';
 
     const matches = [
         { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, time: "2026-03-09T23:00:00", img1: "https://tmssl.akamaized.net/images/crest/big/714.png", img2: "https://tmssl.akamaized.net/images/crest/big/2893.png" },
@@ -209,157 +126,104 @@
         { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, time: "2026-03-12T20:45:00", img1: "https://tmssl.akamaized.net/images/crest/big/940.png", img2: "https://tmssl.akamaized.net/images/crest/big/1041.png" }
     ];
 
-    function renderMatches() {
-        let h = ''; let a = '';
-        matches.forEach(m => {
-            h += `<div class="match-card" id="${m.id}" data-teams="${m.t1},یەکسان,${m.t2}">
-                <div class="prediction-container">
-                    <div class="predict-box">
-                        <span class="team-name">${m.t1}</span>
-                        <img src="${m.img1}" class="team-logo">
-                        <button class="opt-btn" id="${m.id}-btn1" onclick="makeChoice('${m.id}', 1, ${m.p1})">بردنەوە</button>
-                        <span class="pts-text">${m.p1} خاڵ</span>
-                    </div>
-                    <div class="predict-box">
-                        <span class="team-name">X</span>
-                        <div style="height:80px; display:flex; align-items:center; font-weight:bold; color:rgba(255,255,255,0.1); font-size:40px;">VS</div>
-                        <button class="opt-btn" id="${m.id}-btn2" onclick="makeChoice('${m.id}', 2, ${m.pX})">یەکسان</button>
-                        <span class="pts-text">${m.pX} خاڵ</span>
-                    </div>
-                    <div class="predict-box">
-                        <span class="team-name">${m.t2}</span>
-                        <img src="${m.img2}" class="team-logo">
-                        <button class="opt-btn" id="${m.id}-btn3" onclick="makeChoice('${m.id}', 3, ${m.p2})">بردنەوە</button>
-                        <span class="pts-text">${m.p2} خاڵ</span>
-                    </div>
-                </div>
-                <div style="text-align:center;">
-                    <span class="deadline-text" id="timer-${m.id}"></span>
-                    <button id="view-${m.id}" style="background:none; border:none; color:var(--primary); font-size:11px; margin-top:10px; cursor:pointer; display:none; text-decoration:underline;" onclick="showAllPredictions('${m.id}')">بینینی پێشبینی برادەران</button>
-                </div>
-            </div>`;
-            
-            a += `<div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; margin-bottom:10px; border-right:4px solid var(--secondary);">
-                <div style="font-weight:bold; margin-bottom:10px; font-size:13px;">${m.t1} - ${m.t2}</div>
-                <div style="display:flex; gap:5px;">
-                    <button class="opt-btn" style="background:var(--success); flex:1;" onclick="finishMatch('${m.id}', 1, ${m.p1})">1</button>
-                    <button class="opt-btn" style="background:#444; flex:1;" onclick="finishMatch('${m.id}', 2, ${m.pX})">X</button>
-                    <button class="opt-btn" style="background:var(--danger); flex:1;" onclick="finishMatch('${m.id}', 3, ${m.p2})">2</button>
-                </div>
-            </div>`;
-        });
-        document.getElementById('matches-list').innerHTML = h;
-        document.getElementById('admin-controls').innerHTML = a;
-    }
-
     function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
         if (name.length < 2) return alert("ناو بنووسە");
-        db.ref('users/' + name).once('value').then((snap) => {
-            if (!snap.exists()) db.ref('users/' + name).set({ total: 0, weekly: 0 });
-            localStorage.setItem('groupBryanUser', name); currentUser = name; startApp();
-        });
+        localStorage.setItem('groupBryanUser', name); location.reload();
     }
 
-    function startApp() {
+    if (currentUser) {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
         if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
-        renderMatches();
-        db.ref('users/' + currentUser).on('value', snap => {
-            const d = snap.val();
-            if (d && d.predictions) highlight(d.predictions);
-            document.getElementById('userPoints').innerText = d?.total || 0;
-            document.getElementById('userWeeklyPoints').innerText = d?.weekly || 0;
+
+        let h = ''; let a = '';
+        matches.forEach(m => {
+            h += `<div class="match-card" id="${m.id}">
+                <div class="prediction-container">
+                    <div class="predict-box">
+                        <span class="team-name">${m.t1}</span>
+                        <img src="${m.img1}" class="team-logo" onerror="this.src='https://via.placeholder.com/80?text=Logo'">
+                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
+                    </div>
+                    <div style="font-weight:bold; color:rgba(255,255,255,0.2); font-size:24px;">VS</div>
+                    <div class="predict-box">
+                        <span class="team-name">یەکسان</span>
+                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:70px;">X (${m.pX})</button>
+                    </div>
+                    <div style="font-weight:bold; color:rgba(255,255,255,0.2); font-size:24px;">VS</div>
+                    <div class="predict-box">
+                        <span class="team-name">${m.t2}</span>
+                        <img src="${m.img2}" class="team-logo" onerror="this.src='https://via.placeholder.com/80?text=Logo'">
+                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
+                    </div>
+                </div>
+            </div>`;
+            a += `<div style="margin-bottom:10px;">${m.t1} vs ${m.t2}: 
+                <button onclick="finish('${m.id}',1,${m.p1})">1</button>
+                <button onclick="finish('${m.id}',2,${m.pX})">X</button>
+                <button onclick="finish('${m.id}',3,${m.p2})">2</button></div>`;
         });
-        checkDeadlines();
-    }
+        document.getElementById('matches-list').innerHTML = h;
+        document.getElementById('admin-controls').innerHTML = a;
 
-    function checkDeadlines() {
-        setInterval(() => {
-            matches.forEach(m => {
-                const diff = new Date(m.time).getTime() - new Date().getTime();
-                const timer = document.getElementById('timer-' + m.id);
-                if (diff <= 0) {
-                    timer.innerText = "🔒 داخرا";
-                    document.getElementById(m.id).querySelectorAll('.opt-btn').forEach(b => { if(!b.classList.contains('selected')) b.disabled = true; });
-                    document.getElementById('view-' + m.id).style.display = 'block';
-                } else {
-                    const h = Math.floor(diff / 3600000); const m_ = Math.floor((diff % 3600000) / 60000);
-                    timer.innerText = `⏰ کات ماوە: ${h}ک : ${m_}خ`;
-                }
-            });
-        }, 1000);
-    }
-
-    function makeChoice(mId, cId, pts) {
-        if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/' + currentUser + '/predictions/' + mId).set({ choice: cId, pts: pts });
-    }
-
-    function highlight(preds) {
-        Object.keys(preds).forEach(mId => {
-            const btn = document.getElementById(`${mId}-btn${preds[mId].choice}`);
-            if(btn) {
-                document.getElementById(mId).querySelectorAll('.opt-btn').forEach(b => {
-                    b.disabled = true; b.style.opacity = (b === btn) ? "1" : "0.2";
-                    if(b === btn) b.classList.add('selected');
+        db.ref('users/' + currentUser).on('value', snap => {
+            const d = snap.val() || {total:0, weekly:0};
+            document.getElementById('userPoints').innerText = d.total;
+            document.getElementById('userWeeklyPoints').innerText = d.weekly;
+            if (d.predictions) {
+                Object.keys(d.predictions).forEach(mid => {
+                    const btn = document.getElementById(mid + '-btn' + d.predictions[mid].choice);
+                    if(btn) {
+                        document.getElementById(mid).querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+                        btn.classList.add('selected');
+                    }
                 });
             }
         });
     }
 
-    function finishMatch(mId, res, pts) {
+    function vote(mId, cId, pts) {
+        if(confirm("قفڵی دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:cId, pts:pts});
+    }
+
+    function finish(mId, res, pts) {
         db.ref('users').once('value').then(snap => {
             snap.forEach(u => {
-                const data = u.val();
-                if(data.predictions && data.predictions[mId] && data.predictions[mId].choice == res) {
-                    db.ref('users/'+u.key).update({ total: (data.total||0)+pts, weekly: (data.weekly||0)+pts });
+                const d = u.val();
+                if(d.predictions?.[mId]?.choice == res) {
+                    db.ref('users/'+u.key).update({total: (d.total||0)+pts, weekly: (d.weekly||0)+pts});
                 }
             });
-            alert("ئەنجام تۆمارکرا!");
+            alert("کرا!");
         });
     }
 
-    function switchTab(tab) {
-        currentTab = tab;
-        document.getElementById('tab-total').classList.toggle('active', tab === 'total');
-        document.getElementById('tab-weekly').classList.toggle('active', tab === 'weekly');
-        updateLeaderboardDisplay();
-    }
-
-    function updateLeaderboardDisplay() {
+    function openLeaderboard() {
         db.ref('users').once('value').then(snap => {
-            let arr = []; snap.forEach(u => arr.push({ name: u.key, total: u.val().total || 0, weekly: u.val().weekly || 0 }));
-            arr.sort((a,b) => currentTab === 'total' ? b.total - a.total : b.weekly - a.weekly);
-            document.getElementById('leaderboard-list').innerHTML = arr.map((u,i) => `<div class="rank-row"><span>${i+1}. ${u.name}</span><b>${currentTab==='total' ? u.total : u.weekly} خاڵ</b></div>`).join('');
-        });
-    }
-
-    function openLeaderboard() { updateLeaderboardDisplay(); document.getElementById('leaderboard-overlay').style.display = 'block'; }
-
-    function showAllPredictions(mId) {
-        const teamNames = document.getElementById(mId).dataset.teams.split(',');
-        db.ref('users').once('value').then(snap => {
-            let html = `<h3 style="text-align:center; color:var(--secondary);">پێشبینی هەمووان</h3>`;
-            snap.forEach(u => {
-                const p = u.val().predictions?.[mId];
-                html += `<div class="rank-row"><span>${u.key}</span><b>${p ? teamNames[p.choice-1] : '---'}</b></div>`;
+            let arr = []; snap.forEach(u => arr.push({name: u.key, total: u.val().total||0, weekly: u.val().weekly||0}));
+            arr.sort((a,b) => b.weekly - a.weekly); // سەرەتا بەپێی خاڵی هەفتە ڕیزی بکە
+            let html = '';
+            arr.forEach((u, i) => {
+                html += `<tr>
+                    <td class="user-name">${i+1}. ${u.name}</td>
+                    <td><span class="points-badge">${u.weekly}</span></td>
+                    <td><span class="total-badge">${u.total}</span></td>
+                </tr>`;
             });
-            document.getElementById('preds-content').innerHTML = html;
-            document.getElementById('preds-overlay').style.display = 'block';
+            document.getElementById('leaderboard-body').innerHTML = html;
+            document.getElementById('leaderboard-overlay').style.display = 'block';
         });
     }
 
     function resetWeeklyOnly() {
-        if(confirm("پێشبینییەکان و خاڵی هەفتانە سفر بکرێتەوە؟")) {
-            db.ref('users').once('value').then(snap => snap.forEach(u => db.ref('users/' + u.key).update({ weekly: 0, predictions: {} })));
-            alert("هەفتەی نوێ دەستی پێکرد!");
+        if(confirm("سفرکردنەوەی هەفتە؟")) {
+            db.ref('users').once('value').then(snap => snap.forEach(u => db.ref('users/'+u.key).update({weekly:0, predictions:{}})));
         }
     }
 
     function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
-    if (currentUser) startApp();
 </script>
 </body>
-    </html>
+</html> 
