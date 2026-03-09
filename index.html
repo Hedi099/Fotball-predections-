@@ -17,9 +17,9 @@
         .container { width: 100%; max-width: 480px; padding: 15px; }
         .hadith-box { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--secondary); border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; }
         
-        /* ستایلی دوگمەی دابەزاندن لەژێر فەرموودە */
+        /* ستایلی دوگمەی دابەزاندن - ئێستا بە هەمیشەیی دیارە */
         .install-app-btn {
-            display: none;
+            display: block; /* گۆڕدرا بۆ هەمیشە دیار */
             width: 100%;
             background: linear-gradient(45deg, #059669, #10b981);
             color: white;
@@ -133,26 +133,21 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // لۆژیکی ناسینەوەی دابەزاندنی ئەپ
     let deferredPrompt;
     const pwaBtn = document.getElementById('pwaInstallBtn');
 
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        pwaBtn.style.display = 'block';
     });
 
     pwaBtn.addEventListener('click', async () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                pwaBtn.style.display = 'none';
-            }
             deferredPrompt = null;
         } else {
-            alert("ئەم خزمەتگوزارییە لە ئێستادا تەنها لەسەر ئەندرۆید و وێبگەڕی Chrome بەردەستە. ئەگەر ئایفۆنت هەیە، لە ڕێگەی Share پاشان Add to Home Screen ئەپەکە دابەزێنە.");
+            alert("ڕێنمایی:\n١- ئەگەر ئەندرۆیدیت: لە سێ خاڵەکەی سەرەوەی براوزەر 'Install app' یان 'Add to home screen' هەڵبژێرە.\n٢- ئەگەر ئایفۆنیت: کلیک لە Share بکە و 'Add to Home Screen' هەڵبژێرە.");
         }
     });
 
