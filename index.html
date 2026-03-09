@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ku" dir="rtl">
 <head>   
     <meta charset="UTF-8">
@@ -65,8 +65,13 @@
         .pts-badge { color: var(--success); font-weight: bold; }
         .total-badge { color: #94a3b8; font-size: 13px; margin-left: 5px; }
 
-        .admin-box { margin-top: 40px; border: 2px solid var(--primary); }
-        .admin-match-item { background: rgba(255,255,255,0.05); padding: 10px; margin-bottom: 10px; border-radius: 10px; text-align: right; }
+        .admin-box { margin-top: 40px; border: 2px solid var(--primary); background: rgba(15, 23, 42, 0.95); padding: 20px; border-radius: 20px; }
+        .admin-match-item { background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 10px; border-radius: 15px; border: 1px solid var(--border); }
+        .admin-btns { display: flex; gap: 5px; margin-top: 10px; justify-content: center; }
+        .admin-btns button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; font-size: 12px; }
+        .btn-t1 { background: var(--primary); }
+        .btn-draw { background: #64748b; }
+        .btn-t2 { background: var(--secondary); color: black !important; }
     </style>
 </head>
 <body>
@@ -111,7 +116,7 @@
         <div id="matches-list"></div>
 
         <div id="admin-panel" class="admin-box" style="display: none;">
-            <h3>🛠 بەشی بەڕێوبەر (ئەنجامەکان)</h3>
+            <h3 style="color: var(--primary);">🛠 کۆنتڕۆڵی ئەنجام (Hedi)</h3>
             <div id="admin-matches-list"></div>
         </div>
     </div>
@@ -161,7 +166,7 @@
     async function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
         const pass = document.getElementById('userPassInput').value.trim();
-        if(name.length < 2) return;
+        if(!name) return;
         const snap = await db.ref('users/' + name).once('value');
         const userData = snap.val();
         if(userData && userData.password && userData.password !== pass) { alert("⚠️ پاسوۆرد هەڵەیە!"); return; }
@@ -178,7 +183,8 @@
             if (diff <= 0) {
                 if (timerEl) timerEl.innerHTML = "🔒 داخراوە";
                 document.getElementById(m.id).classList.add('expired');
-                document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b => b.disabled = true);
+                const btns = document.querySelectorAll(`#${m.id} .opt-btn`);
+                btns.forEach(b => b.disabled = true);
             } else {
                 const h = Math.floor(diff / (1000 * 60 * 60));
                 const m_rem = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -193,16 +199,17 @@
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('welcomeText').innerText = "سڵاو، " + currentUser;
 
-        // Show Admin if name is 'Bryan'
-        if(currentUser === 'Bryan') {
+        if(currentUser === 'Hedi') {
             document.getElementById('admin-panel').style.display = 'block';
             let admH = '';
             matches.forEach(m => {
                 admH += `<div class="admin-match-item">
-                    <span>${m.t1} vs ${m.t2}</span><br>
-                    <button onclick="settleMatch('${m.id}', 1)">T1</button>
-                    <button onclick="settleMatch('${m.id}', 2)">Draw</button>
-                    <button onclick="settleMatch('${m.id}', 3)">T2</button>
+                    <div style="font-weight:bold; margin-bottom:10px; font-size:14px;">${m.t1} vs ${m.t2}</div>
+                    <div class="admin-btns">
+                        <button class="btn-t1" onclick="settleMatch('${m.id}', 1)">T1</button>
+                        <button class="btn-draw" onclick="settleMatch('${m.id}', 2)">X</button>
+                        <button class="btn-t2" onclick="settleMatch('${m.id}', 3)">T2</button>
+                    </div>
                 </div>`;
             });
             document.getElementById('admin-matches-list').innerHTML = admH;
@@ -249,13 +256,11 @@
                             weekly: (userData.weekly || 0) + pts,
                             total: (userData.total || 0) + pts
                         });
-                        db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
-                    } else {
-                        db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
                     }
+                    db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
                 }
             });
-            alert("ئەنجامەکە تۆمارکرا و خاڵەکان دابەشکران!");
+            alert("ئەنجام دیاری کرا و خاڵەکان دابەشکران.");
         });
     }
 
@@ -266,10 +271,7 @@
             let row = ''; 
             arr.forEach((u, i) => { 
                 let medal = i === 0 ? "🥇 " : i === 1 ? "🥈 " : i === 2 ? "🥉 " : (i+1) + ". ";
-                row += `<tr class="rank-row">
-                    <td>${medal}${u.name}</td>
-                    <td><span class="pts-badge">${u.w}</span> / <span class="total-badge">${u.t}</span></td>
-                </tr>`; 
+                row += `<tr class="rank-row"><td>${medal}${u.name}</td><td><span class="pts-badge">${u.w}</span> / ${u.t}</td></tr>`; 
             });
             document.getElementById('leaderboard-body').innerHTML = row;
             document.getElementById('leaderboard-overlay').style.display = 'block';
@@ -280,9 +282,9 @@
     function deleteAccount() { if(confirm("دڵنیای؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
     function vote(mId, c, p) { 
         const match = matches.find(m => m.id === mId);
-        if(new Date().getTime() > new Date(match.deadline).getTime()) { alert("ئەم یارییە داخراوە!"); return; }
+        if(new Date().getTime() > new Date(match.deadline).getTime()) return;
         if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); 
     }
 </script>
 </body>
-</html> 
+</html>
