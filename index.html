@@ -32,7 +32,6 @@
         #password-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: #1e293b; padding: 30px; border-radius: 25px; border: 1px solid var(--secondary); text-align: center; width: 100%; max-width: 350px; }
 
-        /* باکگراوندی یاریگا بۆ کارتەکان */
         .match-card { 
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1000&auto=format&fit=crop');
             background-size: cover;
@@ -58,6 +57,25 @@
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
         .rank-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); text-align: center; }
+
+        /* دوگمەی سڕینەوەی هەژمار - نوێکراوە */
+        .delete-account-btn { 
+            background: var(--danger); 
+            color: white; 
+            border: none; 
+            padding: 4px 8px; 
+            border-radius: 8px; 
+            font-size: 9px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            margin-top: 4px; 
+            display: inline-block;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        .delete-account-btn:hover { opacity: 1; transform: scale(0.95); }
+
+        .admin-item { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 15px; border-right: 4px solid var(--primary); }
     </style>
 </head>
 <body>
@@ -81,9 +99,9 @@
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 20px; border: 1px solid var(--border);">
             <div style="text-align: right;">
                 <span id="welcomeText" style="color: var(--secondary); font-weight: bold;"></span><br>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <small onclick="logoutUser()" style="color: #94a3b8; cursor:pointer;">دەرچوون ↩</small>
-                    <span class="delete-account-btn" onclick="deleteAccount()">سڕینەوەی هەژمار 🗑️</span>
+                <div style="display: flex; gap: 8px; align-items: center; margin-top: 5px;">
+                    <small onclick="logoutUser()" style="color: #94a3b8; cursor:pointer; font-size: 11px;">دەرچوون ↩</small>
+                    <span class="delete-account-btn" onclick="deleteAccount()">سڕینەوە 🗑️</span>
                 </div>
             </div>
             <div style="display: flex; gap: 15px;">
@@ -234,7 +252,7 @@
 
     function vote(mId, c, p) { if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
     function logoutUser() { localStorage.removeItem('groupBryanUser'); location.reload(); }
-    function deleteAccount() { if(confirm("دڵنیای لە سڕینەوە؟")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
+    function deleteAccount() { if(confirm("دڵنیای لە سڕینەوەی هەژمارەکەت؟ هەموو خاڵەکانت دەسڕێنەوە.")) { db.ref('users/'+currentUser).remove(); logoutUser(); } }
     function openLeaderboard() {
         db.ref('users').once('value').then(snap => {
             let arr = []; snap.forEach(u => { const data = u.val(); arr.push({name: u.key, t: data.total || 0, w: data.weekly || 0}); });
