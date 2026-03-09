@@ -102,21 +102,21 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // لۆگۆکان بە فۆرماتی باوەڕپێکراو بۆ ئەوەی لە هەموو شوێنێک دەرکەون
+    // بەکارهێنانی سێرڤەری باوەڕپێکراو بۆ لۆگۆکان کە لە هەموو شوێنێک دەردەکەون
     const matches = [
-        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://www.worldfootball.net/at_img/logos/74.gif", img2: "https://www.worldfootball.net/at_img/logos/256.gif", stadium: "یاریگای ئیسپانیۆل 🏟️" },
-        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "https://www.worldfootball.net/at_img/logos/138.gif", img2: "https://www.worldfootball.net/at_img/logos/15.gif", stadium: "یاریگای گەلتەسەرای 🏟️" },
-        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن میونشن", p1: 4, pX: 3, p2: 2, img1: "https://www.worldfootball.net/at_img/logos/565.gif", img2: "https://www.worldfootball.net/at_img/logos/9.gif", stadium: "یاریگای ئەتلەنتا 🏟️" },
-        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://www.worldfootball.net/at_img/logos/14.gif", img2: "https://www.worldfootball.net/at_img/logos/20.gif", stadium: "یاریگای ئەتلەتیکۆ مەدرید 🏟️" },
-        { id: "m5", t1: "نیوکاسڵ", t2: "بارسێلۆنا", p1: 4, pX: 3, p2: 2, img1: "https://www.worldfootball.net/at_img/logos/18.gif", img2: "https://www.worldfootball.net/at_img/logos/13.gif", stadium: "یاریگای نیوکاسڵ 🏟️" },
-        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, img1: "https://www.worldfootball.net/at_img/logos/11.gif", img2: "https://www.worldfootball.net/at_img/logos/1.gif", stadium: "یاریگای لیڤەرکوزن 🏟️" },
-        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, img1: "https://www.worldfootball.net/at_img/logos/1155.gif", img2: "https://www.worldfootball.net/at_img/logos/173.gif", stadium: "یاریگای بۆدۆگلیمت 🏟️" },
-        { id: "m8", t1: "پاریس سان جێرمان", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://www.worldfootball.net/at_img/logos/141.gif", img2: "https://www.worldfootball.net/at_img/logos/5.gif", stadium: "یاریگای پاریس 🏟️" },
-        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مانسیتی", p1: 3, pX: 4, p2: 2, img1: "https://www.worldfootball.net/at_img/logos/12.gif", img2: "https://www.worldfootball.net/at_img/logos/615.gif", stadium: "یاریگای ڕیاڵ مەدرید 🏟️" },
-        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, img1: "https://www.worldfootball.net/at_img/logos/557.gif", img2: "https://www.worldfootball.net/at_img/logos/22.gif", stadium: "یاریگای ڕۆما 🏟️" },
-        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, img1: "https://www.worldfootball.net/at_img/logos/575.gif", img2: "https://www.worldfootball.net/at_img/logos/2.gif", stadium: "یاریگای لیل 🏟️" },
-        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, img1: "https://www.worldfootball.net/at_img/logos/23.gif", img2: "https://www.worldfootball.net/at_img/logos/272.gif", stadium: "یاریگای شتوتگارت 🏟️" },
-        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, img1: "https://www.worldfootball.net/at_img/logos/154.gif", img2: "https://www.worldfootball.net/at_img/logos/150.gif", stadium: "یاریگای سێلتاڤیگۆ 🏟️" }
+        { id: "m1", t1: "ئیسپانیۆل", t2: "ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/714.png", img2: "https://crests.football-data.org/oviedo.png", stadium: "یاریگای ئیسپانیۆل 🏟️" },
+        { id: "m2", t1: "گەلەتەسەرای", t2: "لیڤەرپوول", p1: 5, pX: 3, p2: 2, img1: "https://crests.football-data.org/610.png", img2: "https://crests.football-data.org/64.png", stadium: "یاریگای گەلتەسەرای 🏟️" },
+        { id: "m3", t1: "ئەتلەنتا", t2: "بایرن میونشن", p1: 4, pX: 3, p2: 2, img1: "https://crests.football-data.org/102.png", img2: "https://crests.football-data.org/5.png", stadium: "یاریگای ئەتلەنتا 🏟️" },
+        { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", stadium: "یاریگای ئەتلەتیکۆ مەدرید 🏟️" },
+        { id: "m5", t1: "نیوکاسڵ", t2: "بارسێلۆنا", p1: 4, pX: 3, p2: 2, img1: "https://crests.football-data.org/67.png", img2: "https://crests.football-data.org/81.png", stadium: "یاریگای نیوکاسڵ 🏟️" },
+        { id: "m6", t1: "لیڤەرکوزن", t2: "ئەرسناڵ", p1: 3, pX: 4, p2: 2, img1: "https://crests.football-data.org/3.png", img2: "https://crests.football-data.org/57.png", stadium: "یاریگای لیڤەرکوزن 🏟️" },
+        { id: "m7", t1: "بۆدۆگلیمت", t2: "لیشبۆنە", p1: 5, pX: 4, p2: 2, img1: "https://crests.football-data.org/bodoglimt.png", img2: "https://crests.football-data.org/sporting.png", stadium: "یاریگای بۆدۆگلیمت 🏟️" },
+        { id: "m8", t1: "پاریس سان جێرمان", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "یاریگای پاریس 🏟️" },
+        { id: "m9", t1: "ڕیاڵ مەدرید", t2: "مانسیتی", p1: 3, pX: 4, p2: 2, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "یاریگای ڕیاڵ مەدرید 🏟️" },
+        { id: "m10", t1: "بۆلۆگنا", t2: "ڕۆما", p1: 4, pX: 3, p2: 2, img1: "https://crests.football-data.org/103.png", img2: "https://crests.football-data.org/100.png", stadium: "یاریگای ڕۆما 🏟️" },
+        { id: "m11", t1: "لیل", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, img1: "https://crests.football-data.org/521.png", img2: "https://crests.football-data.org/58.png", stadium: "یاریگای لیل 🏟️" },
+        { id: "m12", t1: "شتوتگارت", t2: "پۆرتۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/10.png", img2: "https://crests.football-data.org/503.png", stadium: "یاریگای شتوتگارت 🏟️" },
+        { id: "m13", t1: "سێلتاڤیگۆ", t2: "لیۆن", p1: 4, pX: 2, p2: 3, img1: "https://crests.football-data.org/338.png", img2: "https://crests.football-data.org/523.png", stadium: "یاریگای سێلتاڤیگۆ 🏟️" }
     ];
 
     function loginUser() {
