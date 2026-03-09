@@ -21,15 +21,14 @@
         .btn-main { width: 100%; background: linear-gradient(to left, var(--primary), #8b5cf6); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
         .match-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 25px; padding: 20px 10px; margin-top: 25px; position: relative; }
         .stadium-info { font-size: 11px; color: #94a3b8; display: block; margin-top: 12px; text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }
-        .time-badge { font-size: 10px; background: rgba(245, 158, 11, 0.2); color: var(--secondary); padding: 2px 8px; border-radius: 10px; margin-top: 5px; display: inline-block; }
+        .timer { font-size: 12px; color: var(--secondary); font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 50px; margin-bottom: 10px; display: inline-block; direction: ltr; }
         .prediction-container { display: flex; justify-content: space-around; align-items: center; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .team-logo { width: 55px; height: 55px; object-fit: contain; background: white; border-radius: 12px; padding: 5px; }
         .team-name { font-size: 11px; font-weight: 600; color: #f1f5f9; text-align: center; margin-bottom: 5px; height: 35px; display: flex; align-items: center; }
         .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px 2px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: bold; border-color: white; }
-        .expired { opacity: 0.6; filter: grayscale(0.5); }
-        .closed-tag { color: var(--danger); font-size: 10px; font-weight: bold; display: block; margin-top: 5px; }
+        .expired { opacity: 0.6; filter: grayscale(0.4); }
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         .rank-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; }
         .rank-table th { background: #1e293b; color: var(--secondary); padding: 15px; font-size: 14px; }
@@ -105,19 +104,39 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // کاتەکان بە شێوازی (Year, Month[0-11], Day, Hour, Minute) بۆ کاتی هەولێر دانراون
+    // کاتەکان بە وردی بەپێی FotMob (کاتی هەولێر) دانراون
     const matches = [
-        { id: "m1", t1: "ڕیاڵ مەدرید", t2: "لیڤەرپوول", p1: 3, pX: 4, p2: 2, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/64.png", stadium: "بێرنابیۆ 🏟️", deadline: new Date(2026, 2, 10, 23, 0), timeLabel: "سێشەممە 11:00 PM" },
-        { id: "m2", t1: "ئەرسناڵ", t2: "میلان", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/98.png", stadium: "ئیمارات 🏟️", deadline: new Date(2026, 2, 10, 23, 0), timeLabel: "سێشەممە 11:00 PM" },
-        { id: "m3", t1: "بارسێلۆنا", t2: "بێنفیکا", p1: 2, pX: 4, p2: 5, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/1903.png", stadium: "کامپ نۆ 🏟️", deadline: new Date(2026, 2, 11, 23, 0), timeLabel: "چوارشەممە 11:00 PM" },
-        { id: "m4", t1: "مان سیتی", t2: "یوڤێنتوس", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/109.png", stadium: "ئیتیحاد 🏟️", deadline: new Date(2026, 2, 11, 23, 0), timeLabel: "چوارشەممە 11:00 PM" },
-        { id: "m5", t1: "بایرن میونشن", t2: "ئەتلەتیکۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/78.png", stadium: "ئەلیانز ئارێنا 🏟️", deadline: new Date(2026, 2, 12, 23, 0), timeLabel: "پێنجشەممە 11:00 PM" }
+        { id: "m1", t1: "Real Madrid", t2: "Liverpool", p1: 3, pX: 4, p2: 2, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/64.png", stadium: "Santiago Bernabéu 🏟️", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m2", t1: "Arsenal", t2: "AC Milan", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/98.png", stadium: "Emirates Stadium 🏟️", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m3", t1: "Barcelona", t2: "Benfica", p1: 2, pX: 4, p2: 5, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/1903.png", stadium: "Spotify Camp Nou 🏟️", deadline: "2026-03-11T23:00:00+03:00" },
+        { id: "m4", t1: "Manchester City", t2: "Juventus", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/109.png", stadium: "Etihad Stadium 🏟️", deadline: "2026-03-11T23:00:00+03:00" }
     ];
 
     function loginUser() {
         const name = document.getElementById('userNameInput').value.trim();
         if (name.length < 2) return;
         localStorage.setItem('groupBryanUser', name); location.reload();
+    }
+
+    function updateTimers() {
+        matches.forEach(m => {
+            const now = new Date().getTime();
+            const target = new Date(m.deadline).getTime();
+            const diff = target - now;
+            const timerEl = document.getElementById('timer-' + m.id);
+            const cardEl = document.getElementById(m.id);
+
+            if (diff <= 0) {
+                if (timerEl) timerEl.innerHTML = "🔒 یاری دەستی پێکرد";
+                if (cardEl) cardEl.classList.add('expired');
+                document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b => b.disabled = true);
+            } else {
+                const h = Math.floor(diff / (1000 * 60 * 60));
+                const m_rem = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                if (timerEl) timerEl.innerHTML = `⏳ ${h}h ${m_rem}m ${s}s`;
+            }
+        });
     }
 
     if (currentUser) {
@@ -127,30 +146,23 @@
         if (currentUser === "Hedi") document.getElementById('admin-panel').style.display = 'block';
 
         let h = '', a = '';
-        const now = new Date();
-
         matches.forEach(m => {
-            const isExpired = now >= m.deadline;
-            
-            h += `<div class="match-card ${isExpired ? 'expired' : ''}" id="${m.id}">
-                <div style="text-align:center; margin-bottom:10px;">
-                    <span class="time-badge">${m.timeLabel}</span>
-                    ${isExpired ? '<span class="closed-tag">داخراوە 🔒</span>' : ''}
-                </div>
+            h += `<div class="match-card" id="${m.id}">
+                <div style="text-align:center;"><div class="timer" id="timer-${m.id}">بارگاوی دەبێت...</div></div>
                 <div class="prediction-container">
                     <div class="predict-box">
                         <span class="team-name">${m.t1}</span>
                         <img src="${m.img1}" class="team-logo">
-                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})" ${isExpired ? 'disabled' : ''}>1 (${m.p1})</button>
+                        <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">1 (${m.p1})</button>
                     </div>
                     <div class="predict-box">
                         <span class="team-name">یەکسان</span>
-                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;" ${isExpired ? 'disabled' : ''}>X (${m.pX})</button>
+                        <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">X (${m.pX})</button>
                     </div>
                     <div class="predict-box">
                         <span class="team-name">${m.t2}</span>
                         <img src="${m.img2}" class="team-logo">
-                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})" ${isExpired ? 'disabled' : ''}>2 (${m.p2})</button>
+                        <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">2 (${m.p2})</button>
                     </div>
                 </div>
                 <div class="stadium-info">${m.stadium}</div>
@@ -158,12 +170,14 @@
 
             a += `<div class="admin-item"><div>${m.t1} vs ${m.t2}</div><div class="admin-btns">
                 <button class="adm-btn" style="background:var(--success)" onclick="finish('${m.id}',1,${m.p1})">${m.t1}</button>
-                <button class="adm-btn" style="background:#555;" onclick="finish('${m.id}',2,${m.pX})">یەکسان</button>
+                <button class="adm-btn" style="background:#555;" onclick="finish('${m.id}',2,${m.pX})">X</button>
                 <button class="adm-btn" style="background:var(--danger)" onclick="finish('${m.id}',3,${m.p2})">${m.t2}</button>
             </div></div>`;
         });
         document.getElementById('matches-list').innerHTML = h;
         document.getElementById('admin-controls').innerHTML = a;
+        setInterval(updateTimers, 1000);
+        updateTimers();
 
         db.ref('users/' + currentUser).on('value', snap => {
             const d = snap.val() || {total:0, weekly:0};
@@ -191,7 +205,7 @@
                     db.ref('users/'+u.key).update({total: (d.total||0)+p, weekly: (d.weekly||0)+p});
                 }
             });
-            alert("ئەنجام بۆ هەمووان هەژمار کرا!");
+            alert("ئەنجام هەژمار کرا!");
         });
     }
 
@@ -205,7 +219,7 @@
             arr.sort((a,b) => b.w - a.w);
             let row = '';
             arr.forEach((u, i) => {
-                row += `<tr><td class="u-n">${i+1}. ${u.name}</td><td style="color:var(--success); font-weight:bold;">${u.w}</td><td style="color:var(--secondary); font-weight:bold;">${u.t}</td></tr>`;
+                row += `<tr><td class="u-n">${i+1}. ${u.name}</td><td>${u.w}</td><td>${u.t}</td></tr>`;
             });
             document.getElementById('leaderboard-body').innerHTML = row;
             document.getElementById('leaderboard-overlay').style.display = 'block';
@@ -213,10 +227,9 @@
     }
 
     function resetWeeklyOnly() {
-        if(confirm("دڵنیایت لە سڕینەوەی خاڵی هەفتانە؟")) {
+        if(confirm("سفرکردنەوەی هەفتانە؟")) {
             db.ref('users').once('value').then(snap => {
                 snap.forEach(u => db.ref('users/'+u.key).update({weekly:0, predictions:{}}));
-                alert("خاڵی هەفتانە سفر کرایەوە!");
             });
         }
     }
