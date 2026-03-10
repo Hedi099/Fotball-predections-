@@ -70,13 +70,15 @@
         .rank-row td:last-child { border-left: 1px solid var(--border); border-top-left-radius: 15px; border-bottom-left-radius: 15px; text-align: left; }
         .pts-badge { color: var(--success); font-weight: bold; }
 
-        .admin-box { margin-top: 40px; border: 2px solid var(--primary); background: rgba(15, 23, 42, 0.95); padding: 20px; border-radius: 20px; }
-        .admin-match-item { background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 10px; border-radius: 15px; border: 1px solid var(--border); }
-        .admin-btns { display: flex; gap: 5px; margin-top: 10px; justify-content: center; }
-        .admin-btns button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; font-size: 12px; }
-        .btn-t1 { background: var(--primary); }
-        .btn-draw { background: #64748b; }
-        .btn-t2 { background: var(--secondary); color: black !important; }
+        /* Admin Styles Improved */
+        .admin-box { margin-top: 40px; border: 2px solid var(--primary); background: #1e293b; padding: 20px; border-radius: 20px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+        .admin-match-item { background: rgba(15, 23, 42, 0.6); padding: 15px; margin-bottom: 15px; border-radius: 15px; border: 1px solid var(--border); }
+        .admin-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .admin-btns button { padding: 12px 5px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; cursor: pointer; color: white; font-size: 11px; transition: 0.2s; }
+        .admin-btns button:active { transform: scale(0.95); }
+        .btn-adm-t1 { background: #1d4ed8; }
+        .btn-adm-x { background: #334155; }
+        .btn-adm-t2 { background: #b45309; }
     </style>
 </head>
 <body>
@@ -85,7 +87,7 @@
     <div class="hadith-box">
         <span style="color:var(--secondary); font-size:12px; font-weight:bold;">پێغەمبەرمان محمد ﷺ ئەفەرموێت :</span>
         <div style="font-size:15px; margin-top:10px; font-weight: bold; line-height: 1.6;">
-            «أَسْتَغْفِرُ اللَّهَ العَظِيمَ الَّذِي لاَ إِلَهَ إِلَّا هُوَ الحَيُّ القَيُّومُ وَأَتُوبُ إِلَيْهِ»
+            «أَسْتَغْفِرُ اللَّهَ العَظِيمَ الَّذِي لاَ إِلَهَ إِلَّا هُوَ الحَيُّ القەیُّومُ وَأَتُوبُ إِلَيْهِ»
         </div>
         <div style="font-size: 14px; color: #cbd5e1; margin-top: 8px;">هەرکەسێک بیڵێت گوناهەکانی دەبەخشرێت ئەگەر لە مەیدانی جەنگیش ڕایکردبێت.</div>
     </div>
@@ -121,7 +123,7 @@
         <div id="matches-list"></div>
 
         <div id="admin-panel" class="admin-box" style="display: none;">
-            <h3 style="color: var(--primary);">🛠 کۆنتڕۆڵی ئەنجام (Hedi)</h3>
+            <h3 style="color: var(--secondary); margin-bottom: 15px;">🛠 کۆنتڕۆڵی براوە (Hedi)</h3>
             <div id="admin-matches-list"></div>
         </div>
     </div>
@@ -226,11 +228,11 @@
             let admH = '';
             matches.forEach(m => {
                 admH += `<div class="admin-match-item">
-                    <div style="font-weight:bold; margin-bottom:10px; font-size:14px;">${m.t1} vs ${m.t2}</div>
+                    <div style="font-weight:bold; margin-bottom:12px; font-size:13px; color:#94a3b8;"># ${m.id}</div>
                     <div class="admin-btns">
-                        <button class="btn-t1" onclick="settleMatch('${m.id}', 1)">T1</button>
-                        <button class="btn-draw" onclick="settleMatch('${m.id}', 2)">X</button>
-                        <button class="btn-t2" onclick="settleMatch('${m.id}', 3)">T2</button>
+                        <button class="btn-adm-t1" onclick="settleMatch('${m.id}', 1)">${m.t1}</button>
+                        <button class="btn-adm-x" onclick="settleMatch('${m.id}', 2)">یەکسان</button>
+                        <button class="btn-adm-t2" onclick="settleMatch('${m.id}', 3)">${m.t2}</button>
                     </div>
                 </div>`;
             });
@@ -269,7 +271,10 @@
     }
 
     function settleMatch(mId, winnerChoice) {
-        if(!confirm("دڵنیای لە ئەنجام؟")) return;
+        const match = matches.find(m => m.id === mId);
+        const choiceText = winnerChoice == 1 ? match.t1 : winnerChoice == 2 ? "یەکسانبوون" : match.t2;
+        if(!confirm(`ئایا دڵنیای کە [${choiceText}] براوەیە بۆ یاری ${match.t1} vs ${match.t2}؟`)) return;
+        
         db.ref('users').once('value').then(snap => {
             snap.forEach(userSnap => {
                 const userData = userSnap.val();
@@ -284,7 +289,7 @@
                     db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
                 }
             });
-            alert("ئەنجام دیاری کرا.");
+            alert("ئەنجام بەسەرکەوتوویی تۆمارکرا و خاڵەکان دابەشکران.");
         });
     }
 
