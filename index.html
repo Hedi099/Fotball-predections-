@@ -36,6 +36,12 @@
         }
         .btn-leaderboard:hover { background: var(--secondary); color: black; }
 
+        .btn-view-others {
+            background: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid var(--border);
+            padding: 8px; border-radius: 10px; font-size: 11px; cursor: pointer; margin-top: 10px; width: 100%;
+            display: none;
+        }
+
         .delete-account-btn { background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 8px; font-size: 9px; cursor: pointer; font-weight: bold; }
 
         .match-card { 
@@ -52,7 +58,8 @@
         .team-name { font-size: 12px; font-weight: bold; color: #ffffff; text-align: center; height: 35px; display: flex; align-items: center; text-shadow: 2px 2px 5px rgba(0,0,0,1); }
         .opt-btn { width: 90%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px 2px; border-radius: 12px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: 900; border-color: white; }
-        .expired { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
+        .expired { opacity: 1; filter: none; } /* Changed to keep visibility for others */
+        .expired-overlay { opacity: 0.6; filter: grayscale(0.5); }
         
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         
@@ -180,17 +187,34 @@
             const target = new Date(m.deadline).getTime();
             const diff = target - now;
             const timerEl = document.getElementById('timer-' + m.id);
+            const viewBtn = document.getElementById('view-' + m.id);
             if (diff <= 0) {
                 if (timerEl) timerEl.innerHTML = "🔒 داخراوە";
-                document.getElementById(m.id).classList.add('expired');
-                const btns = document.querySelectorAll(`#${m.id} .opt-btn`);
-                btns.forEach(b => b.disabled = true);
+                document.getElementById(m.id).classList.add('expired-overlay');
+                document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b => b.disabled = true);
+                if (viewBtn) viewBtn.style.display = 'block';
             } else {
                 const h = Math.floor(diff / (1000 * 60 * 60));
                 const m_rem = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((diff % (1000 * 60)) / 1000);
                 if (timerEl) timerEl.innerHTML = `⏳ ${h}h ${m_rem}m ${s}s`;
             }
+        });
+    }
+
+    function viewAllPredictions(mId) {
+        db.ref('users').once('value').then(snap => {
+            let list = "Pishbiniekan:\n\n";
+            snap.forEach(uSnap => {
+                const u = uSnap.val();
+                if(u.predictions && u.predictions[mId]) {
+                    const choice = u.predictions[mId].choice;
+                    const match = matches.find(m => m.id === mId);
+                    const team = choice == 1 ? match.t1 : choice == 2 ? "Draw" : match.t2;
+                    list += `${uSnap.key}: ${team}\n`;
+                }
+            });
+            alert(list || "Hich pishbiniek neyakrawa!");
         });
     }
 
@@ -226,7 +250,9 @@
                         <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})" style="margin-top:55px;">${m.pX} خاڵ</button></div>
                     <div class="predict-box"><span class="team-name">${m.t2}</span><img src="${m.img2}" class="team-logo">
                         <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">${m.p2} خاڵ</button></div>
-                </div><div class="stadium-info">🏟️ ${m.stadium}</div></div>`;
+                </div>
+                <button id="view-${m.id}" class="btn-view-others" onclick="viewAllPredictions('${m.id}')">👁️ بینینی پێشبینی هەمووان</button>
+                <div class="stadium-info">🏟️ ${m.stadium}</div></div>`;
         });
         document.getElementById('matches-list').innerHTML = h;
         setInterval(updateTimers, 1000); updateTimers();
@@ -287,4 +313,4 @@
     }
 </script>
 </body>
-</html>
+</html> 
