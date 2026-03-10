@@ -70,15 +70,14 @@
         .rank-row td:last-child { border-left: 1px solid var(--border); border-top-left-radius: 15px; border-bottom-left-radius: 15px; text-align: left; }
         .pts-badge { color: var(--success); font-weight: bold; }
 
-        /* Admin Styles Improved */
         .admin-box { margin-top: 40px; border: 2px solid var(--primary); background: #1e293b; padding: 20px; border-radius: 20px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
         .admin-match-item { background: rgba(15, 23, 42, 0.6); padding: 15px; margin-bottom: 15px; border-radius: 15px; border: 1px solid var(--border); }
         .admin-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
         .admin-btns button { padding: 12px 5px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; cursor: pointer; color: white; font-size: 11px; transition: 0.2s; }
-        .admin-btns button:active { transform: scale(0.95); }
         .btn-adm-t1 { background: #1d4ed8; }
         .btn-adm-x { background: #334155; }
         .btn-adm-t2 { background: #b45309; }
+        .admin-status-locked { color: var(--success); font-weight: bold; font-size: 12px; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
@@ -225,18 +224,23 @@
 
         if(currentUser === 'Hedi') {
             document.getElementById('admin-panel').style.display = 'block';
-            let admH = '';
-            matches.forEach(m => {
-                admH += `<div class="admin-match-item">
-                    <div style="font-weight:bold; margin-bottom:12px; font-size:13px; color:#94a3b8;"># ${m.id}</div>
-                    <div class="admin-btns">
-                        <button class="btn-adm-t1" onclick="settleMatch('${m.id}', 1)">${m.t1}</button>
-                        <button class="btn-adm-x" onclick="settleMatch('${m.id}', 2)">یەکسان</button>
-                        <button class="btn-adm-t2" onclick="settleMatch('${m.id}', 3)">${m.t2}</button>
-                    </div>
-                </div>`;
+            db.ref('settledMatches').on('value', snap => {
+                const settled = snap.val() || {};
+                let admH = '';
+                matches.forEach(m => {
+                    const isLocked = settled[m.id];
+                    admH += `<div class="admin-match-item">
+                        <div style="font-weight:bold; margin-bottom:12px; font-size:13px; color:#94a3b8;"># ${m.id}</div>
+                        <div id="adm-btns-${m.id}" class="admin-btns" style="${isLocked ? 'display:none' : ''}">
+                            <button class="btn-adm-t1" onclick="settleMatch('${m.id}', 1)">${m.t1}</button>
+                            <button class="btn-adm-x" onclick="settleMatch('${m.id}', 2)">یەکسان</button>
+                            <button class="btn-adm-t2" onclick="settleMatch('${m.id}', 3)">${m.t2}</button>
+                        </div>
+                        <div id="adm-lock-${m.id}" class="admin-status-locked" style="${isLocked ? 'display:block' : ''}">🔒 ئەنجام تۆمارکراوە و قفڵە</div>
+                    </div>`;
+                });
+                document.getElementById('admin-matches-list').innerHTML = admH;
             });
-            document.getElementById('admin-matches-list').innerHTML = admH;
         }
 
         let h = '';
@@ -273,7 +277,7 @@
     function settleMatch(mId, winnerChoice) {
         const match = matches.find(m => m.id === mId);
         const choiceText = winnerChoice == 1 ? match.t1 : winnerChoice == 2 ? "یەکسانبوون" : match.t2;
-        if(!confirm(`ئایا دڵنیای کە [${choiceText}] براوەیە بۆ یاری ${match.t1} vs ${match.t2}؟`)) return;
+        if(!confirm(`ئایا دڵنیای کە [${choiceText}] براوەیە؟ ئەنجامەکە قفڵ دەبێت و ناگۆڕدرێت.`)) return;
         
         db.ref('users').once('value').then(snap => {
             snap.forEach(userSnap => {
@@ -289,7 +293,9 @@
                     db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
                 }
             });
-            alert("ئەنجام بەسەرکەوتوویی تۆمارکرا و خاڵەکان دابەشکران.");
+            // Lock the match in Firebase
+            db.ref('settledMatches/' + mId).set(true);
+            alert("ئەنجام قفڵ کرا و خاڵەکان دابەشکران.");
         });
     }
 
