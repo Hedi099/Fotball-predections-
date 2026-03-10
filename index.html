@@ -38,9 +38,10 @@
 
         .btn-view-others {
             background: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid var(--border);
-            padding: 8px; border-radius: 10px; font-size: 11px; cursor: pointer; margin-top: 10px; width: 100%;
-            display: none;
+            padding: 10px; border-radius: 15px; font-size: 11px; cursor: pointer; margin-top: 10px; width: 100%;
+            display: none; transition: 0.3s;
         }
+        .btn-view-others:hover { background: rgba(255,255,255,0.2); }
 
         .delete-account-btn { background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 8px; font-size: 9px; cursor: pointer; font-weight: bold; }
 
@@ -60,7 +61,8 @@
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: 900; border-color: white; }
         .expired-overlay { opacity: 0.6; filter: grayscale(0.5); }
         
-        #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
+        /* Modals & Overlays */
+        #leaderboard-overlay, #predictions-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
         
         .rank-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
         .rank-table thead th { color: #94a3b8; font-size: 13px; padding: 10px; font-weight: bold; }
@@ -69,6 +71,13 @@
         .rank-row td:first-child { border-right: 1px solid var(--border); border-top-right-radius: 15px; border-bottom-right-radius: 15px; text-align: right; }
         .rank-row td:last-child { border-left: 1px solid var(--border); border-top-left-radius: 15px; border-bottom-left-radius: 15px; text-align: left; }
         .pts-badge { color: var(--success); font-weight: bold; }
+
+        .pred-list-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .pred-user-name { font-weight: bold; color: white; }
+        .pred-choice-box { font-size: 12px; padding: 5px 12px; border-radius: 8px; font-weight: bold; }
+        .choice-1 { background: #1d4ed8; color: white; }
+        .choice-2 { background: #334155; color: white; }
+        .choice-3 { background: #b45309; color: white; }
 
         .admin-box { margin-top: 40px; border: 2px solid var(--primary); background: #1e293b; padding: 20px; border-radius: 20px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
         .admin-match-item { background: rgba(15, 23, 42, 0.6); padding: 15px; margin-bottom: 15px; border-radius: 15px; border: 1px solid var(--border); }
@@ -141,6 +150,12 @@
     </table>
 </div>
 
+<div id="predictions-overlay">
+    <button class="btn-main" style="background:var(--danger); margin-bottom:20px;" onclick="document.getElementById('predictions-overlay').style.display='none'">گەڕانەوە 🔙</button>
+    <h2 id="pred-match-title" style="text-align:center; color:var(--secondary); font-size:18px; margin-bottom:20px;"></h2>
+    <div id="predictions-body"></div>
+</div>
+
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ",
@@ -202,18 +217,27 @@
     }
 
     function viewAllPredictions(mId) {
+        const match = matches.find(m => m.id === mId);
+        document.getElementById('pred-match-title').innerText = `${match.t1} 🆚 ${match.t2}`;
+        document.getElementById('predictions-body').innerHTML = '<p style="text-align:center;">کەمێک چاوەڕوان بە...</p>';
+        document.getElementById('predictions-overlay').style.display = 'block';
+
         db.ref('users').once('value').then(snap => {
-            let list = "Pishbiniekan:\n\n";
+            let listHtml = "";
+            let hasPreds = false;
             snap.forEach(uSnap => {
                 const u = uSnap.val();
                 if(u.predictions && u.predictions[mId]) {
+                    hasPreds = true;
                     const choice = u.predictions[mId].choice;
-                    const match = matches.find(m => m.id === mId);
-                    const team = choice == 1 ? match.t1 : choice == 2 ? "Draw" : match.t2;
-                    list += `${uSnap.key}: ${team}\n`;
+                    const team = choice == 1 ? match.t1 : choice == 2 ? "یەکسان" : match.t2;
+                    listHtml += `<div class="pred-list-item">
+                        <span class="pred-user-name">${uSnap.key}</span>
+                        <span class="pred-choice-box choice-${choice}">${team}</span>
+                    </div>`;
                 }
             });
-            alert(list || "Hich pishbiniek neyakrawa!");
+            document.getElementById('predictions-body').innerHTML = hasPreds ? listHtml : '<p style="text-align:center; color:#94a3b8;">هیچ پێشبینییەک نەکراوە!</p>';
         });
     }
 
@@ -255,7 +279,7 @@
                     <div class="predict-box"><span class="team-name">${m.t2}</span><img src="${m.img2}" class="team-logo">
                         <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">${m.p2} خاڵ</button></div>
                 </div>
-                <button id="view-${m.id}" class="btn-view-others" onclick="viewAllPredictions('${m.id}')">👁️ بینینی پێشبینی هەمووان</button>
+                <button id="view-${m.id}" class="btn-view-others" onclick="viewAllPredictions('${m.id}')">👥 بینینی پێشبینی هەمووان</button>
                 <div class="stadium-info">🏟️ ${m.stadium}</div></div>`;
         });
         document.getElementById('matches-list').innerHTML = h;
@@ -277,7 +301,7 @@
     function settleMatch(mId, winnerChoice) {
         const match = matches.find(m => m.id === mId);
         const choiceText = winnerChoice == 1 ? match.t1 : winnerChoice == 2 ? "یەکسانبوون" : match.t2;
-        if(!confirm(`ئایا دڵنیای کە [${choiceText}] براوەیە؟ ئەنجامەکە قفڵ دەبێت و ناگۆڕدرێت.`)) return;
+        if(!confirm(`ئایا دڵنیای کە [${choiceText}] براوەیە؟`)) return;
         
         db.ref('users').once('value').then(snap => {
             snap.forEach(userSnap => {
@@ -290,10 +314,8 @@
                             total: (userData.total || 0) + pts
                         });
                     }
-                    db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
                 }
             });
-            // Lock the match in Firebase
             db.ref('settledMatches/' + mId).set(true);
             alert("ئەنجام قفڵ کرا و خاڵەکان دابەشکران.");
         });
