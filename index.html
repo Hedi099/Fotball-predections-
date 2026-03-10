@@ -58,7 +58,6 @@
         .team-name { font-size: 12px; font-weight: bold; color: #ffffff; text-align: center; height: 35px; display: flex; align-items: center; text-shadow: 2px 2px 5px rgba(0,0,0,1); }
         .opt-btn { width: 90%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px 2px; border-radius: 12px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .opt-btn.selected { background: var(--secondary); color: black; font-weight: 900; border-color: white; }
-        .expired { opacity: 1; filter: none; } /* Changed to keep visibility for others */
         .expired-overlay { opacity: 0.6; filter: grayscale(0.5); }
         
         #leaderboard-overlay { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 1000; padding: 20px; overflow-y: auto; }
@@ -70,7 +69,6 @@
         .rank-row td:first-child { border-right: 1px solid var(--border); border-top-right-radius: 15px; border-bottom-right-radius: 15px; text-align: right; }
         .rank-row td:last-child { border-left: 1px solid var(--border); border-top-left-radius: 15px; border-bottom-left-radius: 15px; text-align: left; }
         .pts-badge { color: var(--success); font-weight: bold; }
-        .total-badge { color: #94a3b8; font-size: 13px; margin-left: 5px; }
 
         .admin-box { margin-top: 40px; border: 2px solid var(--primary); background: rgba(15, 23, 42, 0.95); padding: 20px; border-radius: 20px; }
         .admin-match-item { background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 10px; border-radius: 15px; border: 1px solid var(--border); }
@@ -158,11 +156,11 @@
 
     const matches = [
         { id: "m1", t1: "ئیسپانیۆل", t2: "ریال ئۆڤیدۆ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/80.png", img2: "https://crests.football-data.org/71.png", stadium: "یاریگای ئیسپانیۆل", deadline: "2026-03-09T23:00:00+03:00" },
-        { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "یاریگای لیڤەرپووڵ", deadline: "2026-03-10T20:45:00+03:00" },
+        { id: "m2", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", stadium: "یاریگای گەلەتەسەرای", deadline: "2026-03-10T20:45:00+03:00" },
         { id: "m3", t1: "ئەتڵانتا", t2: "بایرن میونشن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/102.png", img2: "https://crests.football-data.org/5.png", stadium: "یاریگای ئەتڵانتا", deadline: "2026-03-10T23:00:00+03:00" },
         { id: "m4", t1: "ئەتلەتیکۆ مەدرید", t2: "تۆتنهام", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", stadium: "یاریگای ئەتلەتیکۆ مەدرید", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m5", t1: "بارسێلۆنا", t2: "نیوکاسڵ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", stadium: "یاریگای بارسێلۆنا", deadline: "2026-03-10T23:00:00+03:00" },
-        { id: "m6", t1: "ئارسناڵ", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", stadium: "یاریگای ئارسناڵ", deadline: "2026-03-11T20:45:00+03:00" },
+        { id: "m5", t1: "بارسێلۆنا", t2: "نیوکاسڵ", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", stadium: "یاریگای نیوکاسڵ", deadline: "2026-03-10T23:00:00+03:00" },
+        { id: "m6", t1: "ئارسناڵ", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", stadium: "یاریگای لیڤەرکوزن", deadline: "2026-03-11T20:45:00+03:00" },
         { id: "m7", t1: "ڕیاڵ مەدرید", t2: "مان سیتی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/65.png", stadium: "یاریگای ڕیاڵ مەدرید", deadline: "2026-03-11T23:00:00+03:00" },
         { id: "m8", t1: "بۆدۆ گلیمت", t2: "لیشبۆنە", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", stadium: "یاریگای بۆدۆ گلیمت", deadline: "2026-03-11T23:00:00+03:00" },
         { id: "m9", t1: "پاریس", t2: "چێڵسی", p1: 2, pX: 3, p2: 4, img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/61.png", stadium: "یاریگای پاریس", deadline: "2026-03-11T23:00:00+03:00" },
@@ -286,7 +284,7 @@
                     db.ref('users/' + userSnap.key + '/predictions/' + mId).remove();
                 }
             });
-            alert("ئەنجام دیاری کرا و خاڵەکان دابەشکران.");
+            alert("ئەنجام دیاری کرا.");
         });
     }
 
@@ -309,7 +307,7 @@
     function vote(mId, c, p) { 
         const match = matches.find(m => m.id === mId);
         if(new Date().getTime() > new Date(match.deadline).getTime()) return;
-        if(confirm("پێشبینییەکەت قفڵ دەکەیت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); 
+        if(confirm("قفڵ؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); 
     }
 </script>
 </body>
