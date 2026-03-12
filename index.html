@@ -12,26 +12,40 @@
         body { background: var(--bg); color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 440px; padding: 15px; }
         .top-nav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
-        .rank-btn { background: var(--secondary); color: #000; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; flex: 1; }
+        .rank-btn { background: var(--secondary); color: #000; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; flex: 1; text-align: center; }
+        
+        /* Leaderboard */
         #leaderboard-view { display: none; background: var(--card-inner); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 20px; position: fixed; top: 5%; left: 5%; right: 5%; z-index: 1000; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 40px #000; }
         .rank-header { display: flex; justify-content: space-between; padding: 10px; border-bottom: 2px solid var(--secondary); font-weight: bold; font-size: 13px; color: var(--secondary); }
         .rank-row { display: flex; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid var(--border); align-items: center; }
         .rank-name { flex: 2; text-align: right; }
         .rank-vals { flex: 1; display: flex; justify-content: space-around; font-weight: bold; }
+
+        /* Others Predictions */
         #all-preds-view { display: none; background: var(--card-inner); border: 1px solid var(--border); border-radius: 20px; padding: 15px; position: fixed; top: 15%; left: 8%; right: 8%; z-index: 1001; box-shadow: 0 0 50px #000; }
-        .match-card { position: relative; border-radius: 30px; margin-top: 25px; overflow: hidden; border: 1px solid var(--border); background-size: cover; background-position: center; }
-        .card-overlay { background: linear-gradient(to bottom, rgba(3,7,18,0.4), var(--card-inner)); padding: 25px 15px; backdrop-filter: blur(4px); }
+
+        /* Match Card - Background set to Etihad Stadium */
+        .match-card { position: relative; border-radius: 30px; margin-top: 25px; overflow: hidden; border: 1px solid var(--border); background-image: url('https://images.unsplash.com/photo-1624896081705-72036a166046?w=800'); background-size: cover; background-position: center; }
+        .card-overlay { background: linear-gradient(to bottom, rgba(3,7,18,0.5), var(--card-inner)); padding: 25px 15px; backdrop-filter: blur(2px); }
         .match-event-badge { position: absolute; top: 12px; right: 12px; background: var(--primary); color: white; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 50px; }
-        .timer { font-size: 11px; color: var(--secondary); background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 50px; display: inline-block; margin-bottom: 15px; direction: ltr; }
+        .timer { font-size: 11px; color: var(--secondary); background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 50px; display: inline-block; margin-bottom: 15px; direction: ltr; }
+        
         .prediction-container { display: flex; justify-content: space-between; align-items: center; gap: 5px; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .team-logo { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
         .team-name { font-size: 11px; font-weight: bold; text-align: center; height: 32px; line-height: 1.2; }
+        
         .opt-btn { width: 90%; background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 12px 0; border-radius: 12px; cursor: pointer; font-size: 10px; transition: 0.2s; }
         .opt-btn.selected { background: var(--secondary) !important; color: #000 !important; font-weight: 900; box-shadow: 0 0 15px rgba(251,191,36,0.4); }
+        
         .view-others-btn { width: 100%; margin-top: 15px; background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid #4338ca; padding: 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; display: none; }
+        
+        .hadith-card { background: var(--card-inner); border: 1px solid var(--border); padding: 15px; border-radius: 20px; text-align: center; margin-bottom: 20px; line-height: 1.6; }
+        .hadith-text { font-size: 14px; color: #d1d5db; font-style: italic; }
+        
         .admin-tools { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #444; display: none; text-align: center; }
         .admin-btn { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 10px; cursor: pointer; margin: 2px; }
+        
         input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--border); background: #111827; color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
         .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
     </style>
@@ -46,9 +60,13 @@
     </div>
 
     <div id="main-app" style="display: none;">
+        <div class="hadith-card">
+            <div class="hadith-text">«خوشەویسترینی خەڵک لای خوای گەورە ئەوانەن کە سوودیان بۆ خەڵک زۆرترە»</div>
+        </div>
+
         <div class="top-nav">
             <button class="rank-btn" onclick="openRank()">📊 ڕیزبەندی</button>
-            <button id="admin-reset-btn" class="rank-btn" style="background:#ef4444; color:white; display:none;" onclick="resetOnlyPredictions()">🔄 پاککردنەوەی پێشبینی</button>
+            <button id="admin-reset-btn" class="rank-btn" style="background:#ef4444; color:white; display:none;" onclick="resetOnlyPredictions()">🔄 پاککردنەوە</button>
             <button class="rank-btn" style="background:#444; color:white; flex:0.4;" onclick="logout()">دەرچوون</button>
         </div>
 
@@ -82,32 +100,33 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
+    // Matches with Kurdish League Names
     const matches = [
-        { id: "m1", t1: "ئارسناڵ", t2: "ئیڤەرتۆن", p1: 2, pX: 3, p2: 5, event: "PL", deadline: "14/3 20:30", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/62.png", bg: "https://images.unsplash.com/photo-1599321955419-7833bd4482c3?w=500" },
-        { id: "m2", t1: "چێڵسی", t2: "نیوکاسڵ", p1: 3, pX: 2, p2: 4, event: "PL", deadline: "14/3 20:30", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/67.png", bg: "https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=500" },
-        { id: "m3", t1: "وێستهام", t2: "مان سیتی", p1: 4, pX: 3, p2: 2, event: "PL", deadline: "14/3 23:00", img1: "https://crests.football-data.org/563.png", img2: "https://crests.football-data.org/65.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" },
-        { id: "m4", t1: "ئەتلەتیکۆ", t2: "خیتافی", p1: 2, pX: 4, p2: 5, event: "Laliga", deadline: "14/3 18:15", img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/82.png", bg: "https://images.unsplash.com/photo-1622279457486-62dcc4a4bd13?w=500" },
-        { id: "m5", t1: "ڕیاڵ ئۆڤیدۆ", t2: "ڤالێنسیا", p1: 3, pX: 4, p2: 2, event: "Laliga", deadline: "14/3 20:30", img1: "https://crests.football-data.org/71.png", img2: "https://crests.football-data.org/95.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
-        { id: "m6", t1: "ڕیاڵ مەدرید", t2: "ئێڵچی", p1: 2, pX: 3, p2: 5, event: "Laliga", deadline: "14/3 23:00", img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/285.png", bg: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500" },
-        { id: "m7", t1: "ئینتەرمیلان", t2: "ئەتڵەنتا", p1: 2, pX: 3, p2: 4, event: "Serie A", deadline: "14/3 17:00", img1: "https://crests.football-data.org/108.png", img2: "https://crests.football-data.org/102.png", bg: "https://images.unsplash.com/photo-1518091043644-c1d445bb5120?w=500" },
-        { id: "m8", t1: "ناپۆلی", t2: "لیچی", p1: 2, pX: 3, p2: 4, event: "Serie A", deadline: "14/3 20:00", img1: "https://crests.football-data.org/113.png", img2: "https://crests.football-data.org/112.png", bg: "https://images.unsplash.com/photo-1639031260004-98c47087053e?w=500" },
-        { id: "m9", t1: "ئۆدێنێزی", t2: "یوڤێنتۆس", p1: 4, pX: 3, p2: 2, event: "Serie A", deadline: "14/3 22:45", img1: "https://crests.football-data.org/115.png", img2: "https://crests.football-data.org/109.png", bg: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=500" },
-        { id: "m10", t1: "بایرن", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, event: "BL", deadline: "14/3 17:30", img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/3.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" },
-        { id: "m11", t1: "دۆرتمۆند", t2: "ئۆگسبۆرگ", p1: 2, pX: 3, p2: 5, event: "BL", deadline: "14/3 17:30", img1: "https://crests.football-data.org/4.png", img2: "https://crests.football-data.org/16.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
-        { id: "m12", t1: "مانیو", t2: "ڤێلا", p1: 3, pX: 2, p2: 4, event: "PL", deadline: "15/3 17:00", img1: "https://crests.football-data.org/66.png", img2: "https://crests.football-data.org/58.png", bg: "https://images.unsplash.com/photo-1563299796-17596ed6b017?w=500" },
-        { id: "m13", t1: "لیڤەرپووڵ", t2: "تۆتنهام", p1: 2, pX: 4, p2: 5, event: "PL", deadline: "15/3 19:30", img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/73.png", bg: "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=500" },
-        { id: "m14", t1: "بارسا", t2: "سێڤیلیا", p1: 2, pX: 3, p2: 4, event: "Laliga", deadline: "15/3 18:15", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/559.png", bg: "https://images.unsplash.com/photo-1524311588144-62bb00b213f0?w=500" },
-        { id: "m15", t1: "کۆمۆ", t2: "ڕۆما", p1: 3, pX: 2, p2: 4, event: "Serie A", deadline: "15/3 20:00", img1: "https://crests.football-data.org/445.png", img2: "https://crests.football-data.org/100.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
-        { id: "m16", t1: "لازیۆ", t2: "میلان", p1: 4, pX: 3, p2: 2, event: "Serie A", deadline: "15/3 22:45", img1: "https://crests.football-data.org/110.png", img2: "https://crests.football-data.org/98.png", bg: "https://images.unsplash.com/photo-1518091043644-c1d445bb5120?w=500" },
-        { id: "m17", t1: "میامی", t2: "Charlotte", p1: 4, pX: 2, p2: 3, event: "MLS", deadline: "15/3 02:30", img1: "https://crests.football-data.org/1132.png", img2: "https://crests.football-data.org/1121.png", bg: "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=500" },
-        { id: "m18", t1: "بۆدۆ", t2: "لیشبۆنە", p1: 4, pX: 3, p2: 2, event: "UCL", deadline: "17/3 20:45", img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
-        { id: "m19", t1: "ئارسناڵ", t2: "بایر", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "17/3 23:00", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", bg: "https://images.unsplash.com/photo-1599321955419-7833bd4482c3?w=500" },
-        { id: "m20", t1: "چێڵسی", t2: "پاریس", p1: 3, pX: 2, p2: 4, event: "UCL", deadline: "17/3 23:00", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/524.png", bg: "https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=500" },
-        { id: "m21", t1: "مان سیتی", t2: "ڕیاڵ", p1: 2, pX: 3, p2: 5, event: "UCL", deadline: "17/3 23:00", img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/86.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" },
-        { id: "m22", t1: "بارسا", t2: "نیوکاسڵ", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "18/3 20:45", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", bg: "https://images.unsplash.com/photo-1524311588144-62bb00b213f0?w=500" },
-        { id: "m23", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 4, p2: 3, event: "UCL", deadline: "18/3 23:00", img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", bg: "https://images.unsplash.com/photo-1622279457486-62dcc4a4bd13?w=500" },
-        { id: "m24", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "18/3 23:00", img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", bg: "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=500" },
-        { id: "m25", t1: "بایرن", t2: "ئەتڵەنتا", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "18/3 23:00", img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/102.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" }
+        { id: "m1", t1: "ئارسناڵ", t2: "ئیڤەرتۆن", p1: 2, pX: 3, p2: 5, event: "خولی ئینگلیزی", deadline: "14/3 20:30", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/62.png" },
+        { id: "m2", t1: "چێڵسی", t2: "نیوکاسڵ", p1: 3, pX: 2, p2: 4, event: "خولی ئینگلیزی", deadline: "14/3 20:30", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/67.png" },
+        { id: "m3", t1: "وێستهام", t2: "مان سیتی", p1: 4, pX: 3, p2: 2, event: "خولی ئینگلیزی", deadline: "14/3 23:00", img1: "https://crests.football-data.org/563.png", img2: "https://crests.football-data.org/65.png" },
+        { id: "m4", t1: "ئەتلەتیکۆ", t2: "خیتافی", p1: 2, pX: 4, p2: 5, event: "خولی ئیسپانی", deadline: "14/3 18:15", img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/82.png" },
+        { id: "m5", t1: "ڕیاڵ ئۆڤیدۆ", t2: "ڤالێنسیا", p1: 3, pX: 4, p2: 2, event: "خولی ئیسپانی", deadline: "14/3 20:30", img1: "https://crests.football-data.org/71.png", img2: "https://crests.football-data.org/95.png" },
+        { id: "m6", t1: "ڕیاڵ مەدرید", t2: "ئێڵچی", p1: 2, pX: 3, p2: 5, event: "خولی ئیسپانی", deadline: "14/3 23:00", img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/285.png" },
+        { id: "m7", t1: "ئینتەرمیلان", t2: "ئەتڵەنتا", p1: 2, pX: 3, p2: 4, event: "خولی ئیتاڵی", deadline: "14/3 17:00", img1: "https://crests.football-data.org/108.png", img2: "https://crests.football-data.org/102.png" },
+        { id: "m8", t1: "ناپۆلی", t2: "لیچی", p1: 2, pX: 3, p2: 4, event: "خولی ئیتاڵی", deadline: "14/3 20:00", img1: "https://crests.football-data.org/113.png", img2: "https://crests.football-data.org/112.png" },
+        { id: "m9", t1: "ئۆدێنێزی", t2: "یوڤێنتۆس", p1: 4, pX: 3, p2: 2, event: "خولی ئیتاڵی", deadline: "14/3 22:45", img1: "https://crests.football-data.org/115.png", img2: "https://crests.football-data.org/109.png" },
+        { id: "m10", t1: "بایرن", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, event: "خولی ئەڵمانی", deadline: "14/3 17:30", img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/3.png" },
+        { id: "m11", t1: "دۆرتمۆند", t2: "ئۆگسبۆرگ", p1: 2, pX: 3, p2: 5, event: "خولی ئەڵمانی", deadline: "14/3 17:30", img1: "https://crests.football-data.org/4.png", img2: "https://crests.football-data.org/16.png" },
+        { id: "m12", t1: "مانیو", t2: "ڤێلا", p1: 3, pX: 2, p2: 4, event: "خولی ئینگلیزی", deadline: "15/3 17:00", img1: "https://crests.football-data.org/66.png", img2: "https://crests.football-data.org/58.png" },
+        { id: "m13", t1: "لیڤەرپووڵ", t2: "تۆتنهام", p1: 2, pX: 4, p2: 5, event: "خولی ئینگلیزی", deadline: "15/3 19:30", img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/73.png" },
+        { id: "m14", t1: "بارسا", t2: "سێڤیلیا", p1: 2, pX: 3, p2: 4, event: "خولی ئیسپانی", deadline: "15/3 18:15", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/559.png" },
+        { id: "m15", t1: "کۆمۆ", t2: "ڕۆما", p1: 3, pX: 2, p2: 4, event: "خولی ئیتاڵی", deadline: "15/3 20:00", img1: "https://crests.football-data.org/445.png", img2: "https://crests.football-data.org/100.png" },
+        { id: "m16", t1: "لازیۆ", t2: "میلان", p1: 4, pX: 3, p2: 2, event: "خولی ئیتاڵی", deadline: "15/3 22:45", img1: "https://crests.football-data.org/110.png", img2: "https://crests.football-data.org/98.png" },
+        { id: "m17", t1: "میامی", t2: "Charlotte", p1: 4, pX: 2, p2: 3, event: "خولی ئەمریکی", deadline: "15/3 02:30", img1: "https://crests.football-data.org/1132.png", img2: "https://crests.football-data.org/1121.png" },
+        { id: "m18", t1: "بۆدۆ", t2: "لیشبۆنە", p1: 4, pX: 3, p2: 2, event: "خولی پاڵەوانەکان", deadline: "17/3 20:45", img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png" },
+        { id: "m19", t1: "ئارسناڵ", t2: "لیڤەرکوزن ", p1: 2, pX: 4, p2: 5, event: "خولی پاڵەوانەکان", deadline: "17/3 23:00", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png" },
+        { id: "m20", t1: "چێڵسی", t2: "پاریس", p1: 3, pX: 2, p2: 4, event: "خولی پاڵەوانەکان", deadline: "17/3 23:00", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/524.png" },
+        { id: "m21", t1: "مان سیتی", t2: "ڕیاڵ", p1: 2, pX: 3, p2: 5, event: "خولی پاڵەوانەکان", deadline: "17/3 23:00", img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/86.png" },
+        { id: "m22", t1: "بارسا", t2: "نیوکاسڵ", p1: 2, pX: 4, p2: 5, event: "خولی پاڵەوانەکان", deadline: "18/3 20:45", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png" },
+        { id: "m23", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 4, p2: 3, event: "خولی پاڵەوانەکان", deadline: "18/3 23:00", img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png" },
+        { id: "m24", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 4, p2: 5, event: "خولی پاڵەوانەکان", deadline: "18/3 23:00", img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png" },
+        { id: "m25", t1: "بایرن", t2: "ئەتڵەنتا", p1: 2, pX: 4, p2: 5, event: "خولی پاڵەوانەکان", deadline: "18/3 23:00", img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/102.png" }
     ];
 
     function loginUser() {
@@ -123,7 +142,7 @@
 
         let h = '';
         matches.forEach(m => {
-            h += `<div class="match-card" id="${m.id}" style="background-image: url('${m.bg}')">
+            h += `<div class="match-card" id="${m.id}">
                 <div class="card-overlay">
                     <div class="match-event-badge">${m.event}</div>
                     <center><div class="timer">کات: ${m.deadline}</div></center>
@@ -148,10 +167,8 @@
 
         db.ref('users/' + currentUser + '/predictions').on('value', snap => {
             const preds = snap.val() || {};
-            // پاککردنەوەی شێوازی دوگمەکان پێش دانانەوەی نوێ
             document.querySelectorAll('.opt-btn').forEach(b => { b.classList.remove('selected'); b.disabled = false; });
             document.querySelectorAll('.view-others-btn').forEach(b => b.style.display = 'none');
-
             Object.keys(preds).forEach(mid => {
                 const btn = document.getElementById(mid + '-btn' + preds[mid].choice);
                 if(btn) {
@@ -163,14 +180,11 @@
         });
     }
 
-    // ئەمە تەنها پێشبینییەکان دەسڕێتەوە و دەستکاری خاڵ ناکات
     function resetOnlyPredictions() {
         if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو پێشبینییەکان؟ خاڵەکان وەک خۆیان دەمێننەوە.")) {
             db.ref('users').once('value', snap => {
-                snap.forEach(uSnap => {
-                    db.ref('users/' + uSnap.key + '/predictions').remove();
-                });
-                alert("پێشبینییەکان سڕانەوە! ئێستا هەمووان دەتوانن پێشبینی نوێ بکەن.");
+                snap.forEach(uSnap => { db.ref('users/' + uSnap.key + '/predictions').remove(); });
+                alert("پێشبینییەکان سڕانەوە!");
                 location.reload();
             });
         }
