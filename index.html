@@ -3,7 +3,7 @@
 <head>   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - وەشانی کۆتایی</title>
+    <title>گروپی برایان</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
@@ -13,17 +13,12 @@
         .container { width: 100%; max-width: 440px; padding: 15px; }
         .top-nav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
         .rank-btn { background: var(--secondary); color: #000; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; flex: 1; }
-        
-        /* Leaderboard Styling */
         #leaderboard-view { display: none; background: var(--card-inner); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 20px; position: fixed; top: 5%; left: 5%; right: 5%; z-index: 1000; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 40px #000; }
         .rank-header { display: flex; justify-content: space-between; padding: 10px; border-bottom: 2px solid var(--secondary); font-weight: bold; font-size: 13px; color: var(--secondary); }
         .rank-row { display: flex; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid var(--border); align-items: center; }
         .rank-name { flex: 2; text-align: right; }
         .rank-vals { flex: 1; display: flex; justify-content: space-around; font-weight: bold; }
-
-        /* Modal for Predictions */
         #all-preds-view { display: none; background: var(--card-inner); border: 1px solid var(--border); border-radius: 20px; padding: 15px; position: fixed; top: 15%; left: 8%; right: 8%; z-index: 1001; box-shadow: 0 0 50px #000; }
-
         .match-card { position: relative; border-radius: 30px; margin-top: 25px; overflow: hidden; border: 1px solid var(--border); background-size: cover; background-position: center; }
         .card-overlay { background: linear-gradient(to bottom, rgba(3,7,18,0.4), var(--card-inner)); padding: 25px 15px; backdrop-filter: blur(4px); }
         .match-event-badge { position: absolute; top: 12px; right: 12px; background: var(--primary); color: white; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 50px; }
@@ -34,11 +29,9 @@
         .team-name { font-size: 11px; font-weight: bold; text-align: center; height: 32px; line-height: 1.2; }
         .opt-btn { width: 90%; background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 12px 0; border-radius: 12px; cursor: pointer; font-size: 10px; transition: 0.2s; }
         .opt-btn.selected { background: var(--secondary) !important; color: #000 !important; font-weight: 900; box-shadow: 0 0 15px rgba(251,191,36,0.4); }
-        
         .view-others-btn { width: 100%; margin-top: 15px; background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid #4338ca; padding: 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; display: none; }
         .admin-tools { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #444; display: none; text-align: center; }
         .admin-btn { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 10px; cursor: pointer; margin: 2px; }
-        
         input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--border); background: #111827; color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
         .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
     </style>
@@ -55,14 +48,12 @@
     <div id="main-app" style="display: none;">
         <div class="top-nav">
             <button class="rank-btn" onclick="openRank()">📊 ڕیزبەندی</button>
-            <button class="rank-btn" style="background:#ef4444; color:white; flex:0.4;" onclick="logout()">دەرچوون</button>
+            <button id="admin-reset-btn" class="rank-btn" style="background:#ef4444; color:white; display:none;" onclick="resetOnlyPredictions()">🔄 پاککردنەوەی پێشبینی</button>
+            <button class="rank-btn" style="background:#444; color:white; flex:0.4;" onclick="logout()">دەرچوون</button>
         </div>
 
         <div id="leaderboard-view">
-            <div class="rank-header">
-                <span style="flex:2">ناوی یاریزان</span>
-                <div style="flex:1; display:flex; justify-content:space-around;"><span>هەفتە</span><span>گشتی</span></div>
-            </div>
+            <div class="rank-header"><span style="flex:2">ناوی یاریزان</span><div style="flex:1; display:flex; justify-content:space-around;"><span>هەفتە</span><span>گشتی</span></div></div>
             <div id="rank-list"></div>
             <button class="btn-main" style="margin-top:20px;" onclick="closeView('leaderboard-view')">داخستن</button>
         </div>
@@ -91,7 +82,6 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // هەموو ٢٥ یارییەکە
     const matches = [
         { id: "m1", t1: "ئارسناڵ", t2: "ئیڤەرتۆن", p1: 2, pX: 3, p2: 5, event: "PL", deadline: "14/3 20:30", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/62.png", bg: "https://images.unsplash.com/photo-1599321955419-7833bd4482c3?w=500" },
         { id: "m2", t1: "چێڵسی", t2: "نیوکاسڵ", p1: 3, pX: 2, p2: 4, event: "PL", deadline: "14/3 20:30", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/67.png", bg: "https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=500" },
@@ -129,6 +119,7 @@
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
         const isAdmin = currentUser.toLowerCase() === 'admin';
+        if(isAdmin) document.getElementById('admin-reset-btn').style.display = 'block';
 
         let h = '';
         matches.forEach(m => {
@@ -157,6 +148,10 @@
 
         db.ref('users/' + currentUser + '/predictions').on('value', snap => {
             const preds = snap.val() || {};
+            // پاککردنەوەی شێوازی دوگمەکان پێش دانانەوەی نوێ
+            document.querySelectorAll('.opt-btn').forEach(b => { b.classList.remove('selected'); b.disabled = false; });
+            document.querySelectorAll('.view-others-btn').forEach(b => b.style.display = 'none');
+
             Object.keys(preds).forEach(mid => {
                 const btn = document.getElementById(mid + '-btn' + preds[mid].choice);
                 if(btn) {
@@ -166,6 +161,19 @@
                 }
             });
         });
+    }
+
+    // ئەمە تەنها پێشبینییەکان دەسڕێتەوە و دەستکاری خاڵ ناکات
+    function resetOnlyPredictions() {
+        if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو پێشبینییەکان؟ خاڵەکان وەک خۆیان دەمێننەوە.")) {
+            db.ref('users').once('value', snap => {
+                snap.forEach(uSnap => {
+                    db.ref('users/' + uSnap.key + '/predictions').remove();
+                });
+                alert("پێشبینییەکان سڕانەوە! ئێستا هەمووان دەتوانن پێشبینی نوێ بکەن.");
+                location.reload();
+            });
+        }
     }
 
     function vote(mId, c, p) {
@@ -180,7 +188,7 @@
                 const p = u.val().predictions ? u.val().predictions[mId] : null;
                 const m = matches.find(x => x.id === mId);
                 let choiceText = "پێشبینی نەکردووە";
-                if(p) { choiceText = p.choice == 1 ? m.t1 : p.choice == 2 ? "یەکسان" : m.t2; }
+                if(p) choiceText = p.choice == 1 ? m.t1 : p.choice == 2 ? "یەکسان" : m.t2;
                 listH += `<div class="rank-row"><span>${u.key}</span><span style="color:var(--secondary)">${choiceText}</span></div>`;
             });
             document.getElementById('preds-content').innerHTML = listH;
