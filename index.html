@@ -3,60 +3,74 @@
 <head>   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گروپی برایان - سیستەمی خاڵ</title>
+    <title>گروپی برایان - وەشانی کۆتایی</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #6366f1; --secondary: #fbbf24; --bg: #030712; --card-inner: rgba(15, 23, 42, 0.9); --border: rgba(255, 255, 255, 0.12); }
+        :root { --primary: #6366f1; --secondary: #fbbf24; --bg: #030712; --card-inner: rgba(15, 23, 42, 0.95); --border: rgba(255, 255, 255, 0.1); }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 440px; padding: 15px; }
         .top-nav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
         .rank-btn { background: var(--secondary); color: #000; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; flex: 1; }
-        #leaderboard-view, #all-preds-view { display: none; background: var(--card-inner); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 20px; position: fixed; top: 10%; left: 5%; right: 5%; z-index: 100; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 30px #000; }
-        .rank-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border); }
+        
+        /* Leaderboard Styling */
+        #leaderboard-view { display: none; background: var(--card-inner); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 20px; position: fixed; top: 5%; left: 5%; right: 5%; z-index: 1000; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 40px #000; }
+        .rank-header { display: flex; justify-content: space-between; padding: 10px; border-bottom: 2px solid var(--secondary); font-weight: bold; font-size: 13px; color: var(--secondary); }
+        .rank-row { display: flex; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid var(--border); align-items: center; }
+        .rank-name { flex: 2; text-align: right; }
+        .rank-vals { flex: 1; display: flex; justify-content: space-around; font-weight: bold; }
+
+        /* Modal for Predictions */
+        #all-preds-view { display: none; background: var(--card-inner); border: 1px solid var(--border); border-radius: 20px; padding: 15px; position: fixed; top: 15%; left: 8%; right: 8%; z-index: 1001; box-shadow: 0 0 50px #000; }
+
         .match-card { position: relative; border-radius: 30px; margin-top: 25px; overflow: hidden; border: 1px solid var(--border); background-size: cover; background-position: center; }
-        .card-overlay { background: linear-gradient(to bottom, rgba(3,7,18,0.5), var(--card-inner)); padding: 20px 15px; backdrop-filter: blur(3px); }
-        .match-event-badge { position: absolute; top: 12px; right: 12px; background: var(--primary); color: white; font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 50px; }
-        .timer { font-size: 11px; color: var(--secondary); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 50px; display: inline-block; margin-bottom: 10px; direction: ltr; }
+        .card-overlay { background: linear-gradient(to bottom, rgba(3,7,18,0.4), var(--card-inner)); padding: 25px 15px; backdrop-filter: blur(4px); }
+        .match-event-badge { position: absolute; top: 12px; right: 12px; background: var(--primary); color: white; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 50px; }
+        .timer { font-size: 11px; color: var(--secondary); background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 50px; display: inline-block; margin-bottom: 15px; direction: ltr; }
         .prediction-container { display: flex; justify-content: space-between; align-items: center; gap: 5px; }
         .predict-box { flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .team-logo { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
-        .team-name { font-size: 11px; font-weight: bold; text-align: center; height: 30px; }
-        .opt-btn { width: 90%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; padding: 10px 0; border-radius: 12px; cursor: pointer; font-size: 10px; transition: 0.3s; }
-        .opt-btn.selected { background: var(--secondary) !important; color: #000 !important; font-weight: bold; }
-        .view-preds-btn { width: 100%; margin-top: 15px; background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid #333; padding: 8px; border-radius: 10px; font-size: 11px; cursor: pointer; }
+        .team-logo { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
+        .team-name { font-size: 11px; font-weight: bold; text-align: center; height: 32px; line-height: 1.2; }
+        .opt-btn { width: 90%; background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 12px 0; border-radius: 12px; cursor: pointer; font-size: 10px; transition: 0.2s; }
+        .opt-btn.selected { background: var(--secondary) !important; color: #000 !important; font-weight: 900; box-shadow: 0 0 15px rgba(251,191,36,0.4); }
+        
+        .view-others-btn { width: 100%; margin-top: 15px; background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid #4338ca; padding: 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; display: none; }
         .admin-tools { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #444; display: none; text-align: center; }
         .admin-btn { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 10px; cursor: pointer; margin: 2px; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #111827; color: white; margin-bottom: 10px; text-align: center; }
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        
+        input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--border); background: #111827; color: white; margin-bottom: 15px; text-align: center; font-size: 16px; }
+        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-page">
-        <h1 style="text-align: center;">🏆 گروپی برایان</h1>
+        <h1 style="text-align: center; margin-bottom: 30px;">🏆 گروپی برایان</h1>
         <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
         <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
     </div>
 
     <div id="main-app" style="display: none;">
         <div class="top-nav">
-            <button class="rank-btn" onclick="toggleView('leaderboard-view')">📊 ڕیزبەندی</button>
+            <button class="rank-btn" onclick="openRank()">📊 ڕیزبەندی</button>
             <button class="rank-btn" style="background:#ef4444; color:white; flex:0.4;" onclick="logout()">دەرچوون</button>
         </div>
 
         <div id="leaderboard-view">
-            <h3 style="text-align:center">ڕیزبەندی گشتی</h3>
+            <div class="rank-header">
+                <span style="flex:2">ناوی یاریزان</span>
+                <div style="flex:1; display:flex; justify-content:space-around;"><span>هەفتە</span><span>گشتی</span></div>
+            </div>
             <div id="rank-list"></div>
-            <button class="btn-main" style="margin-top:10px; padding:10px;" onclick="toggleView('leaderboard-view')">داخستن</button>
+            <button class="btn-main" style="margin-top:20px;" onclick="closeView('leaderboard-view')">داخستن</button>
         </div>
 
         <div id="all-preds-view">
-            <h3 id="pred-title" style="text-align:center">پێشبینییەکان</h3>
-            <div id="preds-content"></div>
-            <button class="btn-main" style="margin-top:10px; padding:10px;" onclick="toggleView('all-preds-view')">داخستن</button>
+            <h3 id="pred-match-title" style="text-align:center; color:var(--secondary); font-size:14px;"></h3>
+            <div id="preds-content" style="max-height:300px; overflow-y:auto;"></div>
+            <button class="btn-main" style="margin-top:20px; padding:10px;" onclick="closeView('all-preds-view')">داخستن</button>
         </div>
 
         <div id="matches-list"></div>
@@ -77,6 +91,7 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
+    // هەموو ٢٥ یارییەکە
     const matches = [
         { id: "m1", t1: "ئارسناڵ", t2: "ئیڤەرتۆن", p1: 2, pX: 3, p2: 5, event: "PL", deadline: "14/3 20:30", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/62.png", bg: "https://images.unsplash.com/photo-1599321955419-7833bd4482c3?w=500" },
         { id: "m2", t1: "چێڵسی", t2: "نیوکاسڵ", p1: 3, pX: 2, p2: 4, event: "PL", deadline: "14/3 20:30", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/67.png", bg: "https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=500" },
@@ -87,29 +102,27 @@
         { id: "m7", t1: "ئینتەرمیلان", t2: "ئەتڵەنتا", p1: 2, pX: 3, p2: 4, event: "Serie A", deadline: "14/3 17:00", img1: "https://crests.football-data.org/108.png", img2: "https://crests.football-data.org/102.png", bg: "https://images.unsplash.com/photo-1518091043644-c1d445bb5120?w=500" },
         { id: "m8", t1: "ناپۆلی", t2: "لیچی", p1: 2, pX: 3, p2: 4, event: "Serie A", deadline: "14/3 20:00", img1: "https://crests.football-data.org/113.png", img2: "https://crests.football-data.org/112.png", bg: "https://images.unsplash.com/photo-1639031260004-98c47087053e?w=500" },
         { id: "m9", t1: "ئۆدێنێزی", t2: "یوڤێنتۆس", p1: 4, pX: 3, p2: 2, event: "Serie A", deadline: "14/3 22:45", img1: "https://crests.football-data.org/115.png", img2: "https://crests.football-data.org/109.png", bg: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=500" },
-        { id: "m10", t1: "بایرن", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, event: "Bundesliga", deadline: "14/3 17:30", img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/3.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" },
-        { id: "m11", t1: "دۆرتمۆند", t2: "ئۆگسبۆرگ", p1: 2, pX: 3, p2: 5, event: "Bundesliga", deadline: "14/3 17:30", img1: "https://crests.football-data.org/4.png", img2: "https://crests.football-data.org/16.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
-        { id: "m12", t1: "مان یونایتد", t2: "ئەستۆن ڤێلا", p1: 3, pX: 2, p2: 4, event: "PL", deadline: "15/3 17:00", img1: "https://crests.football-data.org/66.png", img2: "https://crests.football-data.org/58.png", bg: "https://images.unsplash.com/photo-1563299796-17596ed6b017?w=500" },
+        { id: "m10", t1: "بایرن", t2: "لیڤەرکوزن", p1: 2, pX: 3, p2: 4, event: "BL", deadline: "14/3 17:30", img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/3.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" },
+        { id: "m11", t1: "دۆرتمۆند", t2: "ئۆگسبۆرگ", p1: 2, pX: 3, p2: 5, event: "BL", deadline: "14/3 17:30", img1: "https://crests.football-data.org/4.png", img2: "https://crests.football-data.org/16.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
+        { id: "m12", t1: "مانیو", t2: "ڤێلا", p1: 3, pX: 2, p2: 4, event: "PL", deadline: "15/3 17:00", img1: "https://crests.football-data.org/66.png", img2: "https://crests.football-data.org/58.png", bg: "https://images.unsplash.com/photo-1563299796-17596ed6b017?w=500" },
         { id: "m13", t1: "لیڤەرپووڵ", t2: "تۆتنهام", p1: 2, pX: 4, p2: 5, event: "PL", deadline: "15/3 19:30", img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/73.png", bg: "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=500" },
-        { id: "m14", t1: "بارسێلۆنا", t2: "سێڤیلیا", p1: 2, pX: 3, p2: 4, event: "Laliga", deadline: "15/3 18:15", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/559.png", bg: "https://images.unsplash.com/photo-1524311588144-62bb00b213f0?w=500" },
+        { id: "m14", t1: "بارسا", t2: "سێڤیلیا", p1: 2, pX: 3, p2: 4, event: "Laliga", deadline: "15/3 18:15", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/559.png", bg: "https://images.unsplash.com/photo-1524311588144-62bb00b213f0?w=500" },
         { id: "m15", t1: "کۆمۆ", t2: "ڕۆما", p1: 3, pX: 2, p2: 4, event: "Serie A", deadline: "15/3 20:00", img1: "https://crests.football-data.org/445.png", img2: "https://crests.football-data.org/100.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
         { id: "m16", t1: "لازیۆ", t2: "میلان", p1: 4, pX: 3, p2: 2, event: "Serie A", deadline: "15/3 22:45", img1: "https://crests.football-data.org/110.png", img2: "https://crests.football-data.org/98.png", bg: "https://images.unsplash.com/photo-1518091043644-c1d445bb5120?w=500" },
-        { id: "m17", t1: "ئینتەرمیامی", t2: "Charlotte", p1: 4, pX: 2, p2: 3, event: "MLS", deadline: "15/3 02:30", img1: "https://crests.football-data.org/1132.png", img2: "https://crests.football-data.org/1121.png", bg: "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=500" },
-        { id: "m18", t1: "بۆدۆ گلیمت", t2: "لیشبۆنە", p1: 4, pX: 3, p2: 2, event: "UCL", deadline: "17/3 20:45", img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
-        { id: "m19", t1: "ئارسناڵ", t2: "لیڤەرکوزن", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "17/3 23:00", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", bg: "https://images.unsplash.com/photo-1599321955419-7833bd4482c3?w=500" },
+        { id: "m17", t1: "میامی", t2: "Charlotte", p1: 4, pX: 2, p2: 3, event: "MLS", deadline: "15/3 02:30", img1: "https://crests.football-data.org/1132.png", img2: "https://crests.football-data.org/1121.png", bg: "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=500" },
+        { id: "m18", t1: "بۆدۆ", t2: "لیشبۆنە", p1: 4, pX: 3, p2: 2, event: "UCL", deadline: "17/3 20:45", img1: "https://crests.football-data.org/5444.png", img2: "https://crests.football-data.org/498.png", bg: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500" },
+        { id: "m19", t1: "ئارسناڵ", t2: "بایر", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "17/3 23:00", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/3.png", bg: "https://images.unsplash.com/photo-1599321955419-7833bd4482c3?w=500" },
         { id: "m20", t1: "چێڵسی", t2: "پاریس", p1: 3, pX: 2, p2: 4, event: "UCL", deadline: "17/3 23:00", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/524.png", bg: "https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=500" },
-        { id: "m21", t1: "مان سیتی", t2: "ڕیاڵ مەدرید", p1: 2, pX: 3, p2: 5, event: "UCL", deadline: "17/3 23:00", img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/86.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" },
-        { id: "m22", t1: "بارسێلۆنا", t2: "نیوکاسڵ", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "18/3 20:45", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", bg: "https://images.unsplash.com/photo-1524311588144-62bb00b213f0?w=500" },
+        { id: "m21", t1: "مان سیتی", t2: "ڕیاڵ", p1: 2, pX: 3, p2: 5, event: "UCL", deadline: "17/3 23:00", img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/86.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" },
+        { id: "m22", t1: "بارسا", t2: "نیوکاسڵ", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "18/3 20:45", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/67.png", bg: "https://images.unsplash.com/photo-1524311588144-62bb00b213f0?w=500" },
         { id: "m23", t1: "ئەتلەتیکۆ", t2: "تۆتنهام", p1: 2, pX: 4, p2: 3, event: "UCL", deadline: "18/3 23:00", img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/73.png", bg: "https://images.unsplash.com/photo-1622279457486-62dcc4a4bd13?w=500" },
         { id: "m24", t1: "لیڤەرپووڵ", t2: "گەلەتەسەرای", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "18/3 23:00", img1: "https://crests.football-data.org/64.png", img2: "https://crests.football-data.org/610.png", bg: "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=500" },
         { id: "m25", t1: "بایرن", t2: "ئەتڵەنتا", p1: 2, pX: 4, p2: 5, event: "UCL", deadline: "18/3 23:00", img1: "https://crests.football-data.org/5.png", img2: "https://crests.football-data.org/102.png", bg: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500" }
     ];
 
     function loginUser() {
-        const name = document.getElementById('userNameInput').value.trim();
-        if(!name) return;
-        localStorage.setItem('groupBryanUser', name);
-        location.reload();
+        const n = document.getElementById('userNameInput').value.trim();
+        if(!n) return; localStorage.setItem('groupBryanUser', n); location.reload();
     }
 
     if (currentUser) {
@@ -126,82 +139,82 @@
                     <div class="prediction-container">
                         <div class="predict-box"><img src="${m.img1}" class="team-logo"><div class="team-name">${m.t1}</div>
                             <button class="opt-btn" id="${m.id}-btn1" onclick="vote('${m.id}', 1, ${m.p1})">${m.p1} خاڵ</button></div>
-                        <div class="predict-box" style="padding-top:30px;"><div class="team-name">یەکسان</div>
+                        <div class="predict-box" style="padding-top:25px;"><div class="team-name">یەکسان</div>
                             <button class="opt-btn" id="${m.id}-btn2" onclick="vote('${m.id}', 2, ${m.pX})">${m.pX} خاڵ</button></div>
                         <div class="predict-box"><img src="${m.img2}" class="team-logo"><div class="team-name">${m.t2}</div>
                             <button class="opt-btn" id="${m.id}-btn3" onclick="vote('${m.id}', 3, ${m.p2})">${m.p2} خاڵ</button></div>
                     </div>
-                    <button class="view-preds-btn" onclick="showAllPredictions('${m.id}', '${m.t1} vs ${m.t2}')">👁 بینینی پێشبینی یاریزانەکان</button>
+                    <button class="view-others-btn" id="viewbtn-${m.id}" onclick="showPredictions('${m.id}', '${m.t1} vs ${m.t2}')">👁 بینینی پێشبینی ئەوانی تر</button>
                     <div class="admin-tools" style="display:${isAdmin?'block':'none'}">
-                        <button class="admin-btn" onclick="setResult('${m.id}', 1, ${m.p1})">بردنی ١</button>
-                        <button class="admin-btn" onclick="setResult('${m.id}', 2, ${m.pX})">یەکسان</button>
-                        <button class="admin-btn" onclick="setResult('${m.id}', 3, ${m.p2})">بردنی ٢</button>
+                        <button class="admin-btn" onclick="setResult('${m.id}',1,${m.p1})">بردنی1</button>
+                        <button class="admin-btn" onclick="setResult('${m.id}',2,${m.pX})">X</button>
+                        <button class="admin-btn" onclick="setResult('${m.id}',3,${m.p2})">بردنی2</button>
                     </div>
                 </div>
             </div>`;
         });
         document.getElementById('matches-list').innerHTML = h;
 
-        db.ref('users/' + currentUser).on('value', snap => {
-            const d = snap.val() || {};
-            if (d.predictions) {
-                Object.keys(d.predictions).forEach(mid => {
-                    const btn = document.getElementById(mid + '-btn' + d.predictions[mid].choice);
-                    if(btn) { btn.classList.add('selected'); document.querySelectorAll(`#${mid} .opt-btn`).forEach(b => b.disabled = true); }
-                });
-            }
-        });
-    }
-
-    function vote(mId, c, p) { 
-        if(confirm("پێشبینییەکە قفڵ بکرێت؟")) {
-            db.ref('users/' + currentUser + '/predictions/' + mId).set({ choice: c, pts: p });
-        }
-    }
-
-    function setResult(mId, winnerChoice, points) {
-        if(!confirm("ئایا دڵنیایت لە ئەنجام؟ خاڵەکان ڕاستەوخۆ بۆ یاریزانەکان زیاد دەبێت.")) return;
-        db.ref('users').once('value', snap => {
-            snap.forEach(userSnap => {
-                const userData = userSnap.val();
-                if(userData.predictions && userData.predictions[mId]) {
-                    if(userData.predictions[mId].choice == winnerChoice) {
-                        const newWeekly = (userData.weekly || 0) + points;
-                        const newTotal = (userData.total || 0) + points;
-                        db.ref('users/' + userSnap.key).update({ weekly: newWeekly, total: newTotal });
-                    }
+        db.ref('users/' + currentUser + '/predictions').on('value', snap => {
+            const preds = snap.val() || {};
+            Object.keys(preds).forEach(mid => {
+                const btn = document.getElementById(mid + '-btn' + preds[mid].choice);
+                if(btn) {
+                    btn.classList.add('selected');
+                    document.querySelectorAll(`#${mid} .opt-btn`).forEach(b => b.disabled = true);
+                    document.getElementById('viewbtn-' + mid).style.display = 'block';
                 }
             });
-            alert("ئەنجام تۆمارکرا و خاڵەکان دابەشکران!");
         });
     }
 
-    function showAllPredictions(mId, matchName) {
-        toggleView('all-preds-view');
-        document.getElementById('pred-title').innerText = matchName;
+    function vote(mId, c, p) {
+        if(confirm("پێشبینییەکە قفڵ بکرێت؟")) db.ref('users/' + currentUser + '/predictions/' + mId).set({ choice: c, pts: p });
+    }
+
+    function showPredictions(mId, title) {
+        document.getElementById('pred-match-title').innerText = title;
         db.ref('users').once('value', snap => {
-            let h = '';
+            let listH = '';
             snap.forEach(u => {
-                const pred = u.val().predictions ? u.val().predictions[mId] : null;
-                const choiceStr = pred ? (pred.choice == 1 ? "بردنی 1" : pred.choice == 2 ? "یەکسان" : "بردنی 2") : "نەیانووسیوە";
-                h += `<div class="rank-row"><span>${u.key}</span><span style="color:${pred?'#fbbf24':'#555'}">${choiceStr}</span></div>`;
+                const p = u.val().predictions ? u.val().predictions[mId] : null;
+                const m = matches.find(x => x.id === mId);
+                let choiceText = "پێشبینی نەکردووە";
+                if(p) { choiceText = p.choice == 1 ? m.t1 : p.choice == 2 ? "یەکسان" : m.t2; }
+                listH += `<div class="rank-row"><span>${u.key}</span><span style="color:var(--secondary)">${choiceText}</span></div>`;
             });
-            document.getElementById('preds-content').innerHTML = h;
+            document.getElementById('preds-content').innerHTML = listH;
+            document.getElementById('all-preds-view').style.display = 'block';
         });
     }
 
-    function toggleView(id) {
-        const v = document.getElementById(id);
-        v.style.display = v.style.display === 'block' ? 'none' : 'block';
-        if(id === 'leaderboard-view' && v.style.display === 'block') {
-            db.ref('users').once('value', s => {
-                let p = []; s.forEach(u => { p.push({ n: u.key, ...u.val() }); });
-                p.sort((a, b) => (b.total || 0) - (a.total || 0));
-                document.getElementById('rank-list').innerHTML = p.map(i => `<div class="rank-row"><span>${i.n}</span><span>${i.weekly||0} / ${i.total||0}</span></div>`).join('');
-            });
-        }
+    function openRank() {
+        db.ref('users').once('value', snap => {
+            let p = []; snap.forEach(u => { p.push({ n: u.key, ...u.val() }); });
+            p.sort((a, b) => (b.total || 0) - (a.total || 0));
+            document.getElementById('rank-list').innerHTML = p.map(i => `
+                <div class="rank-row">
+                    <span class="rank-name">${i.n}</span>
+                    <div class="rank-vals"><span>${i.weekly||0}</span><span>${i.total||0}</span></div>
+                </div>`).join('');
+            document.getElementById('leaderboard-view').style.display = 'block';
+        });
     }
 
+    function setResult(mId, winChoice, pts) {
+        if(!confirm("خاڵەکان هەژمار بکرێن؟")) return;
+        db.ref('users').once('value', snap => {
+            snap.forEach(uSnap => {
+                const u = uSnap.val();
+                if(u.predictions && u.predictions[mId] && u.predictions[mId].choice == winChoice) {
+                    db.ref('users/' + uSnap.key).update({ weekly: (u.weekly || 0) + pts, total: (u.total || 0) + pts });
+                }
+            });
+            alert("تەواو بوو!");
+        });
+    }
+
+    function closeView(id) { document.getElementById(id).style.display = 'none'; }
     function logout() { localStorage.removeItem('groupBryanUser'); location.reload(); }
 </script>
 </body>
