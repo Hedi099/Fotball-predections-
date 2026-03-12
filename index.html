@@ -11,8 +11,8 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 440px; padding: 15px; }
-        .top-nav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
-        .rank-btn { background: var(--secondary); color: #000; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; flex: 1; text-align: center; }
+        .top-nav { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .rank-btn { background: var(--secondary); color: #000; border: none; padding: 12px 8px; border-radius: 12px; font-weight: bold; cursor: pointer; flex: 1; text-align: center; font-size: 13px; }
         #leaderboard-view { display: none; background: var(--card-inner); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 20px; position: fixed; top: 5%; left: 5%; right: 5%; z-index: 1000; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 40px #000; }
         .rank-header { display: flex; justify-content: space-between; padding: 10px; border-bottom: 2px solid var(--secondary); font-weight: bold; font-size: 13px; color: var(--secondary); }
         .rank-row { display: flex; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid var(--border); align-items: center; }
@@ -54,8 +54,8 @@
 
         <div class="top-nav">
             <button class="rank-btn" onclick="openRank()">📊 ڕیزبەندی</button>
-            <button id="admin-reset-btn" class="rank-btn" style="background:#ef4444; color:white; display:none;" onclick="resetOnlyPredictions()">🔄 پاککردنەوە</button>
-            <button class="rank-btn" style="background:#444; color:white; flex:0.4;" onclick="logout()">دەرچوون</button>
+            <button id="admin-reset-btn" class="rank-btn" style="background:#ef4444; color:white; display:none;" onclick="resetOnlyPredictions()">🔄 Reset</button>
+            <button class="rank-btn" style="background:#444; color:white; flex:0.6;" onclick="logout()">دەرچوون</button>
         </div>
 
         <div id="leaderboard-view">
@@ -156,22 +156,27 @@
             const preds = snap.val() || {};
             document.querySelectorAll('.opt-btn').forEach(b => { b.classList.remove('selected'); b.disabled = false; });
             document.querySelectorAll('.view-others-btn').forEach(b => b.style.display = 'none');
+            
             Object.keys(preds).forEach(mid => {
-                const btn = document.getElementById(mid + '-btn' + preds[mid].choice);
-                if(btn) {
-                    btn.classList.add('selected');
-                    document.querySelectorAll(`#${mid} .opt-btn`).forEach(b => b.disabled = true);
-                    document.getElementById('viewbtn-' + mid).style.display = 'block';
+                // تەنها ئەو پێشبینییانە نیشان بدە کە ئایدییەکەیان لە لیستی ئێستادا هەیە
+                const matchExists = matches.some(m => m.id === mid);
+                if (matchExists) {
+                    const btn = document.getElementById(mid + '-btn' + preds[mid].choice);
+                    if(btn) {
+                        btn.classList.add('selected');
+                        document.querySelectorAll(`#${mid} .opt-btn`).forEach(b => b.disabled = true);
+                        document.getElementById('viewbtn-' + mid).style.display = 'block';
+                    }
                 }
             });
         });
     }
 
     function resetOnlyPredictions() {
-        if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو پێشبینییەکان؟ خاڵەکان وەک خۆیان دەمێننەوە.")) {
+        if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو پێشبینییەکان؟ (خاڵەکان وەک خۆیان دەمێننەوە)")) {
             db.ref('users').once('value', snap => {
                 snap.forEach(uSnap => { db.ref('users/' + uSnap.key + '/predictions').remove(); });
-                alert("پێشبینییەکان سڕانەوە!");
+                alert("هەموو پێشبینییەکان سڕانەوە!");
                 location.reload();
             });
         }
