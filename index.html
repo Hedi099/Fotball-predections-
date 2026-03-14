@@ -98,7 +98,6 @@
 
     function closeSalawat() { document.getElementById('salawat-overlay').style.display = 'none'; }
 
-    // کاتەکان لێرە بە فۆرماتی (YYYY-MM-DDTHH:MM:00) نوێکراونەتەوە بۆ دێدلاین
     const matches = [
         { id: "m1", t1: "ئارسناڵ", t2: "ئیڤەرتۆن", p1: 2, pX: 3, p2: 5, event: "پرێمەرلیگ", deadline: "2026-03-14T20:30:00", img1: "https://crests.football-data.org/57.png", img2: "https://crests.football-data.org/62.png" },
         { id: "m2", t1: "چێڵسی", t2: "نیوکاسڵ", p1: 3, pX: 2, p2: 4, event: "پرێمەرلیگ", deadline: "2026-03-14T20:30:00", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/67.png" },
@@ -141,14 +140,11 @@
             document.getElementById('admin-reset-weekly').style.display = 'block';
         }
         
+        const now = new Date();
         let h = '';
-        const now = new Date(); // کاتی ئێستا
-
         matches.forEach(m => {
             const matchDeadline = new Date(m.deadline);
-            const isLocked = now >= matchDeadline; // ئایا کاتی پێشبینی بەسەرچووە؟
-            
-            // پیشاندانی کات بە شێوازێکی جوان
+            const isLocked = now >= matchDeadline;
             const displayDate = matchDeadline.toLocaleString('en-GB', { day:'numeric', month:'numeric', hour:'2-digit', minute:'2-digit' });
 
             h += `<div class="match-card" id="${m.id}">
@@ -169,7 +165,7 @@
                             <button class="opt-btn" id="${m.id}-btn3" ${isLocked ? 'disabled' : ''} onclick="vote('${m.id}', 3, ${m.p2})">${m.p2} خاڵ</button></div>
                     </div>
                     <button class="view-others-btn" id="viewbtn-${m.id}" onclick="showPredictions('${m.id}', '${m.t1} vs ${m.t2}')">👁 بینینی پێشبینی ئەوانی تر</button>
-                    <div class="admin-tools" style="display:${isAdmin?'block':'none'}">
+                    <div class="admin-tools" id="admin-tools-${m.id}" style="display:none">
                         <button class="admin-btn" onclick="setResult('${m.id}',1,${m.p1})">بردنی1</button>
                         <button class="admin-btn" onclick="setResult('${m.id}',2,${m.pX})">X</button>
                         <button class="admin-btn" onclick="setResult('${m.id}',3,${m.p2})">بردنی2</button>
@@ -179,18 +175,28 @@
         });
         document.getElementById('matches-list').innerHTML = h || '<p>هیچ یارییەک نییە</p>';
         
+        // چاودێری ئەنجامەکان بۆ ئەوەی ئەگەر دانرابوو، ئەدمین نەتوانێت دەستکاری بکات
+        db.ref('results').on('value', snap => {
+            const results = snap.val() || {};
+            matches.forEach(m => {
+                const tools = document.getElementById(`admin-tools-${m.id}`);
+                if (isAdmin && !results[m.id]) {
+                    tools.style.display = 'block';
+                } else {
+                    tools.style.display = 'none';
+                }
+            });
+        });
+
         db.ref('users/' + currentUser + '/predictions').on('value', snap => {
             const preds = snap.val() || {};
             document.querySelectorAll('.opt-btn').forEach(b => { 
                 const mid = b.id.split('-btn')[0];
                 const matchData = matches.find(m => m.id === mid);
                 const isLocked = new Date() >= new Date(matchData.deadline);
-                
                 b.classList.remove('selected'); 
                 if(!isLocked) b.disabled = false; 
             });
-            
-            document.querySelectorAll('.view-others-btn').forEach(b => b.style.display = 'none');
             Object.keys(preds).forEach(mid => {
                 const btn = document.getElementById(mid + '-btn' + preds[mid].choice);
                 if(btn) {
@@ -205,26 +211,44 @@
     function vote(mId, c, p) {
         const matchData = matches.find(m => m.id === mId);
         if(new Date() >= new Date(matchData.deadline)) {
-            alert("ببورە، دێدلاینی ئەم یارییە کۆتایی هاتووە و پێشبینی وەرناگیرێت.");
+            alert("ببورە، دێدلاینی ئەم یارییە کۆتایی هاتووە.");
             return;
         }
         if(confirm("پێشبینییەکە قفڵ بکرێت؟")) db.ref('users/' + currentUser + '/predictions/' + mId).set({ choice: c, pts: p });
     }
 
+    function setResult(mId, winChoice, pts) {
+        if(!confirm("خاڵەکان هەژمار بکرێن؟ ئاگاداربە تەنها یەکجار دەتوانیت ئەنجام دابنێیت!")) return;
+        
+        // یەکەمجار ئەنجامەکە تۆمار دەکەین بۆ ئەوەی قوفڵ بێت
+        db.ref('results/' + mId).set({ winner: winChoice, points: pts }).then(() => {
+            db.ref('users').once('value', snap => {
+                snap.forEach(uSnap => {
+                    const u = uSnap.val();
+                    if(u.predictions && u.predictions[mId] && u.predictions[mId].choice == winChoice) {
+                        db.ref('users/' + uSnap.key).update({ weekly: (u.weekly || 0) + pts, total: (u.total || 0) + pts });
+                    }
+                });
+                alert("خاڵەکان بە سەرکەوتوویی هەژمار کران و یارییەکە قوفڵ کرا!");
+            });
+        });
+    }
+
     function resetWeeklyPoints() {
-        if(confirm("ئایا دڵنیایت لە سفرکردنەوەی خاڵەکانی 'ئەم هەفتەیە'؟")) {
+        if(confirm("ئایا دڵنیایت؟")) {
             db.ref('users').once('value', snap => {
                 snap.forEach(uSnap => { db.ref('users/' + uSnap.key).update({ weekly: 0 }); });
-                alert("خاڵەکانی هەفتە سفرکرانەوە!"); location.reload();
+                alert("سفرکرانەوە!"); location.reload();
             });
         }
     }
 
     function resetOnlyPredictions() {
-        if(confirm("پێشبینییەکان بسڕێنەوە؟")) {
+        if(confirm("پێشبینییەکان و ئەنجامەکان بسڕێنەوە؟")) {
+            db.ref('results').remove();
             db.ref('users').once('value', snap => {
                 snap.forEach(uSnap => { db.ref('users/' + uSnap.key + '/predictions').remove(); });
-                alert("سڕایەوە!"); location.reload();
+                alert("هەمووی سڕایەوە!"); location.reload();
             });
         }
     }
@@ -255,19 +279,6 @@
                     <div class="rank-vals"><span>${i.weekly||0}</span><span>${i.total||0}</span></div>
                 </div>`).join('');
             document.getElementById('leaderboard-view').style.display = 'block';
-        });
-    }
-
-    function setResult(mId, winChoice, pts) {
-        if(!confirm("خاڵەکان هەژمار بکرێن؟")) return;
-        db.ref('users').once('value', snap => {
-            snap.forEach(uSnap => {
-                const u = uSnap.val();
-                if(u.predictions && u.predictions[mId] && u.predictions[mId].choice == winChoice) {
-                    db.ref('users/' + uSnap.key).update({ weekly: (u.weekly || 0) + pts, total: (u.total || 0) + pts });
-                }
-            });
-            alert("تەواو بوو!");
         });
     }
 
