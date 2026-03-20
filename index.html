@@ -7,7 +7,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #6366f1; --secondary: #fbbf24; --bg: #030712; --card-inner: rgba(30, 41, 59, 0.7); --border: rgba(255, 255, 255, 0.1); }
+        :root { --primary: #6366f1; --secondary: #fbbf24; --bg: #030712; --card-inner: rgba(30, 41, 59, 0.7); --border: rgba(255, 255, 255, 0.1); --win: #22c55e; --lose: #ef4444; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: radial-gradient(circle at top, #1e1b4b, #030712); color: white; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .glass { background: var(--card-inner); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 24px; }
@@ -25,20 +25,30 @@
         .stadium-info { text-align: center; font-size: 11px; color: #fbbf24; margin: 10px 0 -10px 0; }
         .match-body { padding: 20px 15px; }
         
-        /* چاککردنی قەبارەی لۆگۆکان */
         .teams-grid { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; }
         .team { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .team img { width: 42px; height: 42px; object-fit: contain; margin-bottom: 6px; }
         .team div { font-size: 11px; font-weight: bold; }
         
         .prediction-row { display: flex; gap: 6px; }
-        .opt-btn { flex: 1; padding: 10px 2px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+        .opt-btn { flex: 1; padding: 10px 2px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; }
         .opt-btn span:first-child { font-size: 9px; opacity: 0.8; }
         .opt-btn span:last-child { font-size: 12px; font-weight: bold; }
-        .opt-btn.selected { background: var(--secondary); color: #000; font-weight: bold; }
+        
+        /* ڕەنگی بارودۆخی پێشبینییەکان */
+        .opt-btn.selected { background: var(--secondary); color: #000; }
+        .opt-btn.correct { background: var(--win) !important; color: white !important; border-color: var(--win); }
+        .opt-btn.wrong { background: var(--lose) !important; color: white !important; border-color: var(--lose); opacity: 0.8; }
         
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; align-items: center; justify-content: center; }
         .modal-content { width: 100%; max-width: 380px; padding: 20px; max-height: 80vh; overflow-y: auto; }
+
+        .rank-header { display: flex; justify-content: space-between; padding: 10px; border-bottom: 2px solid var(--secondary); margin-bottom: 10px; font-weight: bold; font-size: 14px; color: var(--secondary); }
+        .rank-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--border); }
+        .rank-user { font-weight: bold; flex: 1; }
+        .rank-points { display: flex; gap: 15px; text-align: left; }
+        .pts-box { width: 45px; text-align: center; }
+
         .admin-zone { margin-top: 15px; display: flex; justify-content: center; gap: 5px; border-top: 1px dashed #444; padding-top: 10px; }
         .admin-action { padding: 6px 10px; border-radius: 8px; border: none; font-size: 10px; cursor: pointer; background: #22c55e; color: white; }
         
@@ -73,7 +83,21 @@
     </div>
 </div>
 
-<div id="leaderboard-view" class="modal"><div class="modal-content glass"><h2 style="text-align:center;color:var(--secondary)">ڕیزبەندی</h2><div id="rank-list"></div><button class="btn-main" style="margin-top:20px" onclick="closeView('leaderboard-view')">داخستن</button></div></div>
+<div id="leaderboard-view" class="modal">
+    <div class="modal-content glass">
+        <h2 style="text-align:center;color:var(--secondary)">ڕیزبەندی</h2>
+        <div class="rank-header">
+            <span>ناوەکان</span>
+            <div style="display:flex; gap:15px;">
+                <span style="width:45px; text-align:center;">هەفتە</span>
+                <span style="width:45px; text-align:center;">گشتی</span>
+            </div>
+        </div>
+        <div id="rank-list"></div>
+        <button class="btn-main" style="margin-top:20px" onclick="closeView('leaderboard-view')">داخستن</button>
+    </div>
+</div>
+
 <div id="all-preds-view" class="modal"><div class="modal-content glass"><h3 id="pred-match-title" style="text-align:center;color:var(--secondary)"></h3><div id="preds-content"></div><button class="btn-main" style="margin-top:20px" onclick="closeView('all-preds-view')">داخستن</button></div></div>
 
 <script>
@@ -153,21 +177,41 @@
 
     function loadStates() {
         const isAdmin = currentUser === 'Hedi';
-        db.ref('results').on('value', s => {
-            const res = s.val() || {};
-            matches.forEach(m => {
-                const tools = document.getElementById(`admin-tools-${m.id}`);
-                if(isAdmin && !res[m.id]) tools.style.display='flex'; else if(tools) tools.style.display='none';
-            });
-        });
-        db.ref('users/'+currentUser+'/predictions').on('value', s => {
-            const ps = s.val() || {};
-            matches.forEach(m => {
-                if(ps[m.id]) {
-                    document.getElementById(m.id+'-btn'+ps[m.id].choice).classList.add('selected');
-                    document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b=>b.disabled=true);
-                    document.getElementById('viewbtn-'+m.id).style.display='block';
-                }
+        
+        // چاودێری ئەنجامەکان و پێشبینییەکان
+        db.ref('results').on('value', sRes => {
+            const results = sRes.val() || {};
+            
+            db.ref('users/'+currentUser+'/predictions').on('value', sPred => {
+                const ps = sPred.val() || {};
+                
+                matches.forEach(m => {
+                    const result = results[m.id];
+                    const prediction = ps[m.id];
+                    
+                    // نیشاندانی ئەدمن تۆڵز
+                    const tools = document.getElementById(`admin-tools-${m.id}`);
+                    if(isAdmin && !result) tools.style.display='flex'; else if(tools) tools.style.display='none';
+
+                    // نیشاندانی دۆخی پێشبینی
+                    if(prediction) {
+                        const btn = document.getElementById(m.id+'-btn'+prediction.choice);
+                        btn.classList.add('selected');
+                        document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b=>b.disabled=true);
+                        document.getElementById('viewbtn-'+m.id).style.display='block';
+
+                        // ئەگەر ئەنجام هەبوو، ڕەنگەکە بگۆڕە
+                        if(result) {
+                            if(prediction.choice == result.winner) {
+                                btn.classList.add('correct');
+                                btn.querySelector('span:first-child').innerText = "✅ ڕاستە";
+                            } else {
+                                btn.classList.add('wrong');
+                                btn.querySelector('span:first-child').innerText = "❌ هەڵەیە";
+                            }
+                        }
+                    }
+                });
             });
         });
     }
@@ -191,8 +235,9 @@
     function resetWeeklyPoints() {
         if(confirm("ئایا دڵنیایت لە سفرکردنەوەی خاڵی هەفتە بۆ هەمووان؟")) {
             db.ref('users').once('value', s => {
-                s.forEach(u => db.ref('users/'+u.key).update({ weekly: 0 }));
-                alert("خاڵەکانی هەفتە سفر کرانەوە.");
+                const updates = {};
+                s.forEach(u => { updates[u.key + '/weekly'] = 0; });
+                db.ref('users').update(updates).then(() => { alert("خاڵەکانی هەفتە سفر کرانەوە."); });
             });
         }
     }
@@ -201,7 +246,14 @@
         db.ref('users').once('value', s => {
             let r = []; s.forEach(u => { r.push({ n:u.key, ...u.val() }); });
             r.sort((a,b) => (b.total||0)-(a.total||0));
-            document.getElementById('rank-list').innerHTML = r.map(i => `<div style="display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid var(--border)"><b>${i.n}</b><span>هـ: ${i.weekly||0} | گشتی: <b style="color:var(--secondary)">${i.total||0}</b></span></div>`).join('');
+            document.getElementById('rank-list').innerHTML = r.map(i => `
+                <div class="rank-row">
+                    <span class="rank-user">${i.n}</span>
+                    <div class="rank-points">
+                        <span class="pts-box">${i.weekly||0}</span>
+                        <span class="pts-box" style="color:var(--secondary); font-weight:bold;">${i.total||0}</span>
+                    </div>
+                </div>`).join('');
             document.getElementById('leaderboard-view').style.display = 'flex';
         });
     }
