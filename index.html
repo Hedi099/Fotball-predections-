@@ -13,7 +13,6 @@
         .glass { background: var(--card-inner); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 24px; }
         .container { width: 100%; max-width: 450px; padding: 20px; }
         
-        /* Hadith Style */
         .hadith-box { background: rgba(251, 191, 36, 0.1); border: 1px solid var(--secondary); border-radius: 15px; padding: 15px; text-align: center; margin-bottom: 20px; font-size: 13px; line-height: 1.6; color: #fefefe; }
         .hadith-arabic { display: block; color: var(--secondary); font-weight: bold; margin-bottom: 5px; font-size: 15px; }
 
@@ -25,11 +24,17 @@
         .match-header { padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .stadium-info { text-align: center; font-size: 11px; color: #fbbf24; margin: 10px 0 -10px 0; }
         .match-body { padding: 20px 15px; }
-        .teams-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .team img { width: 50px; height: 50px; object-fit: contain; }
         
-        .prediction-row { display: flex; gap: 8px; }
-        .opt-btn { flex: 1; padding: 12px 5px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        /* چاککردنی قەبارەی لۆگۆکان */
+        .teams-grid { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; }
+        .team { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .team img { width: 42px; height: 42px; object-fit: contain; margin-bottom: 6px; }
+        .team div { font-size: 11px; font-weight: bold; }
+        
+        .prediction-row { display: flex; gap: 6px; }
+        .opt-btn { flex: 1; padding: 10px 2px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+        .opt-btn span:first-child { font-size: 9px; opacity: 0.8; }
+        .opt-btn span:last-child { font-size: 12px; font-weight: bold; }
         .opt-btn.selected { background: var(--secondary); color: #000; font-weight: bold; }
         
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; align-items: center; justify-content: center; }
@@ -53,7 +58,7 @@
     <div id="main-app" style="display: none;">
         <div class="hadith-box">
             <span class="hadith-arabic">«ارْحَمُوا مَنْ فِي الأَرْضِ يَرْحَمْكُمْ مَنْ فِي السَّمَاءِ»</span>
-            پێغەمبەر (ص) دەفەرموێت: ڕەحم بەوانە بکەن کە لەسەر زەوین، ئەوەی لە ئاسمانە ڕەحمتان پێ دەکات.
+            پێغەمبەر (ص) دەفەرموێت: ڕەحم بەوانە بکە کە لەسەر زەوین، تاوەکو ئەوەی لە ئاسمانە ڕەحمتان پێ بکات.
         </div>
         
         <div class="logo-text">Brothers Cup</div>
@@ -131,11 +136,11 @@
                 <div class="match-header"><span style="background:var(--primary);font-size:10px;padding:3px 8px;border-radius:10px">${m.event}</span><span style="font-size:10px;opacity:0.6">${new Date(m.deadline).toLocaleString('ku-IQ',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>
                 <div class="stadium-info">🏟️ یاریگای ${m.t1}</div>
                 <div class="match-body">
-                    <div class="teams-grid"><div style="text-align:center"><img src="${m.img1}"><div style="font-size:11px">${m.t1}</div></div><div style="color:var(--secondary);font-weight:900">VS</div><div style="text-align:center"><img src="${m.img2}"><div style="font-size:11px">${m.t2}</div></div></div>
+                    <div class="teams-grid"><div class="team"><img src="${m.img1}"><div>${m.t1}</div></div><div style="color:var(--secondary);font-weight:900;font-size:14px">VS</div><div class="team"><img src="${m.img2}"><div>${m.t2}</div></div></div>
                     <div class="prediction-row">
-                        <button class="opt-btn" id="${m.id}-btn1" ${isLocked?'disabled':''} onclick="vote('${m.id}',1,${m.p1})"><span>بردنەوەی ${m.t1}</span><span>${m.p1}خ</span></button>
-                        <button class="opt-btn" id="${m.id}-btn2" ${isLocked?'disabled':''} onclick="vote('${m.id}',2,${m.pX})"><span>یەکسان بوون</span><span>${m.pX}خ</span></button>
-                        <button class="opt-btn" id="${m.id}-btn3" ${isLocked?'disabled':''} onclick="vote('${m.id}',3,${m.p2})"><span>بردنەوەی ${m.t2}</span><span>${m.p2}خ</span></button>
+                        <button class="opt-btn" id="${m.id}-btn1" ${isLocked?'disabled':''} onclick="vote('${m.id}',1,${m.p1})"><span>بردنەوەی ${m.t1}</span><span>${m.p1} خاڵ</span></button>
+                        <button class="opt-btn" id="${m.id}-btn2" ${isLocked?'disabled':''} onclick="vote('${m.id}',2,${m.pX})"><span>یەکسان بوون</span><span>${m.pX} خاڵ</span></button>
+                        <button class="opt-btn" id="${m.id}-btn3" ${isLocked?'disabled':''} onclick="vote('${m.id}',3,${m.p2})"><span>بردنەوەی ${m.t2}</span><span>${m.p2} خاڵ</span></button>
                     </div>
                     <button class="btn-main" id="viewbtn-${m.id}" style="margin-top:12px;padding:8px;font-size:11px;display:none;background:rgba(255,255,255,0.1)" onclick="showPredictions('${m.id}')">👁️ پێشبینی ئەوانی تر</button>
                     <div class="admin-zone" id="admin-tools-${m.id}" style="display:none"><button class="admin-action" onclick="setResult('${m.id}',1,${m.p1})">W1</button><button class="admin-action" style="background:#64748b" onclick="setResult('${m.id}',2,${m.pX})">X</button><button class="admin-action" onclick="setResult('${m.id}',3,${m.p2})">W2</button></div>
