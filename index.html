@@ -17,7 +17,6 @@
         .hadith-arabic { display: block; color: var(--secondary); font-weight: bold; margin-bottom: 5px; font-size: 15px; }
 
         .logo-text { font-size: 28px; font-weight: 900; text-align: center; background: linear-gradient(to right, #fbbf24, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
-        .top-nav { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
         .nav-btn { flex: 1; padding: 10px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; }
         
         .match-card { margin-bottom: 25px; overflow: hidden; }
@@ -57,13 +56,16 @@
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #000; color: white; margin-bottom: 10px; }
         .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; }
 
-        /* نواندنی بەشەکان */
         .choice-container { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
         .choice-card { padding: 30px 20px; text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .choice-card:hover { transform: translateY(-3px); border-color: var(--secondary); background: rgba(255,255,255,0.05); }
         .choice-title { font-size: 20px; font-weight: bold; color: var(--secondary); }
         .back-btn { background: none; border: 1px solid var(--border); color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; font-size: 11px; width: fit-content; }
         .quiz-option { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: white; text-align: right; cursor: pointer; font-weight: bold; }
+
+        /* Timer Styles */
+        .timer-bar { width: 100%; height: 6px; background: #333; border-radius: 3px; margin-bottom: 15px; overflow: hidden; }
+        .timer-fill { height: 100%; background: var(--lose); width: 100%; transition: linear; }
     </style>
 </head>
 <body>
@@ -91,7 +93,8 @@
                 <div class="choice-title">پرسیار و وەڵام</div>
             </div>
             <div style="display: flex; gap: 8px; margin-top: 10px;">
-                <button class="nav-btn" style="background:var(--secondary)" onclick="openRank()">📊 ڕیزبەندی</button>
+                <button class="nav-btn" style="background:var(--secondary)" onclick="openRank('preds')">📊 ڕیزبەندی پێشبینی</button>
+                <button class="nav-btn" style="background:#8b5cf6; color:white;" onclick="openRank('quiz')">📊 ڕیزبەندی زانیاری</button>
                 <button id="reset-weekly-btn-main" class="nav-btn" style="background:#ef4444; color:white; display:none;" onclick="resetWeeklyPoints()">🧹</button>
                 <button class="nav-btn" style="background:#334155; color:white; flex:0.3" onclick="logout()">🚪</button>
             </div>
@@ -107,12 +110,14 @@
         <div id="quiz-section" style="display: none;">
             <button class="back-btn" onclick="showSection('home')">⬅️ گەڕانەوە</button>
             <div class="glass match-body">
-                <h3 style="text-align:center;color:#8b5cf6; margin-top:0;">🧠 کۆشکی زانیاری</h3>
-                <p id="quiz-question" style="text-align:center; font-weight:bold; margin-bottom:25px; line-height:1.6;"></p>
-                <div id="quiz-options"></div>
-                <div id="admin-quiz-tools" style="display:none; margin-top:20px; border-top:1px dashed #444; padding-top:15px;">
-                    <button class="nav-btn" style="background:#22c55e; width: 100%;" onclick="updateQuiz()">⚙️ گۆڕینی پرسیار</button>
+                <div id="quiz-timer-container" style="display:none;">
+                    <div class="timer-bar"><div id="timer-fill" class="timer-fill"></div></div>
+                    <p id="timer-text" style="text-align:center; font-size:12px; color:var(--lose); margin-top:-10px;">٣٠ چرکە</p>
                 </div>
+                <h3 style="text-align:center;color:#8b5cf6; margin-top:0;">🧠 بەشی پرسیار و وەڵام</h3>
+                <p id="quiz-question" style="text-align:center; font-weight:bold; margin-bottom:25px; line-height:1.6; min-height:60px;">بۆ دەستپێکردن کرتە بکە</p>
+                <div id="quiz-options"></div>
+                <button id="start-quiz-btn" class="btn-main" onclick="nextQuestion()">دەستپێکردنی پرسیارەکان</button>
             </div>
         </div>
     </div>
@@ -120,12 +125,12 @@
 
 <div id="leaderboard-view" class="modal">
     <div class="modal-content glass">
-        <h2 style="text-align:center;color:var(--secondary)">ڕیزبەندی</h2>
+        <h2 id="rank-title" style="text-align:center;color:var(--secondary)">ڕیزبەندی</h2>
         <div class="rank-header">
             <span>ناوەکان</span>
             <div style="display:flex; gap:15px;">
-                <span style="width:45px; text-align:center;">هەفتە</span>
-                <span style="width:45px; text-align:center;">گشتی</span>
+                <span id="rank-label-1" style="width:45px; text-align:center;">هەفتە</span>
+                <span id="rank-label-2" style="width:45px; text-align:center;">گشتی</span>
             </div>
         </div>
         <div id="rank-list"></div>
@@ -136,19 +141,12 @@
 <div id="all-preds-view" class="modal"><div class="modal-content glass"><h3 id="pred-match-title" style="text-align:center;color:var(--secondary)"></h3><div id="preds-content"></div><button class="btn-main" style="margin-top:20px" onclick="closeView('all-preds-view')">داخستن</button></div></div>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ",
-        authDomain: "brayan-2a1ef.firebaseapp.com",
-        databaseURL: "https://brayan-2a1ef-default-rtdb.firebaseio.com",
-        projectId: "brayan-2a1ef",
-        storageBucket: "brayan-2a1ef.firebasestorage.app",
-        messagingSenderId: "655783456427",
-        appId: "1:655783456427:web:1535d3dfd9b53515c391ee"
-    };
+    const firebaseConfig = { apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ", authDomain: "brayan-2a1ef.firebaseapp.com", databaseURL: "https://brayan-2a1ef-default-rtdb.firebaseio.com", projectId: "brayan-2a1ef", storageBucket: "brayan-2a1ef.firebasestorage.app", messagingSenderId: "655783456427", appId: "1:655783456427:web:1535d3dfd9b53515c391ee" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
+    // لێرە هەموو یارییەکانت وەک خۆی پارێزراوە
     const matches = [
         { id: "m21_1", t1: "برایتۆن", t2: "لیڤەرپوول", p1: 4, pX: 5, p2: 3, event: "پرێمەرلیگ", deadline: "2026-03-21T15:30:00", img1: "https://crests.football-data.org/397.png", img2: "https://crests.football-data.org/64.png" },
         { id: "m21_2", t1: "ئیڤەرتۆن", t2: "چێڵسی", p1: 5, pX: 4, p2: 3, event: "پرێمەرلیگ", deadline: "2026-03-21T20:30:00", img1: "https://crests.football-data.org/62.png", img2: "https://crests.football-data.org/61.png" },
@@ -175,6 +173,28 @@
         { id: "m26_2", t1: "بەرازیل", t2: "فەڕەنسا", p1: 5, pX: 3, p2: 4, event: "دۆستانە", deadline: "2026-03-26T23:00:00", img1: "https://crests.football-data.org/764.png", img2: "https://crests.football-data.org/773.png" }
     ];
 
+    // ١٥ پرسیار بۆ بەشی کویز
+    const quizData = [
+        { q: "کام یاری بە موعجیزەکەی ئەستەنبوڵ ناسراوە؟", opts: ["لیڤەرپووڵ و ئەیسی میلان", "مانسیتی و ئینتەرمیلان", "لیڤەرپووڵ و ڕیاڵ مەدرید"], ans: 0 },
+        { q: "کام یاریزانی ئەرجەنتین لێدانی سزای لەدەست دا دژی هۆڵەندا لە مۆندیالی ٢٠٢٢؟", opts: ["دیبالا", "لاوتارۆ مارتینێز", "ئێنزۆ فێرناندێز"], ans: 2 },
+        { q: "جگە لە مێسی، کام یاریزان توانیویانە سێ جاری لەسەر یەک خەڵاتی بالۆندۆر ببەنەوە؟", opts: ["کریستیانۆ", "دیستیڤانۆ", "پلاتینی"], ans: 2 },
+        { q: "کام هەڵبژاردە زۆرترین جار جامی جیهانی بردۆتەوە؟", opts: ["بەرازیل", "ئەڵمانیا", "ئیتاڵیا"], ans: 0 },
+        { q: "کێ گۆڵکاری مێژوویی چامپیۆنزلیگە؟", opts: ["مێسی", "ڕۆناڵدۆ", "بنزیما"], ans: 1 },
+        { q: "یەکەم مۆندیال لە چ ساڵێکدا ئەنجامدرا؟", opts: ["١٩٣٠", "١٩٣٤", "١٩٥٠"], ans: 0 },
+        { q: "کام یاریزان بە 'پاشای تۆپی پێ' ناسراوە؟", opts: ["مارادۆنا", "پێلێ", "کرویف"], ans: 1 },
+        { q: "یاریگای کام یانە بە 'ئۆڵد ترافۆرد' ناسراوە؟", opts: ["مان یونایتد", "لیڤەرپوول", "چێڵسی"], ans: 0 },
+        { q: "کام یانە زۆرترین نازناوی چامپیۆنزلیگی هەیە؟", opts: ["میلانی ئیتاڵی", "لیڤەرپوولی ئینگلیزی", "ڕیاڵ مەدریدی ئیسپانی"], ans: 2 },
+        { q: "گۆڵکاری مێژوویی جامی جیهانی کێیە؟", opts: ["ڕۆناڵدۆی بەرازیلی", "مێرۆسلاڤ کلۆزە", "پێلێ"], ans: 1 },
+        { q: "کام هەڵبژاردە یەکەم نازناوی جامی جیهانی بردەوە؟", opts: ["ئوروگوای", "ئەرجەنتین", "بەرازیل"], ans: 0 },
+        { q: "کام یاریزان نازناوی 'دیاردە'ی لێنراوە؟", opts: ["ڕۆناڵدینهۆ", "ڕۆناڵدۆی بەرازیلی", "کریستیانۆ ڕۆناڵدۆ"], ans: 1 },
+        { q: "کام یانە توانی ٦ نازناو (Sextuple) لە یەک ساڵدا بباتەوە لە ٢٠٠٩؟", opts: ["بایرن میونشن", "ڕیاڵ مەدرید", "بارسێلۆنا"], ans: 2 },
+        { q: "زۆرترین گۆڵ لە یەک وەرزدا لە لالیگا کێ تۆماری کردووە؟ (٥٠ گۆڵ)", opts: ["مێسی", "ڕۆناڵدۆ", "سوارێز"], ans: 0 },
+        { q: "کام ساڵ هەڵبژاردەی ئیسپانیا جامی جیهانی بردەوە؟", opts: ["٢٠٠٦", "٢٠١٠", "٢٠١٤"], ans: 1 }
+    ];
+
+    let currentQIdx = 0;
+    let quizTimer;
+
     function loginUser() {
         const n = document.getElementById('userNameInput').value.trim();
         if(!n) return; localStorage.setItem('groupBryanUser', n); location.reload();
@@ -185,7 +205,6 @@
         document.getElementById('selection-page').style.display = 'block';
         if(currentUser === 'Hedi') {
             document.getElementById('reset-weekly-btn-main').style.display = 'block';
-            document.getElementById('admin-quiz-tools').style.display = 'block';
         }
     }
 
@@ -194,6 +213,7 @@
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('preds-section').style.display = 'none';
         document.getElementById('quiz-section').style.display = 'none';
+        clearInterval(quizTimer);
 
         if(sec === 'home') {
             document.getElementById('selection-page').style.display = 'block';
@@ -204,10 +224,66 @@
             startCountdowns();
         } else if(sec === 'quiz') {
             document.getElementById('quiz-section').style.display = 'block';
-            loadQuiz();
+            currentQIdx = 0;
+            document.getElementById('quiz-question').innerText = "ئامادەیت؟ ١٥ پرسیار، بۆ هەر یەکێک ٣٠ چرکە.";
+            document.getElementById('quiz-options').innerHTML = "";
+            document.getElementById('start-quiz-btn').style.display = "block";
+            document.getElementById('quiz-timer-container').style.display = "none";
         }
     }
 
+    // --- بەشی کویز ---
+    function nextQuestion() {
+        if(currentQIdx >= quizData.length) {
+            alert("هەموو پرسیارەکانت تەواو کرد!");
+            showSection('home');
+            return;
+        }
+        const qId = "q_" + currentQIdx;
+        db.ref('quizRecords/'+currentUser+'/'+qId).once('value', s => {
+            if(s.exists()) { currentQIdx++; nextQuestion(); } else { renderQuiz(); }
+        });
+    }
+
+    function renderQuiz() {
+        const q = quizData[currentQIdx];
+        document.getElementById('quiz-question').innerText = q.q;
+        document.getElementById('start-quiz-btn').style.display = "none";
+        document.getElementById('quiz-timer-container').style.display = "block";
+        let h = '';
+        q.opts.forEach((opt, i) => { h += `<button class="quiz-option" onclick="submitAnswer(${i})">${opt}</button>`; });
+        document.getElementById('quiz-options').innerHTML = h;
+
+        let time = 30;
+        const fill = document.getElementById('timer-fill');
+        const txt = document.getElementById('timer-text');
+        fill.style.transition = 'none'; fill.style.width = '100%';
+        clearInterval(quizTimer);
+        quizTimer = setInterval(() => {
+            time--;
+            txt.innerText = time + " چرکە";
+            fill.style.transition = '1s linear';
+            fill.style.width = (time/30*100) + "%";
+            if(time <= 0) { clearInterval(quizTimer); submitAnswer(-1); }
+        }, 1000);
+    }
+
+    function submitAnswer(choice) {
+        clearInterval(quizTimer);
+        const q = quizData[currentQIdx];
+        const correct = (choice === q.ans);
+        const qId = "q_" + currentQIdx;
+        db.ref('quizRecords/'+currentUser+'/'+qId).set({ choice: choice, status: correct }).then(() => {
+            if(correct) {
+                db.ref('quizPoints/'+currentUser).once('value', s => {
+                    db.ref('quizPoints/'+currentUser).set((s.val() || 0) + 1);
+                });
+            }
+            currentQIdx++; nextQuestion();
+        });
+    }
+
+    // --- بەشی پێشبینی ---
     function renderMatches() {
         let h = '';
         matches.forEach(m => {
@@ -255,24 +331,19 @@
             db.ref('users/'+currentUser+'/predictions').on('value', sPred => {
                 const ps = sPred.val() || {};
                 matches.forEach(m => {
-                    const result = results[m.id];
-                    const prediction = ps[m.id];
+                    const res = results[m.id];
+                    const pred = ps[m.id];
                     const tools = document.getElementById(`admin-tools-${m.id}`);
-                    if(isAdmin && !result) { if(tools) tools.style.display='flex'; } else if(tools) tools.style.display='none';
-                    if(prediction) {
-                        const btn = document.getElementById(m.id+'-btn'+prediction.choice);
+                    if(isAdmin && !res) { if(tools) tools.style.display='flex'; } else if(tools) tools.style.display='none';
+                    if(pred) {
+                        const btn = document.getElementById(m.id+'-btn'+pred.choice);
                         if(btn) {
                             btn.classList.add('selected');
                             document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b=>b.disabled=true);
                             const vb = document.getElementById('viewbtn-'+m.id); if(vb) vb.style.display='block';
-                            if(result) {
-                                if(prediction.choice == result.winner) {
-                                    btn.classList.add('correct');
-                                    btn.querySelector('span:first-child').innerText = "✅ ڕاستە";
-                                } else {
-                                    btn.classList.add('wrong');
-                                    btn.querySelector('span:first-child').innerText = "❌ هەڵەیە";
-                                }
+                            if(res) {
+                                if(pred.choice == res.winner) { btn.classList.add('correct'); btn.querySelector('span:first-child').innerText = "✅ ڕاستە"; }
+                                else { btn.classList.add('wrong'); btn.querySelector('span:first-child').innerText = "❌ هەڵەیە"; }
                             }
                         }
                     }
@@ -281,13 +352,13 @@
         });
     }
 
-    function vote(mId, c, p, deadline) { 
-        if(new Date() >= new Date(deadline)) { alert("ببورە، کاتی پێشبینیکردن بەسەرچووە! 🔒"); return; }
-        if(confirm("پێشبینییەکە قفڵ بکرێت؟")) { db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
+    function vote(mId, c, p, dl) { 
+        if(new Date() >= new Date(dl)) return;
+        if(confirm("قفڵ بکرێت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p});
     }
 
     function setResult(mId, win, pts) {
-        if(!confirm("خاڵەکان هەژمار بکرێن؟")) return;
+        if(!confirm("هەژمار بکرێت؟")) return;
         db.ref('results/'+mId).set({winner:win}).then(() => {
             db.ref('users').once('value', s => {
                 s.forEach(u => {
@@ -301,70 +372,31 @@
     }
 
     function resetWeeklyPoints() {
-        if(confirm("ئایا دڵنیایت لە سفرکردنەوەی خاڵی هەفتە؟")) {
+        if(confirm("سفر بکرێتەوە؟")) {
             db.ref('users').once('value', s => {
-                const updates = {}; s.forEach(u => { updates[u.key + '/weekly'] = 0; });
-                db.ref('users').update(updates).then(() => { alert("خاڵەکانی هەفتە سفر کرانەوە."); });
+                const ups = {}; s.forEach(u => { ups[u.key + '/weekly'] = 0; });
+                db.ref('users').update(ups).then(() => alert("سفر کرایەوە."));
             });
         }
     }
 
-    function loadQuiz() {
-        db.ref('quiz').on('value', s => {
-            const data = s.val() || { q: "پرسیارەکە لێرە دەبێت؟", opts: ["وەڵام ١", "وەڵام ٢", "وەڵام ٣"], ans: 0, pts: 5 };
-            document.getElementById('quiz-question').innerText = data.q;
-            db.ref('users/'+currentUser+'/quizAns').once('value', sUser => {
-                const userAns = sUser.val();
-                let html = '';
-                data.opts.forEach((opt, index) => {
-                    let style = '';
-                    if(userAns !== null) {
-                        if(index === data.ans) style = 'background:var(--win); border-color:var(--win);';
-                        else if(index === userAns) style = 'background:var(--lose); border-color:var(--lose);';
-                    }
-                    html += `<button class="quiz-option" style="${style}" onclick="answerQuiz(${index}, ${data.ans}, ${data.pts})" ${userAns !== null ? 'disabled' : ''}>${opt}</button>`;
-                });
-                document.getElementById('quiz-options').innerHTML = html;
-            });
-        });
-    }
-
-    function answerQuiz(choice, correct, pts) {
-        if(!confirm("دڵنیایت؟")) return;
-        db.ref('users/'+currentUser+'/quizAns').set(choice).then(() => {
-            if(choice === correct) {
-                alert("ڕاستە! "+pts+" خاڵت بۆ زیادکرا.");
-                db.ref('users/'+currentUser).once('value', s => {
-                    const d = s.val();
-                    db.ref('users/'+currentUser).update({ weekly: (d.weekly||0)+pts, total: (d.total||0)+pts });
-                });
+    function openRank(type) {
+        const path = (type === 'preds') ? 'users' : 'quizPoints';
+        document.getElementById('rank-title').innerText = (type === 'preds') ? 'ڕیزبەندی پێشبینی' : 'ڕیزبەندی زانیاری';
+        db.ref(path).once('value', s => {
+            let r = [];
+            if(type === 'preds') {
+                s.forEach(u => { r.push({ n: u.key, p1: u.val().weekly||0, p2: u.val().total||0 }); });
+                document.getElementById('rank-label-1').innerText = "هەفتە"; document.getElementById('rank-label-2').innerText = "گشتی";
+            } else {
+                s.forEach(u => { r.push({ n: u.key, p1: "-", p2: u.val()||0 }); });
+                document.getElementById('rank-label-1').innerText = "-"; document.getElementById('rank-label-2').innerText = "خاڵ";
             }
-        });
-    }
-
-    function updateQuiz() {
-        const q = prompt("پرسیار:");
-        const o1 = prompt("١:"); const o2 = prompt("٢:"); const o3 = prompt("٣:");
-        const a = prompt("وەڵامی ڕاست (0 یان 1 یان 2):");
-        const p = prompt("خاڵ:");
-        if(q) {
-            db.ref('quiz').set({ q:q, opts:[o1,o2,o3], ans:parseInt(a), pts:parseInt(p) });
-            db.ref('users').once('value', s => { s.forEach(u => { db.ref('users/'+u.key+'/quizAns').remove(); }); });
-            alert("پرسیار نوێ بووەوە!");
-        }
-    }
-
-    function openRank() {
-        db.ref('users').once('value', s => {
-            let r = []; s.forEach(u => { r.push({ n:u.key, ...u.val() }); });
-            r.sort((a,b) => (b.total||0)-(a.total||0));
+            r.sort((a,b) => b.p2 - a.p2);
             document.getElementById('rank-list').innerHTML = r.map(i => `
                 <div class="rank-row">
                     <span class="rank-user">${i.n}</span>
-                    <div class="rank-points">
-                        <span class="pts-box">${i.weekly||0}</span>
-                        <span class="pts-box" style="color:var(--secondary); font-weight:bold;">${i.total||0}</span>
-                    </div>
+                    <div class="rank-points"><span class="pts-box">${i.p1}</span><span class="pts-box" style="color:var(--secondary); font-weight:bold;">${i.p2}</span></div>
                 </div>`).join('');
             document.getElementById('leaderboard-view').style.display = 'flex';
         });
