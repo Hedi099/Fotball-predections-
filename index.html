@@ -61,9 +61,8 @@
         .choice-card:hover { transform: translateY(-3px); border-color: var(--secondary); background: rgba(255,255,255,0.05); }
         .choice-title { font-size: 20px; font-weight: bold; color: var(--secondary); }
         .back-btn { background: none; border: 1px solid var(--border); color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; font-size: 11px; width: fit-content; }
-        .quiz-option { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: white; text-align: right; cursor: pointer; font-weight: bold; }
+        .quiz-option { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: white; text-align: right; cursor: pointer; font-weight: bold; transition: 0.3s; }
 
-        /* Timer Styles */
         .timer-bar { width: 100%; height: 6px; background: #333; border-radius: 3px; margin-bottom: 15px; overflow: hidden; }
         .timer-fill { height: 100%; background: var(--lose); width: 100%; transition: linear; }
     </style>
@@ -146,7 +145,6 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // لێرە هەموو یارییەکانت وەک خۆی پارێزراوە
     const matches = [
         { id: "m21_1", t1: "برایتۆن", t2: "لیڤەرپوول", p1: 4, pX: 5, p2: 3, event: "پرێمەرلیگ", deadline: "2026-03-21T15:30:00", img1: "https://crests.football-data.org/397.png", img2: "https://crests.football-data.org/64.png" },
         { id: "m21_2", t1: "ئیڤەرتۆن", t2: "چێڵسی", p1: 5, pX: 4, p2: 3, event: "پرێمەرلیگ", deadline: "2026-03-21T20:30:00", img1: "https://crests.football-data.org/62.png", img2: "https://crests.football-data.org/61.png" },
@@ -173,7 +171,6 @@
         { id: "m26_2", t1: "بەرازیل", t2: "فەڕەنسا", p1: 5, pX: 3, p2: 4, event: "دۆستانە", deadline: "2026-03-26T23:00:00", img1: "https://crests.football-data.org/764.png", img2: "https://crests.football-data.org/773.png" }
     ];
 
-    // ١٥ پرسیار بۆ بەشی کویز
     const quizData = [
         { q: "کام یاری بە موعجیزەکەی ئەستەنبوڵ ناسراوە؟", opts: ["لیڤەرپووڵ و ئەیسی میلان", "مانسیتی و ئینتەرمیلان", "لیڤەرپووڵ و ڕیاڵ مەدرید"], ans: 0 },
         { q: "کام یاریزانی ئەرجەنتین لێدانی سزای لەدەست دا دژی هۆڵەندا لە مۆندیالی ٢٠٢٢؟", opts: ["دیبالا", "لاوتارۆ مارتینێز", "ئێنزۆ فێرناندێز"], ans: 2 },
@@ -203,9 +200,7 @@
     if (currentUser) {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('selection-page').style.display = 'block';
-        if(currentUser === 'Hedi') {
-            document.getElementById('reset-weekly-btn-main').style.display = 'block';
-        }
+        if(currentUser === 'Hedi') document.getElementById('reset-weekly-btn-main').style.display = 'block';
     }
 
     function showSection(sec) {
@@ -214,35 +209,15 @@
         document.getElementById('preds-section').style.display = 'none';
         document.getElementById('quiz-section').style.display = 'none';
         clearInterval(quizTimer);
-
-        if(sec === 'home') {
-            document.getElementById('selection-page').style.display = 'block';
-            document.getElementById('main-app').style.display = 'none';
-        } else if(sec === 'preds') {
-            document.getElementById('preds-section').style.display = 'block';
-            renderMatches();
-            startCountdowns();
-        } else if(sec === 'quiz') {
-            document.getElementById('quiz-section').style.display = 'block';
-            currentQIdx = 0;
-            document.getElementById('quiz-question').innerText = "ئامادەیت؟ ١٥ پرسیار، بۆ هەر یەکێک ٣٠ چرکە.";
-            document.getElementById('quiz-options').innerHTML = "";
-            document.getElementById('start-quiz-btn').style.display = "block";
-            document.getElementById('quiz-timer-container').style.display = "none";
-        }
+        if(sec === 'home') { document.getElementById('selection-page').style.display = 'block'; document.getElementById('main-app').style.display = 'none'; }
+        else if(sec === 'preds') { document.getElementById('preds-section').style.display = 'block'; renderMatches(); startCountdowns(); }
+        else if(sec === 'quiz') { document.getElementById('quiz-section').style.display = 'block'; currentQIdx = 0; document.getElementById('quiz-question').innerText = "ئامادەیت؟ ١٥ پرسیار، بۆ هەر یەکێک ٣٠ چرکە."; document.getElementById('quiz-options').innerHTML = ""; document.getElementById('start-quiz-btn').style.display = "block"; document.getElementById('quiz-timer-container').style.display = "none"; }
     }
 
-    // --- بەشی کویز ---
     function nextQuestion() {
-        if(currentQIdx >= quizData.length) {
-            alert("هەموو پرسیارەکانت تەواو کرد!");
-            showSection('home');
-            return;
-        }
+        if(currentQIdx >= quizData.length) { alert("هەموو پرسیارەکانت تەواو کرد!"); showSection('home'); return; }
         const qId = "q_" + currentQIdx;
-        db.ref('quizRecords/'+currentUser+'/'+qId).once('value', s => {
-            if(s.exists()) { currentQIdx++; nextQuestion(); } else { renderQuiz(); }
-        });
+        db.ref('quizRecords/'+currentUser+'/'+qId).once('value', s => { if(s.exists()) { currentQIdx++; nextQuestion(); } else { renderQuiz(); } });
     }
 
     function renderQuiz() {
@@ -253,37 +228,33 @@
         let h = '';
         q.opts.forEach((opt, i) => { h += `<button class="quiz-option" onclick="submitAnswer(${i})">${opt}</button>`; });
         document.getElementById('quiz-options').innerHTML = h;
-
         let time = 30;
         const fill = document.getElementById('timer-fill');
         const txt = document.getElementById('timer-text');
         fill.style.transition = 'none'; fill.style.width = '100%';
         clearInterval(quizTimer);
-        quizTimer = setInterval(() => {
-            time--;
-            txt.innerText = time + " چرکە";
-            fill.style.transition = '1s linear';
-            fill.style.width = (time/30*100) + "%";
-            if(time <= 0) { clearInterval(quizTimer); submitAnswer(-1); }
-        }, 1000);
+        quizTimer = setInterval(() => { time--; txt.innerText = time + " چرکە"; fill.style.transition = '1s linear'; fill.style.width = (time/30*100) + "%"; if(time <= 0) { clearInterval(quizTimer); submitAnswer(-1); } }, 1000);
     }
 
     function submitAnswer(choice) {
         clearInterval(quizTimer);
         const q = quizData[currentQIdx];
         const correct = (choice === q.ans);
+        const options = document.getElementById('quiz-options').children;
+
+        for (let i = 0; i < options.length; i++) {
+            options[i].disabled = true;
+            if (i === q.ans) { options[i].style.background = "var(--win)"; options[i].style.borderColor = "var(--win)"; }
+            else if (i === choice && !correct) { options[i].style.background = "var(--lose)"; options[i].style.borderColor = "var(--lose)"; }
+        }
+
         const qId = "q_" + currentQIdx;
         db.ref('quizRecords/'+currentUser+'/'+qId).set({ choice: choice, status: correct }).then(() => {
-            if(correct) {
-                db.ref('quizPoints/'+currentUser).once('value', s => {
-                    db.ref('quizPoints/'+currentUser).set((s.val() || 0) + 1);
-                });
-            }
-            currentQIdx++; nextQuestion();
+            if(correct) { db.ref('quizPoints/'+currentUser).once('value', s => { db.ref('quizPoints/'+currentUser).set((s.val() || 0) + 1); }); }
+            setTimeout(() => { currentQIdx++; nextQuestion(); }, 1500);
         });
     }
 
-    // --- بەشی پێشبینی ---
     function renderMatches() {
         let h = '';
         matches.forEach(m => {
@@ -308,115 +279,13 @@
         loadStates();
     }
 
-    function startCountdowns() {
-        setInterval(() => {
-            matches.forEach(m => {
-                const now = new Date().getTime();
-                const diff = new Date(m.deadline).getTime() - now;
-                const el = document.getElementById(`cd-${m.id}`);
-                if (!el) return;
-                if (diff <= 0) { el.innerHTML = "🔒 کات تەواو بوو"; return; }
-                const h = Math.floor(diff / (1000 * 60 * 60));
-                const m_ = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-                el.innerHTML = `⏳ کاتی ماوە: ${h}:${m_}:${s}`;
-            });
-        }, 1000);
-    }
-
-    function loadStates() {
-        const isAdmin = currentUser === 'Hedi';
-        db.ref('results').on('value', sRes => {
-            const results = sRes.val() || {};
-            db.ref('users/'+currentUser+'/predictions').on('value', sPred => {
-                const ps = sPred.val() || {};
-                matches.forEach(m => {
-                    const res = results[m.id];
-                    const pred = ps[m.id];
-                    const tools = document.getElementById(`admin-tools-${m.id}`);
-                    if(isAdmin && !res) { if(tools) tools.style.display='flex'; } else if(tools) tools.style.display='none';
-                    if(pred) {
-                        const btn = document.getElementById(m.id+'-btn'+pred.choice);
-                        if(btn) {
-                            btn.classList.add('selected');
-                            document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b=>b.disabled=true);
-                            const vb = document.getElementById('viewbtn-'+m.id); if(vb) vb.style.display='block';
-                            if(res) {
-                                if(pred.choice == res.winner) { btn.classList.add('correct'); btn.querySelector('span:first-child').innerText = "✅ ڕاستە"; }
-                                else { btn.classList.add('wrong'); btn.querySelector('span:first-child').innerText = "❌ هەڵەیە"; }
-                            }
-                        }
-                    }
-                });
-            });
-        });
-    }
-
-    function vote(mId, c, p, dl) { 
-        if(new Date() >= new Date(dl)) return;
-        if(confirm("قفڵ بکرێت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p});
-    }
-
-    function setResult(mId, win, pts) {
-        if(!confirm("هەژمار بکرێت؟")) return;
-        db.ref('results/'+mId).set({winner:win}).then(() => {
-            db.ref('users').once('value', s => {
-                s.forEach(u => {
-                    const d = u.val();
-                    if(d.predictions && d.predictions[mId] && d.predictions[mId].choice == win) {
-                        db.ref('users/'+u.key).update({ weekly:(d.weekly||0)+pts, total:(d.total||0)+pts });
-                    }
-                });
-            });
-        });
-    }
-
-    function resetWeeklyPoints() {
-        if(confirm("سفر بکرێتەوە؟")) {
-            db.ref('users').once('value', s => {
-                const ups = {}; s.forEach(u => { ups[u.key + '/weekly'] = 0; });
-                db.ref('users').update(ups).then(() => alert("سفر کرایەوە."));
-            });
-        }
-    }
-
-    function openRank(type) {
-        const path = (type === 'preds') ? 'users' : 'quizPoints';
-        document.getElementById('rank-title').innerText = (type === 'preds') ? 'ڕیزبەندی پێشبینی' : 'ڕیزبەندی زانیاری';
-        db.ref(path).once('value', s => {
-            let r = [];
-            if(type === 'preds') {
-                s.forEach(u => { r.push({ n: u.key, p1: u.val().weekly||0, p2: u.val().total||0 }); });
-                document.getElementById('rank-label-1').innerText = "هەفتە"; document.getElementById('rank-label-2').innerText = "گشتی";
-            } else {
-                s.forEach(u => { r.push({ n: u.key, p1: "-", p2: u.val()||0 }); });
-                document.getElementById('rank-label-1').innerText = "-"; document.getElementById('rank-label-2').innerText = "خاڵ";
-            }
-            r.sort((a,b) => b.p2 - a.p2);
-            document.getElementById('rank-list').innerHTML = r.map(i => `
-                <div class="rank-row">
-                    <span class="rank-user">${i.n}</span>
-                    <div class="rank-points"><span class="pts-box">${i.p1}</span><span class="pts-box" style="color:var(--secondary); font-weight:bold;">${i.p2}</span></div>
-                </div>`).join('');
-            document.getElementById('leaderboard-view').style.display = 'flex';
-        });
-    }
-
-    function showPredictions(mId) {
-        const m = matches.find(x => x.id === mId);
-        document.getElementById('pred-match-title').innerText = `${m.t1} - ${m.t2}`;
-        db.ref('users').once('value', s => {
-            let h = '';
-            s.forEach(u => {
-                const p = u.val().predictions ? u.val().predictions[mId] : null;
-                const txt = p ? (p.choice==1?m.t1:(p.choice==2?"یەکسان":m.t2)) : "---";
-                h += `<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #333"><span>${u.key}</span><span style="color:var(--secondary)">${txt}</span></div>`;
-            });
-            document.getElementById('preds-content').innerHTML = h;
-            document.getElementById('all-preds-view').style.display = 'flex';
-        });
-    }
-
+    function startCountdowns() { setInterval(() => { matches.forEach(m => { const now = new Date().getTime(); const diff = new Date(m.deadline).getTime() - now; const el = document.getElementById(`cd-${m.id}`); if (!el) return; if (diff <= 0) { el.innerHTML = "🔒 کات تەواو بوو"; return; } const h = Math.floor(diff / (1000 * 60 * 60)); const m_ = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)); const s = Math.floor((diff % (1000 * 60)) / 1000); el.innerHTML = `⏳ کاتی ماوە: ${h}:${m_}:${s}`; }); }, 1000); }
+    function loadStates() { const isAdmin = currentUser === 'Hedi'; db.ref('results').on('value', sRes => { const results = sRes.val() || {}; db.ref('users/'+currentUser+'/predictions').on('value', sPred => { const ps = sPred.val() || {}; matches.forEach(m => { const res = results[m.id]; const pred = ps[m.id]; const tools = document.getElementById(`admin-tools-${m.id}`); if(isAdmin && !res) { if(tools) tools.style.display='flex'; } else if(tools) tools.style.display='none'; if(pred) { const btn = document.getElementById(m.id+'-btn'+pred.choice); if(btn) { btn.classList.add('selected'); document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b=>b.disabled=true); const vb = document.getElementById('viewbtn-'+m.id); if(vb) vb.style.display='block'; if(res) { if(pred.choice == res.winner) { btn.classList.add('correct'); btn.querySelector('span:first-child').innerText = "✅ ڕاستە"; } else { btn.classList.add('wrong'); btn.querySelector('span:first-child').innerText = "❌ هەڵەیە"; } } } } }); }); }); }
+    function vote(mId, c, p, dl) { if(new Date() >= new Date(dl)) return; if(confirm("قفڵ بکرێت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
+    function setResult(mId, win, pts) { if(!confirm("هەژمار بکرێت؟")) return; db.ref('results/'+mId).set({winner:win}).then(() => { db.ref('users').once('value', s => { s.forEach(u => { const d = u.val(); if(d.predictions && d.predictions[mId] && d.predictions[mId].choice == win) { db.ref('users/'+u.key).update({ weekly:(d.weekly||0)+pts, total:(d.total||0)+pts }); } }); }); }); }
+    function resetWeeklyPoints() { if(confirm("سفر بکرێتەوە؟")) { db.ref('users').once('value', s => { const ups = {}; s.forEach(u => { ups[u.key + '/weekly'] = 0; }); db.ref('users').update(ups).then(() => alert("سفر کرایەوە.")); }); } }
+    function openRank(type) { const path = (type === 'preds') ? 'users' : 'quizPoints'; document.getElementById('rank-title').innerText = (type === 'preds') ? 'ڕیزبەندی پێشبینی' : 'ڕیزبەندی زانیاری'; db.ref(path).once('value', s => { let r = []; if(type === 'preds') { s.forEach(u => { r.push({ n: u.key, p1: u.val().weekly||0, p2: u.val().total||0 }); }); document.getElementById('rank-label-1').innerText = "هەفتە"; document.getElementById('rank-label-2').innerText = "گشتی"; } else { s.forEach(u => { r.push({ n: u.key, p1: "-", p2: u.val()||0 }); }); document.getElementById('rank-label-1').innerText = "-"; document.getElementById('rank-label-2').innerText = "خاڵ"; } r.sort((a,b) => b.p2 - a.p2); document.getElementById('rank-list').innerHTML = r.map(i => `<div class="rank-row"><span class="rank-user">${i.n}</span><div class="rank-points"><span class="pts-box">${i.p1}</span><span class="pts-box" style="color:var(--secondary); font-weight:bold;">${i.p2}</span></div></div>`).join(''); document.getElementById('leaderboard-view').style.display = 'flex'; }); }
+    function showPredictions(mId) { const m = matches.find(x => x.id === mId); document.getElementById('pred-match-title').innerText = `${m.t1} - ${m.t2}`; db.ref('users').once('value', s => { let h = ''; s.forEach(u => { const p = u.val().predictions ? u.val().predictions[mId] : null; const txt = p ? (p.choice==1?m.t1:(p.choice==2?"یەکسان":m.t2)) : "---"; h += `<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #333"><span>${u.key}</span><span style="color:var(--secondary)">${txt}</span></div>`; }); document.getElementById('preds-content').innerHTML = h; document.getElementById('all-preds-view').style.display = 'flex'; }); }
     function closeView(id) { document.getElementById(id).style.display = 'none'; }
     function logout() { localStorage.removeItem('groupBryanUser'); location.reload(); }
 </script>
