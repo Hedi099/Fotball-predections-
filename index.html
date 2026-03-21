@@ -180,13 +180,21 @@
         { q: "یەکەم مۆندیال لە چ ساڵێکدا ئەنجامدرا؟", opts: ["١٩٣٠", "١٩٣٤", "١٩٥٠"], ans: 0 },
         { q: "کام یاریزان بە 'پاشای تۆپی پێ' ناسراوە؟", opts: ["مارادۆنا", "پێلێ", "کرویف"], ans: 1 },
         { q: "یاریگای کام یانە بە 'ئۆڵد ترافۆرد' ناسراوە؟", opts: ["مان یونایتد", "لیڤەرپوول", "چێڵسی"], ans: 0 },
-        { q: "کام یانە زۆرترین نازناوی چامپیۆنزلیگی هەیە؟", opts: ["میلانی ئیتاڵی", "لیڤەرپوولی ئینگلیزی", "ڕیاڵ مەدریدی ئیسپانی"], ans: 2 },
+        { q: "کام یانە زۆرترین نازناوی چامپیۆنزلیگی هەیە؟", opts: ["میلانی ئیتاڵی", "لیڤەرپووڵی ئینگلیزی", "ڕیاڵ مەدریدی ئیسپانی"], ans: 2 },
         { q: "گۆڵکاری مێژوویی جامی جیهانی کێیە؟", opts: ["ڕۆناڵدۆی بەرازیلی", "مێرۆسلاڤ کلۆزە", "پێلێ"], ans: 1 },
         { q: "کام هەڵبژاردە یەکەم نازناوی جامی جیهانی بردەوە؟", opts: ["ئوروگوای", "ئەرجەنتین", "بەرازیل"], ans: 0 },
         { q: "کام یاریزان نازناوی 'دیاردە'ی لێنراوە؟", opts: ["ڕۆناڵدینهۆ", "ڕۆناڵدۆی بەرازیلی", "کریستیانۆ ڕۆناڵدۆ"], ans: 1 },
         { q: "کام یانە توانی ٦ نازناو (Sextuple) لە یەک ساڵدا بباتەوە لە ٢٠٠٩؟", opts: ["بایرن میونشن", "ڕیاڵ مەدرید", "بارسێلۆنا"], ans: 2 },
         { q: "زۆرترین گۆڵ لە یەک وەرزدا لە لالیگا کێ تۆماری کردووە؟ (٥٠ گۆڵ)", opts: ["مێسی", "ڕۆناڵدۆ", "سوارێز"], ans: 0 },
-        { q: "کام ساڵ هەڵبژاردەی ئیسپانیا جامی جیهانی بردەوە؟", opts: ["٢٠٠٦", "٢٠١٠", "٢٠١٤"], ans: 1 }
+        { q: "کام ساڵ هەڵبژاردەی ئیسپانیا جامی جیهانی بردەوە؟", opts: ["٢٠٠٦", "٢٠١٠", "٢٠١٤"], ans: 1 },
+        { q: "ئەو یاریزانە کامەیە کە زۆرترین یاری کۆتایی چامپیۆنسلیگی دۆڕاندوە؟", opts: ["پلاتینی", "واین ڕۆنی", "پاتریس ئێڤرا"], ans: 2 },
+        { q: "کام یاریزان لە یاری کۆتایی ئەستەنبوڵ، یەکەم لێدانی سزای بۆ لیڤەرپووڵ تۆمارکرد؟", opts: ["چابی ئەلۆنسۆ", "هامان", "میلان بارۆش"], ans: 1 },
+        { q: "کۆتا جار کام یانە توانی بارسێلۆنا و ڕیاڵ مەدرید لە یەک وەرزی چامپیۆنسلیگ بکاتە دەرەوە؟", opts: ["یوڤێنتۆس", "بایرن میونشن", "ئینتەرمیلان"], ans: 0 },
+        { q: "جامی جیهانی ساڵی 2006 لە کام وڵات ئەنجام درا؟", opts: ["فەڕەنسا و ئیتاڵیا", "ئەڵمانیا", "فەڕەنسا و بەلجیکا"], ans: 1 },
+        { q: "کام یاریزان کۆتا گۆڵی جامی جیهانی 2018ی تۆمار کرد؟", opts: ["ئێمباپێ", "پۆگبا", "ماندزۆکیچ"], ans: 2 },
+        { q: "کێ کاپتنی هەڵبژاردەی ئیتاڵیا بوو لە مۆندیالی 2006؟", opts: ["بوفۆن", "ماڵدینی", "کاناڤارۆ"], ans: 2 },
+        { q: "کام گۆڵپارێز بووە خاوەن خەڵاتی باشترین گۆڵپارێزی جامی جیهانی 2018؟", opts: ["کۆرتوا", "لۆرێس", "مانوێل نۆیەر"], ans: 0 },
+        { q: "ئەمە کاروانی کام یاریزانە؟ (ستۆک سیتی، مان یونایتد، نیوکاسڵ، ڕیاڵ مەدرید، لیڤەرپووڵ)", opts: ["ئۆوین", "ئانێلکا", "چابی ئەلۆنسۆ"], ans: 0 }
     ];
 
     let currentQIdx = 0;
@@ -211,7 +219,7 @@
         clearInterval(quizTimer);
         if(sec === 'home') { document.getElementById('selection-page').style.display = 'block'; document.getElementById('main-app').style.display = 'none'; }
         else if(sec === 'preds') { document.getElementById('preds-section').style.display = 'block'; renderMatches(); startCountdowns(); }
-        else if(sec === 'quiz') { document.getElementById('quiz-section').style.display = 'block'; currentQIdx = 0; document.getElementById('quiz-question').innerText = "ئامادەیت؟ ١٥ پرسیار، بۆ هەر یەکێک ٣٠ چرکە."; document.getElementById('quiz-options').innerHTML = ""; document.getElementById('start-quiz-btn').style.display = "block"; document.getElementById('quiz-timer-container').style.display = "none"; }
+        else if(sec === 'quiz') { document.getElementById('quiz-section').style.display = 'block'; currentQIdx = 0; document.getElementById('quiz-question').innerText = "ئامادەیت؟ " + quizData.length + " پرسیار، بۆ هەر یەکێک ٣٠ چرکە."; document.getElementById('quiz-options').innerHTML = ""; document.getElementById('start-quiz-btn').style.display = "block"; document.getElementById('quiz-timer-container').style.display = "none"; }
     }
 
     function nextQuestion() {
