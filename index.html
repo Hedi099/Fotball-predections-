@@ -116,7 +116,12 @@
                 <h3 style="text-align:center;color:#8b5cf6; margin-top:0;">🧠 بەشی پرسیار و وەڵام</h3>
                 <p id="quiz-question" style="text-align:center; font-weight:bold; margin-bottom:25px; line-height:1.6; min-height:60px;">بۆ دەستپێکردن کرتە بکە</p>
                 <div id="quiz-options"></div>
-                <button id="start-quiz-btn" class="btn-main" onclick="nextQuestion()">دەستپێکردنی پرسیارەکان</button>
+                <div id="quiz-footer-btns" style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button id="start-quiz-btn" class="btn-main" onclick="nextQuestion()">دەستپێکردن</button>
+                    <button id="review-quiz-btn" class="btn-main" style="display:none; background:#475569" onclick="reviewMode()">سەیرکردنەوەی وەڵامەکان</button>
+                    <button id="prev-review-btn" class="btn-main" style="display:none; background:#475569" onclick="changeReviewQ(-1)">پێشتر</button>
+                    <button id="next-review-btn" class="btn-main" style="display:none; background:#475569" onclick="changeReviewQ(1)">دواتر</button>
+                </div>
             </div>
         </div>
     </div>
@@ -199,6 +204,9 @@
 
     let currentQIdx = 0;
     let quizTimer;
+    let userQuizRecords = {};
+    let isReviewing = false;
+    let reviewIdx = 0;
 
     function loginUser() {
         const n = document.getElementById('userNameInput').value.trim();
@@ -217,15 +225,88 @@
         document.getElementById('preds-section').style.display = 'none';
         document.getElementById('quiz-section').style.display = 'none';
         clearInterval(quizTimer);
-        if(sec === 'home') { document.getElementById('selection-page').style.display = 'block'; document.getElementById('main-app').style.display = 'none'; }
-        else if(sec === 'preds') { document.getElementById('preds-section').style.display = 'block'; renderMatches(); startCountdowns(); }
-        else if(sec === 'quiz') { document.getElementById('quiz-section').style.display = 'block'; currentQIdx = 0; document.getElementById('quiz-question').innerText = "ئامادەیت؟ " + quizData.length + " پرسیار، بۆ هەر یەکێک ٣٠ چرکە."; document.getElementById('quiz-options').innerHTML = ""; document.getElementById('start-quiz-btn').style.display = "block"; document.getElementById('quiz-timer-container').style.display = "none"; }
+        isReviewing = false;
+        
+        if(sec === 'home') { 
+            document.getElementById('selection-page').style.display = 'block'; 
+            document.getElementById('main-app').style.display = 'none'; 
+        }
+        else if(sec === 'preds') { 
+            document.getElementById('preds-section').style.display = 'block'; 
+            renderMatches(); 
+            startCountdowns(); 
+        }
+        else if(sec === 'quiz') { 
+            document.getElementById('quiz-section').style.display = 'block'; 
+            checkQuizStatus();
+        }
+    }
+
+    function checkQuizStatus() {
+        db.ref('quizRecords/'+currentUser).once('value', s => {
+            userQuizRecords = s.val() || {};
+            const answeredCount = Object.keys(userQuizRecords).length;
+            
+            // Reset footer buttons
+            document.getElementById('start-quiz-btn').style.display = "none";
+            document.getElementById('review-quiz-btn').style.display = "none";
+            document.getElementById('prev-review-btn').style.display = "none";
+            document.getElementById('next-review-btn').style.display = "none";
+            document.getElementById('quiz-options').innerHTML = "";
+            document.getElementById('quiz-timer-container').style.display = "none";
+
+            if (answeredCount >= quizData.length) {
+                document.getElementById('quiz-question').innerText = "تۆ هەموو پرسیارەکانت تەواو کردووە!";
+                document.getElementById('review-quiz-btn').style.display = "block";
+            } else {
+                currentQIdx = 0;
+                document.getElementById('quiz-question').innerText = "ئامادەیت؟ " + quizData.length + " پرسیار، بۆ هەر یەکێک ٣٠ چرکە.";
+                document.getElementById('start-quiz-btn').style.display = "block";
+            }
+        });
+    }
+
+    function reviewMode() {
+        isReviewing = true;
+        reviewIdx = 0;
+        document.getElementById('review-quiz-btn').style.display = "none";
+        document.getElementById('prev-review-btn').style.display = "block";
+        document.getElementById('next-review-btn').style.display = "block";
+        renderReview();
+    }
+
+    function renderReview() {
+        const q = quizData[reviewIdx];
+        const record = userQuizRecords["q_" + reviewIdx];
+        document.getElementById('quiz-question').innerText = `(${reviewIdx + 1}/${quizData.length}) ${q.q}`;
+        
+        let h = '';
+        q.opts.forEach((opt, i) => {
+            let style = "background: rgba(255,255,255,0.05);";
+            if (i === q.ans) style = "background: var(--win); border-color: var(--win);";
+            else if (record && i === record.choice && !record.status) style = "background: var(--lose); border-color: var(--lose);";
+            
+            h += `<button class="quiz-option" style="${style} cursor: default;" disabled>${opt}</button>`;
+        });
+        document.getElementById('quiz-options').innerHTML = h;
+    }
+
+    function changeReviewQ(dir) {
+        reviewIdx += dir;
+        if (reviewIdx < 0) reviewIdx = quizData.length - 1;
+        if (reviewIdx >= quizData.length) reviewIdx = 0;
+        renderReview();
     }
 
     function nextQuestion() {
-        if(currentQIdx >= quizData.length) { alert("هەموو پرسیارەکانت تەواو کرد!"); showSection('home'); return; }
+        if(currentQIdx >= quizData.length) { checkQuizStatus(); return; }
         const qId = "q_" + currentQIdx;
-        db.ref('quizRecords/'+currentUser+'/'+qId).once('value', s => { if(s.exists()) { currentQIdx++; nextQuestion(); } else { renderQuiz(); } });
+        if (userQuizRecords[qId]) {
+            currentQIdx++;
+            nextQuestion();
+        } else {
+            renderQuiz();
+        }
     }
 
     function renderQuiz() {
@@ -257,7 +338,10 @@
         }
 
         const qId = "q_" + currentQIdx;
-        db.ref('quizRecords/'+currentUser+'/'+qId).set({ choice: choice, status: correct }).then(() => {
+        const record = { choice: choice, status: correct };
+        userQuizRecords[qId] = record; // Update local state
+        
+        db.ref('quizRecords/'+currentUser+'/'+qId).set(record).then(() => {
             if(correct) { db.ref('quizPoints/'+currentUser).once('value', s => { db.ref('quizPoints/'+currentUser).set((s.val() || 0) + 1); }); }
             setTimeout(() => { currentQIdx++; nextQuestion(); }, 1500);
         });
