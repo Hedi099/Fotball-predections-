@@ -91,10 +91,11 @@
                 <span style="font-size: 35px;">🧠</span>
                 <div class="choice-title">پرسیار و وەڵام</div>
             </div>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
                 <button class="nav-btn" style="background:var(--secondary)" onclick="openRank('preds')">📊 ڕیزبەندی پێشبینی</button>
                 <button class="nav-btn" style="background:#8b5cf6; color:white;" onclick="openRank('quiz')">📊 ڕیزبەندی زانیاری</button>
-                <button id="reset-weekly-btn-main" class="nav-btn" style="background:#ef4444; color:white; display:none;" onclick="resetWeeklyPoints()">🧹</button>
+                <button id="reset-weekly-btn-main" class="nav-btn" style="background:#ef4444; color:white; display:none;" onclick="resetWeeklyPoints()">🧹 سفرکردنەوەی هەمووی</button>
+                <button id="reset-just-weekly-btn" class="nav-btn" style="background:#f97316; color:white; display:none;" onclick="resetOnlyWeekly()">🧹 هەفتە</button>
                 <button class="nav-btn" style="background:#334155; color:white; flex:0.3" onclick="logout()">🚪</button>
             </div>
         </div>
@@ -161,7 +162,7 @@
         { id: "m4_7", t1: "شتوتگارت", t2: "بروسیا دۆرتمۆند", p1: 4, pX: 2, p2: 3, event: "خولی ئەڵمانی", deadline: "2026-04-04T19:30:00", img1: "https://crests.football-data.org/10.png", img2: "https://crests.football-data.org/4.png" },
         { id: "m4_8", t1: "ئاتلێتیکۆ مەدرید", t2: "بارسێلۆنا", p1: 3, pX: 2, p2: 4, event: "خولی ئیسپانیا", deadline: "2026-04-04T22:00:00", img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/81.png" },
         { id: "m4_9", t1: "ساوسهامپتن", t2: "ئارسناڵ", p1: 5, pX: 3, p2: 2, event: "ئێف ئەی کاپ", deadline: "2026-04-04T22:00:00", img1: "https://crests.football-data.org/72.png", img2: "https://crests.football-data.org/57.png" },
-        { id: "m5_1", t1: "ئینتەرمیامی", t2: "ئۆستن", p1: 3, pX: 4, p2: 5, event: "خولی ئەمریکی", deadline: "2026-04-05T02:30:00", img1: "https://crests.football-data.org/1132.png", img2: "https://crests.football-data.org/Austin.png" },
+        { id: "m5_1", t1: "ئینتەرمیامی", t2: "ئۆستن", p1: 3, pX: 4, p2: 5, event: "خولی ئەمریکی", deadline: "2026-04-05T02:30:00", img1: "https://crests.football-data.org/1132.png", img2: "https://via.placeholder.com/42?text=Austin" },
         { id: "m5_2", t1: "ئینتەر میلان", t2: "ڕۆما", p1: 3, pX: 2, p2: 4, event: "خولی ئیتاڵی", deadline: "2026-04-05T21:45:00", img1: "https://crests.football-data.org/108.png", img2: "https://crests.football-data.org/100.png" },
         { id: "m5_3", t1: "مۆناکۆ", t2: "مارسیلیا", p1: 3, pX: 2, p2: 4, event: "خولی فەڕەنسی", deadline: "2026-04-05T21:45:00", img1: "https://crests.football-data.org/548.png", img2: "https://crests.football-data.org/516.png" },
         { id: "m6_1", t1: "یوڤانتۆس", t2: "جەنەوا", p1: 2, pX: 3, p2: 4, event: "خولی ئیتاڵی", deadline: "2026-04-06T19:00:00", img1: "https://crests.football-data.org/109.png", img2: "https://crests.football-data.org/107.png" },
@@ -173,29 +174,26 @@
     ];
 
     const quizData = [
-        { q: "کام یاری بە موعجیزەکەی ئەستەنبوڵ ناسراوە؟", opts: ["لیڤەرپووڵ و ئەیسی میلان", "مانسیتی و ئینتەرمیلان", "لیڤەرپووڵ و ڕیاڵ مەدرید"], ans: 0 },
-        { q: "کام یاریزانی ئەرجەنتین لێدانی سزای لەدەست دا دژی هۆڵەندا لە مۆندیالی ٢٠٢٢؟", opts: ["دیبالا", "لاوتارۆ مارتینێز", "ئێنزۆ فێرناندێز"], ans: 2 },
-        { q: "جگە لە مێسی، کام یاریزان توانیویانە سێ جاری لەسەر یەک خەڵاتی بالۆندۆر ببەنەوە؟", opts: ["کریستیانۆ", "دیستیڤانۆ", "پلاتینی"], ans: 2 },
-        { q: "کام هەڵبژاردە زۆرترین جار جامی جیهانی بردۆتەوە؟", opts: ["بەرازیل", "ئەڵمانیا", "ئیتاڵیا"], ans: 0 },
-        { q: "کێ گۆڵکاری مێژوویی چامپیۆنزلیگە؟", opts: ["مێسی", "ڕۆناڵدۆ", "بنزیما"], ans: 1 },
-        { q: "یەکەم مۆندیال لە چ ساڵێکدا ئەنجامدرا؟", opts: ["١٩٣٠", "١٩٣٤", "١٩٥٠"], ans: 0 },
-        { q: "کام یاریزان بە 'پاشای تۆپی پێ' ناسراوە؟", opts: ["مارادۆنا", "پێلێ", "کرویف"], ans: 1 },
-        { q: "یاریگای کام یانە بە 'ئۆڵد ترافۆرد' ناسراوە؟", opts: ["مان یونایتد", "لیڤەرپوول", "چێڵسی"], ans: 0 },
-        { q: "کام یانە زۆرترین نازناوی چامپیۆنزلیگی هەیە؟", opts: ["میلانی ئیتاڵی", "لیڤەرپووڵی ئینگلیزی", "ڕیاڵ مەدریدی ئیسپانی"], ans: 2 },
-        { q: "گۆڵکاری مێژوویی جامی جیهانی کێیە؟", opts: ["ڕۆناڵدۆی بەرازیلی", "مێرۆسلاڤ کلۆزە", "پێلێ"], ans: 1 },
-        { q: "کام هەڵبژاردە یەکەم نازناوی جامی جیهانی بردەوە؟", opts: ["ئوروگوای", "ئەرجەنتین", "بەرازیل"], ans: 0 },
-        { q: "کام یاریزان نازناوی 'دیاردە'ی لێنراوە؟", opts: ["ڕۆناڵدینهۆ", "ڕۆناڵدۆی بەرازیلی", "کریستیانۆ ڕۆناڵدۆ"], ans: 1 },
-        { q: "کام یانە توانی ٦ نازناو (Sextuple) لە یەک ساڵدا بباتەوە لە ٢٠٠٩؟", opts: ["بایرن میونشن", "ڕیاڵ مەدرید", "بارسێلۆنا"], ans: 2 },
-        { q: "زۆرترین گۆڵ لە یەک وەرزدا لە لالیگا کێ تۆماری کردووە؟ (٥٠ گۆڵ)", opts: ["مێسی", "ڕۆناڵدۆ", "سوارێز"], ans: 0 },
-        { q: "کام ساڵ هەڵبژاردەی ئیسپانیا جامی جیهانی بردەوە؟", opts: ["٢٠٠٦", "٢٠١٠", "٢٠١٤"], ans: 1 },
-        { q: "ئەو یاریزانە کامەیە کە زۆرترین یاری کۆتایی چامپیۆنسلیگی دۆڕاندوە؟", opts: ["پلاتینی", "واین ڕۆنی", "پاتریس ئێڤرا"], ans: 2 },
-        { q: "کام یاریزان لە یاری کۆتایی ئەستەنبوڵ، یەکەم لێدانی سزای بۆ لیڤەرپووڵ تۆمارکرد؟", opts: ["چابی ئەلۆنسۆ", "هامان", "میلان بارۆش"], ans: 1 },
-        { q: "کۆتا جار کام یانە توانی بارسێلۆنا و ڕیاڵ مەدرید لە یەک وەرزی چامپیۆنسلیگ بکاتە دەرەوە؟", opts: ["یوڤێنتۆس", "بایرن میونشن", "ئینتەرمیلان"], ans: 0 },
-        { q: "جامی جیهانی ساڵی 2006 لە کام وڵات ئەنجام درا؟", opts: ["فەڕەنسا و ئیتاڵیا", "ئەڵمانیا", "فەڕەنسا و بەلجیکا"], ans: 1 },
-        { q: "کام یاریزان کۆتا گۆڵی جامی جیهانی 2018ی تۆمار کرد؟", opts: ["ئێمباپێ", "پۆگبا", "ماندزۆکیچ"], ans: 2 },
-        { q: "کێ کاپتنی هەڵبژاردەی ئیتاڵیا بوو لە مۆندیالی 2006؟", opts: ["بوفۆن", "ماڵدینی", "کاناڤارۆ"], ans: 2 },
-        { q: "کام گۆڵپارێز بووە خاوەن خەڵاتی باشترین گۆڵپارێزی جامی جیهانی 2018؟", opts: ["کۆرتوا", "لۆرێس", "مانوێل نۆیەر"], ans: 0 },
-        { q: "ئەمە کاروانی کام یاریزانە؟ (ستۆک سیتی، مان یونایتد، نیوکاسڵ، ڕیاڵ مەدرید، لیڤەرپووڵ)", opts: ["ئۆوین", "ئانێلکا", "چابی ئەلۆنسۆ"], ans: 0 }
+        { q: "کێ گرانترین گواستنەوەی گۆڵپارێزە لە مێژووی تۆپی پێدا؟", opts: ["ئالیسۆن بیکەر", "کێپا ئاریزابالاگا", "ئیدێرسۆن"], ans: 1 },
+        { q: "کام یاریزان زۆرترین گۆڵی لە یەک ساڵی زایینیدا تۆمار کردووە؟ (91 گۆڵ)", opts: ["ڕۆناڵدۆ", "پێلێ", "مێسی"], ans: 2 },
+        { q: "کام وڵات میوانداری یەکەم مۆندیالی کرد لە ساڵی 1930؟", opts: ["بەرازیل", "ئوروگوای", "ئیتاڵیا"], ans: 1 },
+        { q: "کێ تەنها یاریزانە کە سێ جامی جیهانی بردبێتەوە؟", opts: ["مارادۆنا", "ڕۆناڵدۆی بەرازیلی", "پێلێ"], ans: 2 },
+        { q: "کام یانە زۆرترین جار خولی ئەوروپای (Europa League) بردۆتەوە؟", opts: ["سیڤیلیا", "لیڤەرپووڵ", "ئینتەرمیلان"], ans: 0 },
+        { q: "یەکەم یاریزانی ئینگلیزی کە لە چوار وڵاتی جیاواز خول بباتەوە کێیە؟", opts: ["دەیڤد بێکهام", "وین ڕۆنی", "جود بێلینگهام"], ans: 0 },
+        { q: "لە کام مۆندیالدا مارادۆنا گۆڵی 'دەستی خودا'ی تۆمار کرد؟", opts: ["1982", "1986", "1990"], ans: 1 },
+        { q: "کام یاریزان نازناوی 'فڕکەوانە هۆڵەندییەکە' (The Flying Dutchman)ی لێنراوە؟", opts: ["مارکۆ ڤان باستن", "ڕۆبن", "یۆهان کرویف"], ans: 2 },
+        { q: "کێ خاوەنی خێراترین گۆڵە لە مێژووی چامپیۆنزلیگ؟ (10.12 چرکە)", opts: ["ڕۆی ماکای", "تیێری هێنری", "سەڵاح"], ans: 0 },
+        { q: "کام یانە بە 'The Old Lady' ناسراوە؟", opts: ["میلان", "لیڤەرپووڵ", "یوڤانتۆس"], ans: 2 },
+        { q: "کێ گۆڵکاری مێژوویی هەڵبژاردەی ئەڵمانیایە؟", opts: ["گێرد مۆلەر", "کلۆزە", "پۆدۆلسکی"], ans: 1 },
+        { q: "لە ساڵی 1992 کام هەڵبژاردە بە شێوەیەکی چاوەڕواننەکراو یۆرۆی بردەوە؟", opts: ["یۆنان", "دانیمارک", "چێک"], ans: 1 },
+        { q: "کام یانە خاوەنی ریکۆردی زۆرترین یاری بەبێ دۆڕانە لە پریمەرلیگ؟ (49 یاری)", opts: ["مان سیتی", "مان یونایتد", "ئارسناڵ"], ans: 2 },
+        { q: "کێ یەکەم یاریزان بوو خەڵاتی 'Golden Boy' بباتەوە لە ساڵی 2003؟", opts: ["مێسی", "ڕۆنی", "رافایل ڤان دێر ڤارت"], ans: 2 },
+        { q: "لە کام یانە کریستیانۆ ڕۆناڵدۆ یەکەم بالۆندۆری بردەوە؟", opts: ["سپۆرتینگ لیشبۆنە", "مان یونایتد", "ڕیاڵ مەدرید"], ans: 1 },
+        { q: "کام یاریزان زۆرترین یاری بۆ هەڵبژاردەی ئیسپانیا کردووە؟", opts: ["کاسیاس", "چاڤی", "سێرجیۆ ڕامۆس"], ans: 2 },
+        { q: "کێ گۆڵکاری مێژوویی خولی ئینگلیزییە؟ (Premier League era)", opts: ["هاری کەین", "ئالان شیرەر", "وین ڕۆنی"], ans: 1 },
+        { q: "لە کام ساڵدا ڕیاڵ مەدرید 'La Decima'ی (نازناوی دەیەم) بردەوە؟", opts: ["2012", "2014", "2016"], ans: 1 },
+        { q: "کێ ڕاهێنەری یۆنان بوو کاتێک یۆرۆی 2004یان بردەوە؟", opts: ["ئۆتۆ ڕێهاگل", "فێرناندۆ سانتۆس", "سکۆلاری"], ans: 0 },
+        { q: "کام یانە نازناوی 'The Gunners'ی هەیە؟", opts: ["ئارسناڵ", "تۆتنهام", "وێستهام"], ans: 0 }
     ];
 
     let currentQIdx = 0;
@@ -212,7 +210,10 @@
     if (currentUser) {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('selection-page').style.display = 'block';
-        if(currentUser === 'Hedi') document.getElementById('reset-weekly-btn-main').style.display = 'block';
+        if(currentUser === 'Hedi') {
+            document.getElementById('reset-weekly-btn-main').style.display = 'block';
+            document.getElementById('reset-just-weekly-btn').style.display = 'block';
+        }
     }
 
     function showSection(sec) {
@@ -242,14 +243,12 @@
         db.ref('quizRecords/'+currentUser).once('value', s => {
             userQuizRecords = s.val() || {};
             const answeredCount = Object.keys(userQuizRecords).length;
-            
             document.getElementById('start-quiz-btn').style.display = "none";
             document.getElementById('review-quiz-btn').style.display = "none";
             document.getElementById('prev-review-btn').style.display = "none";
             document.getElementById('next-review-btn').style.display = "none";
             document.getElementById('quiz-options').innerHTML = "";
             document.getElementById('quiz-timer-container').style.display = "none";
-
             if (answeredCount >= quizData.length) {
                 document.getElementById('quiz-question').innerText = "تۆ هەموو پرسیارەکانت تەواو کردووە!";
                 document.getElementById('review-quiz-btn').style.display = "block";
@@ -274,7 +273,6 @@
         const q = quizData[reviewIdx];
         const record = userQuizRecords["q_" + reviewIdx];
         document.getElementById('quiz-question').innerText = `(${reviewIdx + 1}/${quizData.length}) ${q.q}`;
-        
         let h = '';
         q.opts.forEach((opt, i) => {
             let style = "background: rgba(255,255,255,0.05);";
@@ -366,7 +364,11 @@
     function loadStates() { const isAdmin = currentUser === 'Hedi'; db.ref('results').on('value', sRes => { const results = sRes.val() || {}; db.ref('users/'+currentUser+'/predictions').on('value', sPred => { const ps = sPred.val() || {}; matches.forEach(m => { const res = results[m.id]; const pred = ps[m.id]; const tools = document.getElementById(`admin-tools-${m.id}`); if(isAdmin && !res) { if(tools) tools.style.display='flex'; } else if(tools) tools.style.display='none'; if(pred) { const btn = document.getElementById(m.id+'-btn'+pred.choice); if(btn) { btn.classList.add('selected'); document.querySelectorAll(`#${m.id} .opt-btn`).forEach(b=>b.disabled=true); const vb = document.getElementById('viewbtn-'+m.id); if(vb) vb.style.display='block'; if(res) { if(pred.choice == res.winner) { btn.classList.add('correct'); btn.querySelector('span:first-child').innerText = "✅ ڕاستە"; } else { btn.classList.add('wrong'); btn.querySelector('span:first-child').innerText = "❌ هەڵەیە"; } } } } }); }); }); }
     function vote(mId, c, p, dl) { if(new Date() >= new Date(dl)) return; if(confirm("قفڵ بکرێت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
     function setResult(mId, win, pts) { if(!confirm("هەژمار بکرێت؟")) return; db.ref('results/'+mId).set({winner:win}).then(() => { db.ref('users').once('value', s => { s.forEach(u => { const d = u.val(); if(d.predictions && d.predictions[mId] && d.predictions[mId].choice == win) { db.ref('users/'+u.key).update({ weekly:(d.weekly||0)+pts, total:(d.total||0)+pts }); } }); }); }); }
-    function resetWeeklyPoints() { if(confirm("سفر بکرێتەوە؟")) { db.ref('users').once('value', s => { const ups = {}; s.forEach(u => { ups[u.key + '/weekly'] = 0; }); db.ref('users').update(ups).then(() => alert("سفر کرایەوە.")); }); } }
+    
+    function resetWeeklyPoints() { if(confirm("ئایا دڵنیایت لە سفرکردنەوەی هەموو خاڵەکان (هەفتە و گشتی) و سڕینەوەی پێشبینییەکان؟")) { db.ref('users').once('value', s => { const ups = {}; s.forEach(u => { ups[u.key + '/weekly'] = 0; ups[u.key + '/total'] = 0; ups[u.key + '/predictions'] = null; }); db.ref('users').update(ups).then(() => { db.ref('results').set(null); alert("هەموو داتاکان سڕدرانەوە."); }); }); } }
+    
+    function resetOnlyWeekly() { if(confirm("تەنها خاڵەکانی 'هەفتە' سفر بکرێنەوە؟ (خاڵی گشتی و پێشبینییەکان وەک خۆیان دەمێننەوە)")) { db.ref('users').once('value', s => { const ups = {}; s.forEach(u => { ups[u.key + '/weekly'] = 0; }); db.ref('users').update(ups).then(() => alert("خاڵەکانی هەفتە سفر کرانەوە.")); }); } }
+
     function openRank(type) { const path = (type === 'preds') ? 'users' : 'quizPoints'; document.getElementById('rank-title').innerText = (type === 'preds') ? 'ڕیزبەندی پێشبینی' : 'ڕیزبەندی زانیاری'; db.ref(path).once('value', s => { let r = []; if(type === 'preds') { s.forEach(u => { r.push({ n: u.key, p1: u.val().weekly||0, p2: u.val().total||0 }); }); } else { s.forEach(u => { r.push({ n: u.key, p1: "-", p2: u.val()||0 }); }); } r.sort((a,b) => b.p2 - a.p2); document.getElementById('rank-list').innerHTML = r.map(i => `<div class="rank-row"><span class="rank-user">${i.n}</span><div class="rank-points"><span class="pts-box">${i.p1}</span><span class="pts-box" style="color:var(--secondary); font-weight:bold;">${i.p2}</span></div></div>`).join(''); document.getElementById('leaderboard-view').style.display = 'flex'; }); }
     function showPredictions(mId) { const m = matches.find(x => x.id === mId); document.getElementById('pred-match-title').innerText = `${m.t1} - ${m.t2}`; db.ref('users').once('value', s => { let h = ''; s.forEach(u => { const p = u.val().predictions ? u.val().predictions[mId] : null; const txt = p ? (p.choice==1?m.t1:(p.choice==2?"یەکسان":m.t2)) : "---"; h += `<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #333"><span>${u.key}</span><span style="color:var(--secondary)">${txt}</span></div>`; }); document.getElementById('preds-content').innerHTML = h; document.getElementById('all-preds-view').style.display = 'flex'; }); }
     function closeView(id) { document.getElementById(id).style.display = 'none'; }
