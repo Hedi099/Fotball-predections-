@@ -96,6 +96,7 @@
                 <button class="nav-btn" style="background:#8b5cf6; color:white;" onclick="openRank('quiz')">📊 ڕیزبەندی زانیاری</button>
                 <button id="reset-weekly-btn-main" class="nav-btn" style="background:#ef4444; color:white; display:none;" onclick="resetWeeklyPoints()">🧹 سفرکردنەوەی هەمووی</button>
                 <button id="reset-just-weekly-btn" class="nav-btn" style="background:#f97316; color:white; display:none;" onclick="resetOnlyWeekly()">🧹 هەفتە</button>
+                <button id="reset-quiz-btn" class="nav-btn" style="background:#6366f1; color:white; display:none;" onclick="resetAllQuizAnswers()">🧹 پاککردنەوەی وەڵامی پرسیارەکان</button>
                 <button class="nav-btn" style="background:#334155; color:white; flex:0.3" onclick="logout()">🚪</button>
             </div>
         </div>
@@ -213,6 +214,7 @@
         if(currentUser === 'Hedi') {
             document.getElementById('reset-weekly-btn-main').style.display = 'block';
             document.getElementById('reset-just-weekly-btn').style.display = 'block';
+            document.getElementById('reset-quiz-btn').style.display = 'block';
         }
     }
 
@@ -368,6 +370,8 @@
     function resetWeeklyPoints() { if(confirm("ئایا دڵنیایت لە سفرکردنەوەی هەموو خاڵەکان (هەفتە و گشتی) و سڕینەوەی پێشبینییەکان؟")) { db.ref('users').once('value', s => { const ups = {}; s.forEach(u => { ups[u.key + '/weekly'] = 0; ups[u.key + '/total'] = 0; ups[u.key + '/predictions'] = null; }); db.ref('users').update(ups).then(() => { db.ref('results').set(null); alert("هەموو داتاکان سڕدرانەوە."); }); }); } }
     
     function resetOnlyWeekly() { if(confirm("تەنها خاڵەکانی 'هەفتە' سفر بکرێنەوە؟ (خاڵی گشتی و پێشبینییەکان وەک خۆیان دەمێننەوە)")) { db.ref('users').once('value', s => { const ups = {}; s.forEach(u => { ups[u.key + '/weekly'] = 0; }); db.ref('users').update(ups).then(() => alert("خاڵەکانی هەفتە سفر کرانەوە.")); }); } }
+
+    function resetAllQuizAnswers() { if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو وەڵامەکانی بەشی پرسیار و وەڵام بۆ هەموو یوزەرەکان؟ (بۆ ئەوەی دووبارە وەڵام بدەنەوە)")) { db.ref('quizRecords').set(null).then(() => { db.ref('quizPoints').set(null).then(() => alert("هەموو وەڵامەکان سڕانەوە.")); }); } }
 
     function openRank(type) { const path = (type === 'preds') ? 'users' : 'quizPoints'; document.getElementById('rank-title').innerText = (type === 'preds') ? 'ڕیزبەندی پێشبینی' : 'ڕیزبەندی زانیاری'; db.ref(path).once('value', s => { let r = []; if(type === 'preds') { s.forEach(u => { r.push({ n: u.key, p1: u.val().weekly||0, p2: u.val().total||0 }); }); } else { s.forEach(u => { r.push({ n: u.key, p1: "-", p2: u.val()||0 }); }); } r.sort((a,b) => b.p2 - a.p2); document.getElementById('rank-list').innerHTML = r.map(i => `<div class="rank-row"><span class="rank-user">${i.n}</span><div class="rank-points"><span class="pts-box">${i.p1}</span><span class="pts-box" style="color:var(--secondary); font-weight:bold;">${i.p2}</span></div></div>`).join(''); document.getElementById('leaderboard-view').style.display = 'flex'; }); }
     function showPredictions(mId) { const m = matches.find(x => x.id === mId); document.getElementById('pred-match-title').innerText = `${m.t1} - ${m.t2}`; db.ref('users').once('value', s => { let h = ''; s.forEach(u => { const p = u.val().predictions ? u.val().predictions[mId] : null; const txt = p ? (p.choice==1?m.t1:(p.choice==2?"یەکسان":m.t2)) : "---"; h += `<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #333"><span>${u.key}</span><span style="color:var(--secondary)">${txt}</span></div>`; }); document.getElementById('preds-content').innerHTML = h; document.getElementById('all-preds-view').style.display = 'flex'; }); }
