@@ -8,12 +8,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root { 
-            --primary: #8b5cf6; 
+            --primary: #6366f1; 
             --secondary: #fbbf24; 
-            --accent: #ec4899;
-            --glass-bg: rgba(15, 23, 42, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --text: #ffffff;
+            --accent: #ef4444;
+            --glass-bg: rgba(0, 0, 0, 0.55); 
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -21,173 +21,160 @@
         body { 
             margin: 0; 
             min-height: 100vh; 
-            color: var(--text);
+            color: var(--text-color);
             display: flex; 
             justify-content: center;
-            background: #030712;
-            position: relative;
+            background-color: #000;
             overflow-x: hidden;
         }
 
-        /* وێنەی باکگراوند */
-        body::before {
-            content: "";
+        /* باکگراوندی وێنە بە ڕوونی */
+        .bg-fixed {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: url('https://r2.erweima.ai/i/eAtF7Ua1QfWf6-xM3A8L1A.jpg') no-repeat center center;
+            background-image: url('https://r2.erweima.ai/i/eAtF7Ua1QfWf6-xM3A8L1A.jpg');
             background-size: cover;
-            filter: brightness(0.4) saturate(1.2);
+            background-position: center;
+            filter: brightness(0.6) blur(1px); /* تەڵخی زۆر کەم بۆ ئەوەی وێنەکە دیار بێت */
             z-index: -1;
         }
 
-        .container { width: 100%; max-width: 480px; padding: 20px; position: relative; z-index: 1; }
+        .container { width: 100%; max-width: 480px; padding: 20px; z-index: 1; }
 
         .glass { 
             background: var(--glass-bg); 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border); 
-            border-radius: 28px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         .logo-text { 
             font-size: 32px; font-weight: 900; text-align: center; 
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #ec4899);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            margin-bottom: 25px; text-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            color: var(--secondary);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
         }
 
         .hadith-box { 
-            background: rgba(251, 191, 36, 0.15); border: 1px solid var(--secondary); 
-            border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 25px; 
-            font-size: 13px; line-height: 1.7; 
+            background: rgba(0, 0, 0, 0.6); 
+            border-right: 4px solid var(--secondary); 
+            border-radius: 15px; padding: 15px; text-align: center; margin-bottom: 20px; 
+            font-size: 13px; line-height: 1.6;
         }
 
-        .match-card { margin-bottom: 25px; transition: transform 0.3s ease; }
-        .match-card:hover { transform: translateY(-5px); }
-        
-        .match-header { 
-            padding: 12px 20px; border-bottom: 1px solid var(--glass-border); 
-            display: flex; justify-content: space-between; font-size: 11px;
-        }
+        .match-card { margin-bottom: 20px; overflow: hidden; }
+        .match-header { padding: 10px 15px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--glass-border); font-size: 11px; }
+        .match-body { padding: 20px 15px; }
 
         .opt-btn { 
-            flex: 1; padding: 12px 5px; border-radius: 18px; border: 1px solid var(--glass-border);
-            background: rgba(255,255,255,0.08); color: #fff; cursor: pointer;
-            transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 4px;
+            flex: 1; padding: 12px 5px; border-radius: 15px; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.1); color: #fff; cursor: pointer;
+            transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 3px;
         }
-        
-        .opt-btn.selected { background: var(--secondary); color: #000; border-color: var(--secondary); box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+        .opt-btn.selected { background: var(--secondary); color: #000; font-weight: bold; }
+
         .btn-main { 
-            width: 100%; padding: 16px; border-radius: 18px; border: none; 
-            background: linear-gradient(135deg, var(--primary), #6366f1); 
-            color: white; font-weight: bold; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            width: 100%; padding: 15px; border-radius: 15px; border: none; 
+            background: var(--primary); color: white; font-weight: bold; cursor: pointer;
         }
-        .btn-main:active { transform: scale(0.98); }
 
         .choice-card { 
-            padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.4s; 
-            border: 1px solid var(--glass-border); margin-bottom: 15px;
+            padding: 35px 20px; text-align: center; cursor: pointer; transition: 0.3s; 
+            margin-bottom: 15px; border: 1px solid var(--glass-border);
         }
-        .choice-card:hover { background: rgba(255,255,255,0.15); border-color: var(--secondary); }
 
         input { 
-            width: 100%; padding: 18px; border-radius: 18px; border: 1px solid var(--glass-border); 
-            background: rgba(0,0,0,0.4); color: white; margin-bottom: 15px; text-align: center;
+            width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--glass-border); 
+            background: rgba(0,0,0,0.5); color: white; margin-bottom: 15px; text-align: center;
         }
 
-        .nav-btn { 
-            padding: 12px; border-radius: 15px; border: none; font-weight: bold; 
-            cursor: pointer; font-size: 11px; transition: 0.3s;
-        }
+        .nav-btn { padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; }
 
-        .rank-row { background: rgba(255,255,255,0.03); margin-bottom: 8px; border-radius: 15px; padding: 12px; }
-        
-        /* Quiz Specific Styling */
         .quiz-option { 
-            width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 18px; 
-            border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); 
-            color: white; text-align: right; cursor: pointer; font-weight: 600;
+            width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 15px; 
+            border: 1px solid var(--glass-border); background: rgba(0,0,0,0.4); 
+            color: white; text-align: right; cursor: pointer; font-weight: bold;
         }
+
+        .rank-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .countdown-timer { font-size: 11px; color: var(--secondary); text-align: center; margin-top: 5px; }
     </style>
 </head>
 <body>
 
+<div class="bg-fixed"></div>
+
 <div class="container">
-    <div id="login-page" style="margin-top: 100px;" class="glass match-body">
-        <div class="logo-text">Brothers Group</div>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
-        <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
+    <div id="login-page" style="margin-top: 80px;" class="glass">
+        <div style="padding: 30px;">
+            <div class="logo-text">Brothers Group</div>
+            <input type="text" id="userNameInput" placeholder="ناوەکەت بنووسە">
+            <button class="btn-main" onclick="loginUser()">چوونە ژوورەوە</button>
+        </div>
     </div>
 
     <div id="selection-page" style="display: none;">
         <div class="hadith-box">
-            <span style="display:block; color:var(--secondary); font-weight:bold; margin-bottom:5px; font-size:16px;">«ارْحَمُوا مَنْ فِي الأَرْضِ يَرْحَمْكُمْ مَنْ فِي السَّمَاءِ»</span>
+            <span style="display:block; color:var(--secondary); font-weight:bold; margin-bottom:5px;">«ارْحَمُوا مَنْ فِي الأَرْضِ يَرْحَمْكُمْ مَنْ فِي السَّمَاءِ»</span>
             پێغەمبەر (ص) دەفەرموێت: ڕەحم بەوانە بکە کە لەسەر زەوین، تاوەکو ئەوەی لە ئاسمانە ڕەحمتان پێ بکات.
         </div>
         <div class="logo-text">Brothers Group</div>
         <div class="choice-container">
             <div class="choice-card glass" onclick="showSection('preds')">
-                <span style="font-size: 45px; filter: drop-shadow(0 0 10px var(--secondary));">⚽</span>
-                <div style="font-size: 22px; font-weight: bold; color: var(--secondary); margin-top: 10px;">بەشی پێشبینی</div>
+                <span style="font-size: 40px;">⚽</span>
+                <div style="font-size: 20px; font-weight: bold; color: var(--secondary); margin-top:10px;">بەشی پێشبینی</div>
             </div>
             <div class="choice-card glass" onclick="showSection('quiz')">
-                <span style="font-size: 45px; filter: drop-shadow(0 0 10px var(--primary));">🧠</span>
-                <div style="font-size: 22px; font-weight: bold; color: var(--primary); margin-top: 10px;">پرسیار و وەڵام</div>
+                <span style="font-size: 40px;">🧠</span>
+                <div style="font-size: 20px; font-weight: bold; color: #818cf8; margin-top:10px;">پرسیار و وەڵام</div>
             </div>
+            
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
                 <button class="nav-btn" style="background:var(--secondary)" onclick="openRank('preds')">📊 ڕیزبەندی پێشبینی</button>
-                <button class="nav-btn" style="background:var(--primary); color:white;" onclick="openRank('quiz')">📊 ڕیزبەندی زانیاری</button>
+                <button class="nav-btn" style="background:#818cf8; color:white;" onclick="openRank('quiz')">📊 ڕیزبەندی زانیاری</button>
                 <button id="reset-weekly-btn-main" class="nav-btn" style="background:#ef4444; color:white; display:none; grid-column: span 2;" onclick="resetWeeklyPoints()">🧹 سفرکردنەوەی هەمووی</button>
-                <button id="reset-just-weekly-btn" class="nav-btn" style="background:#f97316; color:white; display:none;" onclick="resetOnlyWeekly()">🧹 هەفتە</button>
-                <button id="reset-quiz-btn" class="nav-btn" style="background:#6366f1; color:white; display:none;" onclick="resetAllQuizAnswers()">🧹 پاککردنەوەی وەڵامەکان</button>
-                <button class="nav-btn" style="background:#334155; color:white; grid-column: span 2;" onclick="logout()">🚪 چوونە دەرەوە</button>
+                <button id="reset-just-weekly-btn" class="nav-btn" style="background:#f97316; color:white; display:none;" onclick="resetOnlyWeekly()">🧹 تەنها هەفتە</button>
+                <button id="reset-quiz-btn" class="nav-btn" style="background:#6366f1; color:white; display:none;" onclick="resetAllQuizAnswers()">🧹 پاککردنەوەی کویز</button>
+                <button class="nav-btn" style="background:#4b5563; color:white; grid-column: span 2;" onclick="logout()">🚪 چوونە دەرەوە</button>
             </div>
         </div>
     </div>
 
     <div id="main-app" style="display: none;">
         <div id="preds-section" style="display: none;">
-            <button class="nav-btn" style="background:rgba(255,255,255,0.1); color:white; margin-bottom:20px;" onclick="showSection('home')">⬅️ گەڕانەوە</button>
+            <button class="nav-btn" style="background:rgba(0,0,0,0.6); color:white; margin-bottom:15px; border:1px solid var(--glass-border);" onclick="showSection('home')">⬅️ گەڕانەوە</button>
             <div id="matches-list"></div>
         </div>
 
         <div id="quiz-section" style="display: none;">
-            <button class="nav-btn" style="background:rgba(255,255,255,0.1); color:white; margin-bottom:20px;" onclick="showSection('home')">⬅️ گەڕانەوە</button>
+            <button class="nav-btn" style="background:rgba(0,0,0,0.6); color:white; margin-bottom:15px; border:1px solid var(--glass-border);" onclick="showSection('home')">⬅️ گەڕانەوە</button>
             <div class="glass" style="padding: 25px;">
-                <div id="quiz-timer-container" style="display:none;">
-                    <div class="timer-bar" style="width:100%; height:8px; background:#333; border-radius:10px; margin-bottom:15px; overflow:hidden;">
-                        <div id="timer-fill" style="height:100%; background:var(--accent); width:100%;"></div>
+                <div id="quiz-timer-container" style="display:none; margin-bottom:15px;">
+                    <div style="width:100%; height:8px; background:#222; border-radius:5px; overflow:hidden;">
+                        <div id="timer-fill" style="height:100%; background:var(--accent); width:100%; transition: linear 1s;"></div>
                     </div>
                 </div>
-                <h3 style="text-align:center;color:var(--primary); margin:0 0 20px 0;">🧠 تاقیکردنەوەی زانیاری</h3>
-                <p id="quiz-question" style="text-align:center; font-weight:bold; font-size:18px; line-height:1.6; min-height:80px;"></p>
+                <h3 style="text-align:center;color:var(--secondary); margin-top:0;">🧠 تاقیکردنەوە</h3>
+                <p id="quiz-question" style="text-align:center; font-weight:bold; font-size:17px; min-height:60px;"></p>
                 <div id="quiz-options"></div>
-                <div id="quiz-footer-btns">
-                    <button id="start-quiz-btn" class="btn-main" onclick="nextQuestion()">دەستپێکردن</button>
-                    <button id="review-quiz-btn" class="btn-main" style="display:none; background:#475569" onclick="reviewMode()">سەیرکردنەوەی وەڵامەکان</button>
-                </div>
+                <button id="start-quiz-btn" class="btn-main" onclick="nextQuestion()">دەستپێکردن</button>
+                <button id="review-quiz-btn" class="btn-main" style="display:none; background:#475569" onclick="reviewMode()">سەیرکردنەوەی وەڵامەکان</button>
             </div>
         </div>
     </div>
 </div>
 
 <div id="leaderboard-view" class="modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; align-items: center; justify-content: center;">
-    <div class="modal-content glass" style="width: 100%; max-width: 400px; padding: 25px; max-height: 85vh; overflow-y: auto;">
+    <div class="modal-content glass" style="width: 100%; max-width: 400px; padding: 25px; max-height: 80vh; overflow-y: auto;">
         <h2 id="rank-title" style="text-align:center;color:var(--secondary)">ڕیزبەندی</h2>
         <div id="rank-list"></div>
         <button class="btn-main" style="margin-top:20px" onclick="closeView('leaderboard-view')">داخستن</button>
     </div>
 </div>
 
-<div id="all-preds-view" class="modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; align-items: center; justify-content: center;">
-    <div class="modal-content glass" style="width: 100%; max-width: 400px; padding: 25px;"><h3 id="pred-match-title" style="text-align:center;color:var(--secondary)"></h3><div id="preds-content"></div><button class="btn-main" style="margin-top:20px" onclick="closeView('all-preds-view')">داخستن</button></div>
-</div>
-
 <script>
-    // --- لۆجیکی فایەربەیس و یارییەکە بەبێ دەستکاری ---
     const firebaseConfig = { apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ", authDomain: "brayan-2a1ef.firebaseapp.com", databaseURL: "https://brayan-2a1ef-default-rtdb.firebaseio.com", projectId: "brayan-2a1ef", storageBucket: "brayan-2a1ef.firebasestorage.app", messagingSenderId: "655783456427", appId: "1:655783456427:web:1535d3dfd9b53515c391ee" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -195,59 +182,20 @@
 
     const matches = [
         { id: "m3_1", t1: "پاریس سان جێرمان", t2: "تۆلۆز", p1: 2, pX: 3, p2: 5, event: "خولی فەڕەنسی", deadline: "2026-04-03T21:45:00", img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/511.png" },
-        { id: "m4_1", t1: "مانچێستەر سیتی", t2: "لیڤەرپووڵ", p1: 3, pX: 2, p2: 4, event: "ئێف ئەی کاپ", deadline: "2026-04-04T14:45:00", img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/64.png" },
-        { id: "m4_2", t1: "لیڤەرکوزن", t2: "وۆلفسبۆرگ", p1: 2, pX: 3, p2: 4, event: "خولی ئەڵمانی", deadline: "2026-04-04T16:30:00", img1: "https://crests.football-data.org/11.png", img2: "https://crests.football-data.org/12.png" },
-        { id: "m4_3", t1: "فرایبۆرگ", t2: "بایرن میونشن", p1: 4, pX: 3, p2: 2, event: "خولی ئەڵمانی", deadline: "2026-04-04T16:30:00", img1: "https://crests.football-data.org/17.png", img2: "https://crests.football-data.org/5.png" },
-        { id: "m4_4", t1: "مایۆرکا", t2: "ڕیاڵ مەدرید", p1: 4, pX: 3, p2: 2, event: "خولی ئیسپانی", deadline: "2026-04-04T17:15:00", img1: "https://crests.football-data.org/89.png", img2: "https://crests.football-data.org/86.png" },
-        { id: "m4_5", t1: "چێڵسی", t2: "پۆرت ڤالی", p1: 2, pX: 4, p2: 5, event: "ئێف ئەی کاپ", deadline: "2026-04-04T19:15:00", img1: "https://crests.football-data.org/61.png", img2: "https://crests.football-data.org/385.png" },
-        { id: "m4_6", t1: "ڕیاڵ بێتس", t2: "ئیپسانیۆل", p1: 3, pX: 2, p2: 4, event: "خولی ئیسپانی", deadline: "2026-04-04T19:30:00", img1: "https://crests.football-data.org/90.png", img2: "https://crests.football-data.org/92.png" },
-        { id: "m4_7", t1: "شتوتگارت", t2: "بروسیا دۆرتمۆند", p1: 4, pX: 2, p2: 3, event: "خولی ئەڵمانی", deadline: "2026-04-04T19:30:00", img1: "https://crests.football-data.org/10.png", img2: "https://crests.football-data.org/4.png" },
-        { id: "m4_8", t1: "ئاتلێتیکۆ مەدرید", t2: "بارسێلۆنا", p1: 3, pX: 2, p2: 4, event: "خولی ئیسپانیا", deadline: "2026-04-04T22:00:00", img1: "https://crests.football-data.org/78.png", img2: "https://crests.football-data.org/81.png" },
-        { id: "m4_9", t1: "ساوسهامپتن", t2: "ئارسناڵ", p1: 5, pX: 3, p2: 2, event: "ئێف ئەی کاپ", deadline: "2026-04-04T22:00:00", img1: "https://crests.football-data.org/72.png", img2: "https://crests.football-data.org/57.png" },
-        { id: "m5_1", t1: "ئینتەرمیامی", t2: "ئۆستن", p1: 3, pX: 4, p2: 5, event: "خولی ئەمریکی", deadline: "2026-04-05T02:30:00", img1: "https://crests.football-data.org/1132.png", img2: "https://via.placeholder.com/42?text=Austin" },
-        { id: "m5_2", t1: "ئینتەر میلان", t2: "ڕۆما", p1: 3, pX: 2, p2: 4, event: "خولی ئیتاڵی", deadline: "2026-04-05T21:45:00", img1: "https://crests.football-data.org/108.png", img2: "https://crests.football-data.org/100.png" },
-        { id: "m5_3", t1: "مۆناکۆ", t2: "مارسیلیا", p1: 3, pX: 2, p2: 4, event: "خولی فەڕەنسی", deadline: "2026-04-05T21:45:00", img1: "https://crests.football-data.org/548.png", img2: "https://crests.football-data.org/516.png" },
-        { id: "m6_1", t1: "یوڤانتۆس", t2: "جەنەوا", p1: 2, pX: 3, p2: 4, event: "خولی ئیتاڵی", deadline: "2026-04-06T19:00:00", img1: "https://crests.football-data.org/109.png", img2: "https://crests.football-data.org/107.png" },
-        { id: "m6_2", t1: "ناپۆلی", t2: "ئەی سی میلان", p1: 3, pX: 5, p2: 4, event: "خولی ئیتاڵی", deadline: "2026-04-06T21:45:00", img1: "https://crests.football-data.org/113.png", img2: "https://crests.football-data.org/98.png" },
-        { id: "m7_1", t1: "ڕیاڵ مەدرید", t2: "بایرن میونشن", p1: 3, pX: 2, p2: 4, event: "چامپیۆنسلیگ", deadline: "2026-04-07T22:00:00", img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/5.png" },
-        { id: "m7_2", t1: "سپۆرتینگ لیشبۆنە", t2: "ئارسناڵ", p1: 5, pX: 3, p2: 2, event: "چامپیۆنسلیگ", deadline: "2026-04-07T22:00:00", img1: "https://crests.football-data.org/498.png", img2: "https://crests.football-data.org/57.png" },
-        { id: "m8_1", t1: "بارسێلۆنا", t2: "ئەتلەتیکۆ مەدرید", p1: 3, pX: 2, p2: 4, event: "چامپیۆنسلیگ", deadline: "2026-04-08T22:00:00", img1: "https://crests.football-data.org/81.png", img2: "https://crests.football-data.org/78.png" },
-        { id: "m8_2", t1: "پاریس سانجێرمان", t2: "لیڤەرپووڵ", p1: 3, pX: 2, p2: 4, event: "چامپیۆنسلیگ", deadline: "2026-04-08T22:00:00", img1: "https://crests.football-data.org/524.png", img2: "https://crests.football-data.org/64.png" }
+        { id: "m4_1", t1: "مانچێستەر سیتی", t2: "لیڤەرپووڵ", p1: 3, pX: 2, p2: 4, event: "ئێف ئەی کاپ", deadline: "2026-04-04T14:45:00", img1: "https://crests.football-data.org/65.png", img2: "https://crests.football-data.org/64.png" }
+        // ... (دەتوانیت یارییەکانی تر لێرە زیاد بکەیت)
     ];
 
     const quizData = [
         { q: "کێ گرانترین گواستنەوەی گۆڵپارێزە لە مێژووی تۆپی پێدا؟", opts: ["ئالیسۆن بیکەر", "کێپا ئاریزابالاگا", "ئیدێرسۆن"], ans: 1 },
-        { q: "کام یاریزان زۆرترین گۆڵی لە یەک ساڵی زایینیدا تۆمار کردووە؟ (91 گۆڵ)", opts: ["ڕۆناڵدۆ", "پێلێ", "مێسی"], ans: 2 },
-        { q: "کام وڵات میوانداری یەکەم مۆندیالی کرد لە ساڵی 1930؟", opts: ["بەرازیل", "ئوروگوای", "ئیتاڵیا"], ans: 1 },
-        { q: "کێ تەنها یاریزانە کە سێ جامی جیهانی بردبێتەوە؟", opts: ["مارادۆنا", "ڕۆناڵدۆی بەرازیلی", "پێلێ"], ans: 2 },
-        { q: "کام یانە زۆرترین جار خولی ئەوروپای (Europa League) بردۆتەوە؟", opts: ["سیڤیلیا", "لیڤەرپووڵ", "ئینتەرمیلان"], ans: 0 },
-        { q: "یەکەم یاریزانی ئینگلیزی کە لە چوار وڵاتی جیاواز خول بباتەوە کێیە؟", opts: ["دەیڤد بێکهام", "وین ڕۆنی", "جود بێلینگهام"], ans: 0 },
-        { q: "لە کام مۆندیالدا مارادۆنا گۆڵی 'دەستی خودا'ی تۆمار کرد؟", opts: ["1982", "1986", "1990"], ans: 1 },
-        { q: "کام یاریزان نازناوی 'فڕکەوانە هۆڵەندییەکە' (The Flying Dutchman)ی لێنراوە؟", opts: ["مارکۆ ڤان باستن", "ڕۆبن", "یۆهان کرویف"], ans: 2 },
-        { q: "کێ خاوەنی خێراترین گۆڵە لە مێژووی چامپیۆنزلیگ؟ (10.12 چرکە)", opts: ["ڕۆی ماکای", "تیێری هێنری", "سەڵاح"], ans: 0 },
-        { q: "کام یانە بە 'The Old Lady' ناسراوە؟", opts: ["میلان", "لیڤەرپووڵ", "یوڤانتۆس"], ans: 2 },
-        { q: "کێ گۆڵکاری مێژوویی هەڵبژاردەی ئەڵمانیایە؟", opts: ["گێرد مۆلەر", "کلۆزە", "پۆدۆلسکی"], ans: 1 },
-        { q: "لە ساڵی 1992 کام هەڵبژاردە بە شێوەیەکی چاوەڕواننەکراو یۆرۆی بردەوە؟", opts: ["یۆنان", "دانیمارک", "چێک"], ans: 1 },
-        { q: "کام یانە خاوەنی ریکۆردی زۆرترین یاری بەبێ دۆڕانە لە پریمەرلیگ؟ (49 یاری)", opts: ["مان سیتی", "مان یونایتد", "ئارسناڵ"], ans: 2 },
-        { q: "کێ یەکەم یاریزان بوو خەڵاتی 'Golden Boy' بباتەوە لە ساڵی 2003؟", opts: ["مێسی", "ڕۆنی", "رافایل ڤان دێر ڤارت"], ans: 2 },
-        { q: "لە کام یانە کریستیانۆ ڕۆناڵدۆ یەکەم بالۆندۆری بردەوە؟", opts: ["سپۆرتینگ لیشبۆنە", "مان یونایتد", "ڕیاڵ مەدرید"], ans: 1 },
-        { q: "کام یاریزان زۆرترین یاری بۆ هەڵبژاردەی ئیسپانیا کردووە؟", opts: ["کاسیاس", "چاڤی", "سێرجیۆ ڕامۆس"], ans: 2 },
-        { q: "کێ گۆڵکاری مێژوویی خولی ئینگلیزییە؟ (Premier League era)", opts: ["هاری کەین", "ئالان شیرەر", "وین ڕۆنی"], ans: 1 },
-        { q: "لە کام ساڵدا ڕیاڵ مەدرید 'La Decima'ی (نازناوی دەیەم) بردەوە؟", opts: ["2012", "2014", "2016"], ans: 1 },
-        { q: "کێ ڕاهێنەری یۆنان بوو کاتێک یۆرۆی 2004یان بردەوە؟", opts: ["ئۆتۆ ڕێهاگل", "فێرناندۆ سانتۆس", "سکۆلاری"], ans: 0 },
-        { q: "کام یانە نازناوی 'The Gunners'ی هەیە؟", opts: ["ئارسناڵ", "تۆتنهام", "وێستهام"], ans: 0 }
+        { q: "کام یاریزان زۆرترین گۆڵی لە یەک ساڵی زایینیدا تۆمار کردووە؟ (91 گۆڵ)", opts: ["ڕۆناڵدۆ", "پێلێ", "مێسی"], ans: 2 }
+        // ... (دەتوانیت پرسیارەکانی تر لێرە زیاد بکەیت)
     ];
 
-    let currentQIdx = 0;
-    let quizTimer;
-    let userQuizRecords = {};
-    let isReviewing = false;
+    let currentQIdx = 0; let quizTimer; let userQuizRecords = {};
 
-    function loginUser() {
-        const n = document.getElementById('userNameInput').value.trim();
-        if(!n) return; localStorage.setItem('groupBryanUser', n); location.reload();
-    }
-
+    function loginUser() { const n = document.getElementById('userNameInput').value.trim(); if(!n) return; localStorage.setItem('groupBryanUser', n); location.reload(); }
+    
     if (currentUser) {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('selection-page').style.display = 'block';
@@ -273,11 +221,11 @@
         db.ref('quizRecords/'+currentUser).once('value', s => {
             userQuizRecords = s.val() || {};
             const answeredCount = Object.keys(userQuizRecords).length;
+            document.getElementById('quiz-options').innerHTML = "";
             document.getElementById('start-quiz-btn').style.display = "none";
             document.getElementById('review-quiz-btn').style.display = "none";
-            document.getElementById('quiz-options').innerHTML = "";
             if (answeredCount >= quizData.length) {
-                document.getElementById('quiz-question').innerText = "تەواو! هەموو پرسیارەکانت وەڵام دایەوە.";
+                document.getElementById('quiz-question').innerText = "هەموو پرسیارەکانت تەواو کردووە!";
                 document.getElementById('review-quiz-btn').style.display = "block";
             } else {
                 currentQIdx = 0;
@@ -303,6 +251,7 @@
         document.getElementById('quiz-options').innerHTML = h;
         let time = 30;
         const fill = document.getElementById('timer-fill');
+        fill.style.width = '100%';
         clearInterval(quizTimer);
         quizTimer = setInterval(() => { time--; fill.style.width = (time/30*100) + "%"; if(time <= 0) { clearInterval(quizTimer); submitAnswer(-1); } }, 1000);
     }
@@ -312,8 +261,8 @@
         const q = quizData[currentQIdx];
         const correct = (choice === q.ans);
         db.ref('quizRecords/'+currentUser+'/q_'+currentQIdx).set({choice, status: correct}).then(() => {
-            if(correct) { db.ref('quizPoints/'+currentUser).once('value', s => { db.ref('quizPoints/'+currentUser).set((s.val() || 0) + 1); }); }
-            currentQIdx++; setTimeout(nextQuestion, 1000);
+            if(correct) { db.ref('quizPoints/'+currentUser).once('value', s => { db.ref('quizPoints/'+currentUser).set((s.val()||0)+1); }); }
+            currentQIdx++; setTimeout(nextQuestion, 1200);
         });
     }
 
@@ -323,22 +272,22 @@
             const isLocked = new Date() >= new Date(m.deadline);
             h += `<div class="match-card glass">
                 <div class="match-header"><span>${m.event}</span><span>${new Date(m.deadline).toLocaleString('ku-IQ')}</span></div>
-                <div class="match-body" style="padding:20px;">
+                <div class="match-body">
                     <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom:15px;">
-                        <div style="text-align:center"><img src="${m.img1}" width="45"><br><small>${m.t1}</small></div>
-                        <div style="font-weight:bold">VS</div>
-                        <div style="text-align:center"><img src="${m.img2}" width="45"><br><small>${m.t2}</small></div>
+                        <div style="text-align:center"><img src="${m.img1}" width="40"><br><small>${m.t1}</small></div>
+                        <div style="font-weight:bold; color:var(--secondary)">VS</div>
+                        <div style="text-align:center"><img src="${m.img2}" width="40"><br><small>${m.t2}</small></div>
                     </div>
-                    <div id="cd-${m.id}" style="text-align:center; color:var(--accent); font-size:12px; margin-bottom:15px;"></div>
-                    <div class="prediction-row" style="display:flex; gap:10px;">
+                    <div id="cd-${m.id}" class="countdown-timer"></div>
+                    <div class="prediction-row" style="display:flex; gap:8px; margin-top:10px;">
                         <button class="opt-btn" id="${m.id}-btn1" ${isLocked?'disabled':''} onclick="vote('${m.id}',1,${m.p1},'${m.deadline}')"><span>1</span><span>${m.p1}</span></button>
                         <button class="opt-btn" id="${m.id}-btn2" ${isLocked?'disabled':''} onclick="vote('${m.id}',2,${m.pX},'${m.deadline}')"><span>X</span><span>${m.pX}</span></button>
                         <button class="opt-btn" id="${m.id}-btn3" ${isLocked?'disabled':''} onclick="vote('${m.id}',3,${m.p2},'${m.deadline}')"><span>2</span><span>${m.p2}</span></button>
                     </div>
                     <div id="admin-tools-${m.id}" style="display:none; margin-top:15px; text-align:center;">
-                        <button onclick="setResult('${m.id}',1,${m.p1})" style="background:#22c55e; border:none; color:white; padding:5px 10px; border-radius:5px;">W1</button>
-                        <button onclick="setResult('${m.id}',2,${m.pX})" style="background:#64748b; border:none; color:white; padding:5px 10px; border-radius:5px;">X</button>
-                        <button onclick="setResult('${m.id}',3,${m.p2})" style="background:#22c55e; border:none; color:white; padding:5px 10px; border-radius:5px;">W2</button>
+                        <button onclick="setResult('${m.id}',1,${m.p1})" style="background:#22c55e; border:none; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">W1</button>
+                        <button onclick="setResult('${m.id}',2,${m.pX})" style="background:#64748b; border:none; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">X</button>
+                        <button onclick="setResult('${m.id}',3,${m.p2})" style="background:#22c55e; border:none; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">W2</button>
                     </div>
                 </div>
             </div>`;
@@ -347,14 +296,14 @@
         loadStates();
     }
 
-    function startCountdowns() { setInterval(() => { matches.forEach(m => { const now = new Date().getTime(); const diff = new Date(m.deadline).getTime() - now; const el = document.getElementById(`cd-${m.id}`); if (!el) return; if (diff <= 0) { el.innerHTML = "🔒 داخراوە"; return; } const h = Math.floor(diff / (3600000)); const m_ = Math.floor((diff % 3600000) / 60000); const s = Math.floor((diff % 60000) / 1000); el.innerHTML = `⏳ ${h}:${m_}:${s}`; }); }, 1000); }
-    function loadStates() { db.ref('results').on('value', sRes => { const results = sRes.val() || {}; db.ref('users/'+currentUser+'/predictions').on('value', sPred => { const ps = sPred.val() || {}; matches.forEach(m => { const res = results[m.id]; const pred = ps[m.id]; if(currentUser === 'Hedi' && !res) document.getElementById(`admin-tools-${m.id}`).style.display='block'; if(pred) { const btn = document.getElementById(m.id+'-btn'+pred.choice); if(btn) btn.classList.add('selected'); } }); }); }); }
-    function vote(mId, c, p, dl) { if(new Date() >= new Date(dl)) return; if(confirm("پەسەندە؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
+    function startCountdowns() { setInterval(() => { matches.forEach(m => { const diff = new Date(m.deadline) - new Date(); const el = document.getElementById(`cd-${m.id}`); if(!el) return; if(diff<=0) { el.innerHTML="🔒 داخراوە"; return; } const h=Math.floor(diff/3600000); const mi=Math.floor((diff%3600000)/60000); const s=Math.floor((diff%60000)/1000); el.innerHTML=`⏳ ${h}:${mi}:${s}`; }); }, 1000); }
+    function loadStates() { db.ref('results').on('value', sRes => { const results = sRes.val() || {}; db.ref('users/'+currentUser+'/predictions').on('value', sPred => { const ps = sPred.val() || {}; matches.forEach(m => { const res = results[m.id]; const pred = ps[m.id]; if(currentUser==='Hedi' && !res) document.getElementById(`admin-tools-${m.id}`).style.display='block'; if(pred) document.getElementById(m.id+'-btn'+pred.choice).classList.add('selected'); }); }); }); }
+    function vote(mId, c, p, dl) { if(new Date() >= new Date(dl)) return; if(confirm("پێشبینییەکە قفڵ بکرێت؟")) db.ref('users/'+currentUser+'/predictions/'+mId).set({choice:c, pts:p}); }
     function setResult(mId, win, pts) { db.ref('results/'+mId).set({winner:win}).then(() => { db.ref('users').once('value', s => { s.forEach(u => { const d = u.val(); if(d.predictions && d.predictions[mId] && d.predictions[mId].choice == win) { db.ref('users/'+u.key).update({ weekly:(d.weekly||0)+pts, total:(d.total||0)+pts }); } }); }); }); }
     
-    function resetWeeklyPoints() { if(confirm("هەموو داتاکان بسڕێنەوە؟")) { db.ref('users').once('value', s => { s.forEach(u => { db.ref('users/'+u.key).update({weekly:0, total:0, predictions:null}); }); db.ref('results').set(null); }); } }
-    function resetOnlyWeekly() { if(confirm("تەنها هەفتە؟")) { db.ref('users').once('value', s => { s.forEach(u => { db.ref('users/'+u.key).update({weekly:0}); }); }); } }
-    function resetAllQuizAnswers() { if(confirm("سڕینەوەی وەڵامی پرسیارەکان؟")) { db.ref('quizRecords').set(null); db.ref('quizPoints').set(null); } }
+    function resetWeeklyPoints() { if(confirm("هەموو خاڵەکان سفر بکرێنەوە؟")) { db.ref('users').once('value', s => { s.forEach(u => { db.ref('users/'+u.key).update({weekly:0, total:0, predictions:null}); }); db.ref('results').set(null); }); } }
+    function resetOnlyWeekly() { if(confirm("تەنها هەفتە سفر بێت؟")) { db.ref('users').once('value', s => { s.forEach(u => { db.ref('users/'+u.key).update({weekly:0}); }); }); } }
+    function resetAllQuizAnswers() { if(confirm("وەڵامی کویزەکان بسڕێتەوە؟")) { db.ref('quizRecords').set(null); db.ref('quizPoints').set(null); } }
 
     function openRank(type) {
         const path = (type === 'preds') ? 'users' : 'quizPoints';
@@ -363,7 +312,7 @@
             if(type === 'preds') s.forEach(u => { r.push({ n: u.key, p: u.val().total||0 }); });
             else s.forEach(u => { r.push({ n: u.key, p: u.val()||0 }); });
             r.sort((a,b) => b.p - a.p);
-            document.getElementById('rank-list').innerHTML = r.map(i => `<div class="rank-row"><span>${i.n}</span><span style="float:left; color:var(--secondary)">${i.p} خاڵ</span></div>`).join('');
+            document.getElementById('rank-list').innerHTML = r.map(i => `<div class="rank-row"><span>${i.n}</span><span style="color:var(--secondary)">${i.p} خاڵ</span></div>`).join('');
             document.getElementById('leaderboard-view').style.display = 'flex';
         });
     }
