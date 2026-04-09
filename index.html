@@ -3,233 +3,124 @@
 <head>   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brothers Group | Premium Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+Arabic:wght@300;700&display=swap" rel="stylesheet">
+    <title>Brothers Group | یانەی برایان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;600;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root {
-            --bg: #050505;
-            --accent: #fbbf24; /* ئاڵتوونی */
-            --card-bg: #111111;
-            --border: #222222;
-            --text-main: #e2e8f0;
+            --bg: #000000;
+            --card: #0a0a0a;
+            --accent: #00ff88; /* نۆنی سەوز */
+            --text: #ffffff;
+            --muted: #666666;
+            --danger: #ff3366;
         }
 
         * { box-sizing: border-box; font-family: 'Noto Sans Arabic', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            background-color: var(--bg); 
-            color: var(--text-main); 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 100vh;
+        body { background-color: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 480px; padding: 20px; }
+
+        /* تایتڵی سەرەکی */
+        .main-title { font-size: 40px; font-weight: 900; line-height: 1; margin-bottom: 10px; letter-spacing: -1px; }
+        .main-title span { color: var(--accent); }
+
+        /* هادیس و وتەکان */
+        .hadith-section { border-right: 3px solid var(--accent); padding-right: 15px; margin: 30px 0; font-size: 14px; color: var(--muted); line-height: 1.8; }
+
+        /* کارتە مۆدێرنەکان */
+        .m-card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 20px; margin-bottom: 20px; transition: 0.3s; }
+        .m-card:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 255, 136, 0.1); }
+
+        /* دوگمە ستایل کراوەکان */
+        .btn-action { 
+            width: 100%; padding: 20px; border-radius: 15px; border: none; 
+            background: var(--accent); color: black; font-weight: 900; 
+            font-size: 16px; cursor: pointer; transition: 0.2s; 
+        }
+        .btn-action:active { transform: scale(0.97); opacity: 0.8; }
+
+        .btn-outline {
+            width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #333;
+            background: transparent; color: white; font-weight: 600; margin-top: 10px; cursor: pointer;
         }
 
-        .container { width: 100%; max-width: 480px; padding: 25px; position: relative; }
+        /* بەشی یارییەکان */
+        .match-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 15px; }
+        .team-row { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; }
+        .team-name { font-size: 20px; font-weight: 900; }
+        .team-logo { width: 45px; height: 45px; object-fit: contain; }
 
-        /* لۆگۆیەکی ناوازە */
-        .premium-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-top: 20px;
-        }
+        .vs-text { font-size: 14px; color: var(--accent); font-weight: 900; }
 
-        .premium-logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: 4px;
-            color: white;
-            text-transform: uppercase;
-            position: relative;
-            display: inline-block;
-        }
+        /* ڕیزبەندی */
+        .rank-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #111; }
+        .rank-num { color: var(--accent); font-weight: 900; margin-left: 10px; }
 
-        .premium-logo::after {
-            content: "";
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
+        /* کویز */
+        .quiz-opt { width: 100%; padding: 18px; background: #111; border: 1px solid #222; border-radius: 12px; color: white; text-align: right; margin-bottom: 10px; cursor: pointer; }
+        .quiz-opt:hover { border-color: var(--accent); }
 
-        /* کارتەکان */
-        .p-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 0px; /* ستایلی تیژ و مۆدێرن */
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            padding: 20px;
-        }
-
-        .p-card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--accent);
-        }
-
-        /* دوگمەکان */
-        .btn-premium {
-            width: 100%;
-            padding: 16px;
-            background: none;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: 0.4s;
-            margin-bottom: 15px;
-        }
-
-        .btn-premium:hover {
-            background: var(--accent);
-            color: black;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
-        }
-
-        /* بەشی پێشبینی */
-        .match-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .team-box { text-align: center; flex: 1; }
-        .team-box img { width: 55px; height: 55px; filter: grayscale(0.3); transition: 0.3s; }
-        .team-box:hover img { filter: grayscale(0); transform: scale(1.1); }
-
-        .vs-circle {
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Orbitron';
-            font-size: 12px;
-            color: var(--accent);
-        }
-
-        .opt-grid { display: flex; gap: 10px; }
-        .opt-item {
-            flex: 1;
-            padding: 15px 5px;
-            border: 1px solid var(--border);
-            background: #0a0a0a;
-            color: white;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .opt-item.selected {
-            border-color: var(--accent);
-            background: rgba(251, 191, 36, 0.1);
-            color: var(--accent);
-        }
-
-        /* هادیسەکە */
-        .quote-box {
-            font-style: italic;
-            border-right: 2px solid var(--accent);
-            padding: 15px;
-            background: #0a0a0a;
-            margin-bottom: 30px;
-            font-size: 14px;
-            line-height: 1.8;
-            color: #888;
-        }
-
-        input {
-            width: 100%;
-            padding: 18px;
-            background: #0a0a0a;
-            border: 1px solid var(--border);
-            color: white;
-            margin-bottom: 20px;
-            outline: none;
-        }
-
+        /* فۆرمی ناو */
+        input { width: 100%; padding: 20px; background: #111; border: 1px solid #222; border-radius: 15px; color: white; font-size: 16px; margin-bottom: 20px; outline: none; }
         input:focus { border-color: var(--accent); }
 
-        .back-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 12px;
-            display: inline-block;
-            margin-bottom: 20px;
-            cursor: pointer;
-        }
-
-        /* ئەنیمەیشنی هاتنە ناوەوە */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .section { animation: slideUp 0.5s ease-out; }
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="login-page" class="section" style="margin-top: 100px;">
-        <div class="premium-header">
-            <div class="premium-logo">BROTHERS</div>
-        </div>
-        <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە">
-        <button class="btn-premium" onclick="loginUser()">ENTER SYSTEM</button>
+    <div id="login-page" class="section" style="display: block; margin-top: 50px;">
+        <h1 class="main-title">بەخێربێیت بۆ<br><span>برایان گرووپ</span></h1>
+        <p style="color: var(--muted); margin-bottom: 40px;">بۆ دەستپێکردن، ناوی خۆت تۆمار بکە.</p>
+        <input type="text" id="userNameInput" placeholder="ناوەکەت لێرە بنووسە...">
+        <button class="btn-action" onclick="loginUser()">دەستپێکردن</button>
     </div>
 
-    <div id="selection-page" class="section" style="display: none;">
-        <div class="quote-box">
-             «ارْحَمُوا مَنْ فِي الأَرْضِ يَرْحَمْكُمْ مَنْ فِي السَّمَاءِ»<br>
-             ڕەحم بەوانە بکە کە لەسەر زەوین، تاوەکو ئەوەی لە ئاسمانە ڕەحمتان پێ بکات.
+    <div id="selection-page" class="section">
+        <div class="hadith-section">
+            «ارْحَمُوا مَنْ فِي الأَرْضِ يَرْحَمْكُمْ مَنْ فِي السَّمَاءِ»<br>
+            ڕەحم بەوانە بکە کە لەسەر زەوین، تاوەکو ئەوەی لە ئاسمانە ڕەحمتان پێ بکات.
         </div>
         
-        <div class="premium-header" style="margin-bottom: 20px;">
-            <div class="premium-logo" style="font-size: 24px;">DASHBOARD</div>
+        <h1 class="main-title">چی دەکەیت<br><span>ئەمڕۆ؟</span></h1>
+        
+        <div class="m-card" onclick="showSection('preds')">
+            <h2 style="margin:0;">⚽ پێشبینی یارییەکان</h2>
+            <p style="color:var(--muted); font-size:12px; margin:5px 0 0 0;">خاڵ کۆبکەرەوە و ببە بە یەکەم.</p>
         </div>
 
-        <button class="btn-premium" onclick="showSection('preds')">FOOTBALL PREDICTIONS</button>
-        <button class="btn-premium" onclick="showSection('quiz')" style="border-color: #8b5cf6; color: #8b5cf6;">KNOWLEDGE QUIZ</button>
-        
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-premium" style="font-size: 10px; padding: 10px;" onclick="openRank('preds')">LEADERBOARD</button>
-            <button class="btn-premium" style="font-size: 10px; padding: 10px; border-color: #444; color: #444;" onclick="logout()">LOGOUT</button>
+        <div class="m-card" onclick="showSection('quiz')">
+            <h2 style="margin:0;">🧠 زانیاری گشتی</h2>
+            <p style="color:var(--muted); font-size:12px; margin:5px 0 0 0;">تاقیکردنەوەی خێرا لە مێژووی وەرزش.</p>
         </div>
+
+        <button class="btn-outline" onclick="openRank('preds')">📊 بینینی ڕیزبەندی</button>
+        <button class="btn-outline" style="color: var(--danger); border-color: #222;" onclick="logout()">🚪 چوونە دەرەوە</button>
     </div>
 
-    <div id="main-app" style="display: none;">
-        <div id="preds-section" class="section" style="display: none;">
-            <span class="back-link" onclick="showSection('home')">← گەڕانەوە بۆ سەرەکی</span>
-            <div id="matches-list"></div>
-        </div>
+    <div id="preds-section" class="section">
+        <button class="btn-outline" style="width: auto; padding: 5px 15px; margin-bottom: 20px;" onclick="showSection('home')">← گەڕانەوە</button>
+        <h1 class="main-title" style="font-size: 24px;">یارییە<span>کان</span></h1>
+        <div id="matches-list"></div>
+    </div>
 
-        <div id="quiz-section" class="section" style="display: none;">
-            <span class="back-link" onclick="showSection('home')">← گەڕانەوە بۆ سەرەکی</span>
-            <div class="p-card">
-                <h3 id="quiz-question" style="text-align: center; font-weight: 300;">ئامادەیت بۆ تاقیکردنەوە؟</h3>
-                <div id="quiz-options"></div>
-                <button id="start-quiz-btn" class="btn-premium" onclick="nextQuestion()">START QUIZ</button>
-            </div>
+    <div id="quiz-section" class="section">
+        <button class="btn-outline" style="width: auto; padding: 5px 15px; margin-bottom: 20px;" onclick="showSection('home')">← گەڕانەوە</button>
+        <div class="m-card">
+            <p id="quiz-question" style="font-size: 20px; font-weight: 600; text-align: center;">ئامادەیت؟</p>
+            <div id="quiz-options"></div>
+            <button id="start-quiz-btn" class="btn-action" onclick="nextQuestion()">دەستپێکردن</button>
         </div>
     </div>
 </div>
 
 <script>
-    // لێرە Firebaseەکەت وەکو خۆی دادەنێیتەوە
+    // کۆنفیگی فایەربەیسەکەت لێرە دابنێوە وەک خۆی
     const firebaseConfig = { 
         apiKey: "AIzaSyBCXp7vjnb1naq1GpiyN29Br3SH_yNGkkQ", 
         authDomain: "brayan-2a1ef.firebaseapp.com", 
@@ -243,27 +134,29 @@
     const db = firebase.database();
     let currentUser = localStorage.getItem('groupBryanUser');
 
-    // بەشی لۆجیک (هەمان ماسیەکان و فەنکشنەکانت لێرە کۆپی بکەرەوە)
-    // من لێرە نموونەیەک لە renderMatches دادەنێم بە دیزاینە نوێیەکە:
-
+    // لۆجیکی نیشاندانی یارییەکان
     function renderMatches() {
-        // ئەمە تەنیا نموونەیە، تۆ لیستە گەورەکەی خۆتی تێبکە
-        const matches = [ {id: "m1", t1: "ڕیاڵ مەدرید", t2: "بارسێلۆنا", p1: 3, pX: 2, p2: 4, event: "LALIGA", img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/81.png", deadline: "2026-10-10T22:00:00"} ];
+        // نموونەی یەک یاری، دەتوانیت لیستی یارییەکانی خۆتی تێبکەیت
+        const matches = [ {id: "m1", t1: "ڕیاڵ مەدرید", t2: "بایرن میونشن", event: "Champions League", img1: "https://crests.football-data.org/86.png", img2: "https://crests.football-data.org/5.png", deadline: "2026-04-10T22:00:00"} ];
         
         let h = '';
         matches.forEach(m => {
             h += `
-            <div class="p-card">
-                <div style="font-size: 10px; color: var(--accent); letter-spacing: 2px;">${m.event}</div>
-                <div class="match-row">
-                    <div class="team-box"><img src="${m.img1}"><div>${m.t1}</div></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="team-box"><img src="${m.img2}"><div>${m.t2}</div></div>
+            <div class="m-card">
+                <div class="match-header"><span>${m.event}</span><span>${m.deadline}</span></div>
+                <div class="team-row">
+                    <div class="team-name">${m.t1}</div>
+                    <img class="team-logo" src="${m.img1}">
                 </div>
-                <div class="opt-grid">
-                    <div class="opt-item" onclick="vote('${m.id}',1)">1 <br> <small>${m.p1}pts</small></div>
-                    <div class="opt-item" onclick="vote('${m.id}',2)">X <br> <small>${m.pX}pts</small></div>
-                    <div class="opt-item" onclick="vote('${m.id}',3)">2 <br> <small>${m.p2}pts</small></div>
+                <div style="text-align:center;" class="vs-text">V S</div>
+                <div class="team-row">
+                    <div class="team-name">${m.t2}</div>
+                    <img class="team-logo" src="${m.img2}">
+                </div>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn-outline" style="flex:1; margin:0;" onclick="vote('${m.id}',1)">1</button>
+                    <button class="btn-outline" style="flex:1; margin:0;" onclick="vote('${m.id}',2)">X</button>
+                    <button class="btn-outline" style="flex:1; margin:0;" onclick="vote('${m.id}',3)">2</button>
                 </div>
             </div>`;
         });
@@ -276,15 +169,10 @@
     }
 
     function showSection(sec) {
-        document.getElementById('login-page').style.display = 'none';
-        document.getElementById('selection-page').style.display = 'none';
-        document.getElementById('main-app').style.display = 'block';
-        document.getElementById('preds-section').style.display = 'none';
-        document.getElementById('quiz-section').style.display = 'none';
-        
-        if(sec === 'home') { document.getElementById('selection-page').style.display = 'block'; document.getElementById('main-app').style.display = 'none'; }
+        document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+        if(sec === 'home') document.getElementById('selection-page').style.display = 'block';
         else if(sec === 'preds') { document.getElementById('preds-section').style.display = 'block'; renderMatches(); }
-        else if(sec === 'quiz') { document.getElementById('quiz-section').style.display = 'block'; }
+        else if(sec === 'quiz') document.getElementById('quiz-section').style.display = 'block';
     }
 
     if(currentUser) {
